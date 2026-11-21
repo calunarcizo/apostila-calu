@@ -98,6 +98,19 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .refs { display: flex; flex-wrap: wrap; gap: 6px; }
 .refs a { font-size: .8rem; text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; color: var(--ink); background: var(--surface); }
 .refs a b { color: var(--accent); font-weight: 600; }
+/* verbos */
+.vlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.vrow { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 4px; min-width: 0; }
+.vforms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; font-family: var(--mono); font-size: .95rem; }
+.vforms b { color: var(--accent); }
+.vforms span { overflow-wrap: anywhere; }
+.vhead { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-inline: 13px; }
+.vhide { font: 700 .85rem var(--mono); min-width: 44px; padding: 2px 10px; border-radius: 6px; border: 1px dashed var(--accent); background: var(--soft); color: var(--accent); cursor: pointer; }
+.vex { font-size: .92rem; }
+.vex mark { background: color-mix(in srgb, var(--signal) 35%, transparent); color: var(--ink); padding: 0 3px; border-radius: 4px; font-weight: 600; }
+nav.tabs { overflow-x: auto; }
+nav.tabs a { white-space: nowrap; }
+@media (max-width: 420px) { nav.tabs a { padding: 8px 10px; } }
 @media (max-width: 420px) { .node:nth-of-type(4n+2), .node:nth-of-type(4n) { transform: none; } .stat b { font-size: 1.3rem; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -111,6 +124,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 
   <nav class="tabs" aria-label="Seções">
     <a href="#trilha" id="tab-trilha">Trilha</a>
+    <a href="#verbos" id="tab-verbos">Irregulares</a>
     <a href="#indice" id="tab-indice">Índice remissivo</a>
   </nav>
 
@@ -143,6 +157,15 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
       <ul class="review small" id="review" style="margin:0;padding-left:18px"></ul>
     </section>
     <p class="small muted">Seu progresso fica salvo neste navegador. Em outro celular ou computador a trilha começa do zero.</p>
+  </main>
+
+  <main id="view-verbos" hidden style="display:grid;gap:14px">
+    <p class="small muted">Base, passado e particípio. Escolha a lista geral ou o seu setor: cada verbo de setor vem com uma frase no passado. No modo treino, tente lembrar e toque no ? para conferir.</p>
+    <input class="search" id="vq" type="search" placeholder="Procure: bought, levar, swollen…" aria-label="Procurar verbo">
+    <div class="chips" id="vtemas" role="group" aria-label="Lista de verbos"></div>
+    <div class="row" style="justify-content:space-between"><span class="small muted" id="vcount"></span><button class="chip" id="vquiz" aria-pressed="false">Modo treino</button></div>
+    <div class="vhead eyebrow"><span>base</span><span>passado</span><span>particípio</span></div>
+    <ul class="vlist" id="vlist"></ul>
   </main>
 
   <main id="view-indice" hidden style="display:grid;gap:16px">
@@ -231,8 +254,9 @@ function sheet(u, st, fav) {
 $("nivel").onchange = () => { ls.set("calu-nivel", +$("nivel").value); render(); };
 
 // ---------- índice remissivo
-const U = { u1: ["u1.html", "Presente simples"], u3: ["u3.html", "Futuro"], u4: ["u4.html", "Passado simples"], u5: ["u5.html", "Present perfect"], u6: ["u6.html", "Past perfect"], mes: ["mestrado.html", "Mestrado"] };
+const U = { u1: ["u1.html", "Presente simples"], u3: ["u3.html", "Futuro"], u4: ["u4.html", "Passado simples"], u5: ["u5.html", "Present perfect"], u6: ["u6.html", "Past perfect"], mes: ["mestrado.html", "Mestrado"], verbos: ["#verbos", "Irregulares"] };
 const IDX = [
+  ["verbos irregulares (lista)", "Base, passado e particípio, com tradução. Lista geral e uma lista por setor, com modo treino.", [["verbos", "aba Irregulares"], ["u4", "passo 0"]]],
   ["variações (Reino Unido × EUA)", "Cada unidade tem um quadro Variações. Nos exercícios, as duas formas contam como certas.", [["u1", "passo 0"], ["u3", "passo 0"], ["u4", "passo 0"], ["u5", "passo 0"], ["u6", "passo 0"]]],
   ["at / on the weekend", "At the weekend no Reino Unido, on the weekend nos EUA. As duas estão certas.", [["u1", "passo 0"]]],
   ["have got × have", "Have you got…? (Reino Unido, informal) e Do you have…? (EUA e geral).", [["u1", "passo 0"]]],
@@ -301,15 +325,162 @@ function renderIdx() {
   $("letters").innerHTML = Object.keys(groups).map(L => `<a href="#indice" data-l="${L}">${L}</a>`).join("");
   $("letters").querySelectorAll("a").forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById("L-" + a.dataset.l)?.scrollIntoView({ behavior: "smooth" }); });
   $("idx").innerHTML = Object.entries(groups).map(([L, list]) => `<section><h3 id="L-${L}">${L}</h3><dl>${list.map(([t, d, refs]) =>
-    `<div><dt>${esc(t)}</dt><dd><span>${esc(d)}</span><span class="refs">${refs.map(([u, where]) => `<a href="${U[u][0]}#${u === "mes" ? "ri" : fav}"><b>${esc(U[u][1])}</b> · ${esc(where)}</a>`).join("")}</span></dd></div>`).join("")}</dl></section>`).join("") || `<p class="muted">Nada encontrado. Tente outra palavra.</p>`;
+    `<div><dt>${esc(t)}</dt><dd><span>${esc(d)}</span><span class="refs">${refs.map(([u, where]) => `<a href="${u === "verbos" ? "#verbos" : U[u][0] + "#" + (u === "mes" ? "ri" : fav)}"><b>${esc(U[u][1])}</b> · ${esc(where)}</a>`).join("")}</span></dd></div>`).join("")}</dl></section>`).join("") || `<p class="muted">Nada encontrado. Tente outra palavra.</p>`;
 }
 $("q").addEventListener("input", renderIdx);
 
+// ---------- verbos irregulares: [base, passado, particípio, tradução, nota]
+const VERBS = [
+["be","was / were","been","ser, estar","was com I, he, she, it; were com you, we, they"],
+["become","became","become","tornar-se",""],
+["begin","began","begun","começar",""],
+["bend","bent","bent","dobrar, curvar",""],
+["bet","bet","bet","apostar",""],
+["bite","bit","bitten","morder",""],
+["bleed","bled","bled","sangrar",""],
+["blow","blew","blown","soprar, ventar",""],
+["break","broke","broken","quebrar",""],
+["bring","brought","brought","trazer",""],
+["broadcast","broadcast","broadcast","transmitir",""],
+["build","built","built","construir",""],
+["burn","burned / burnt","burned / burnt","queimar","burnt é mais britânico; nos EUA, burned"],
+["buy","bought","bought","comprar",""],
+["catch","caught","caught","pegar, apanhar",""],
+["choose","chose","chosen","escolher",""],
+["come","came","come","vir",""],
+["cost","cost","cost","custar",""],
+["cut","cut","cut","cortar",""],
+["deal","dealt","dealt","lidar, negociar","deal with = lidar com"],
+["dig","dug","dug","cavar",""],
+["do","did","done","fazer",""],
+["draw","drew","drawn","desenhar, tirar (conclusões)",""],
+["dream","dreamed / dreamt","dreamed / dreamt","sonhar","dreamt é mais britânico"],
+["drink","drank","drunk","beber",""],
+["drive","drove","driven","dirigir",""],
+["eat","ate","eaten","comer","no Reino Unido, ate às vezes soa /ét/"],
+["fall","fell","fallen","cair",""],
+["feed","fed","fed","alimentar",""],
+["feel","felt","felt","sentir",""],
+["fight","fought","fought","lutar, brigar",""],
+["find","found","found","encontrar",""],
+["fit","fit / fitted","fit / fitted","caber, servir","fit é mais americano; fitted, britânico"],
+["fly","flew","flown","voar",""],
+["forbid","forbade","forbidden","proibir",""],
+["forget","forgot","forgotten","esquecer",""],
+["forgive","forgave","forgiven","perdoar",""],
+["freeze","froze","frozen","congelar",""],
+["get","got","got / gotten","conseguir, receber, ficar","gotten é americano; no Reino Unido, got"],
+["give","gave","given","dar",""],
+["go","went","gone","ir","been também serve: I've been to Paris (fui e voltei)"],
+["grow","grew","grown","crescer, cultivar",""],
+["hang","hung","hung","pendurar","hanged (regular) só para enforcar"],
+["have","had","had","ter",""],
+["hear","heard","heard","ouvir",""],
+["hide","hid","hidden","esconder",""],
+["hit","hit","hit","bater, atingir",""],
+["hold","held","held","segurar, realizar (evento)",""],
+["hurt","hurt","hurt","machucar, doer",""],
+["keep","kept","kept","manter, guardar",""],
+["know","knew","known","saber, conhecer",""],
+["lay","laid","laid","colocar, pôr (deitado)","não confunda com lie (deitar-se)"],
+["lead","led","led","liderar, levar a",""],
+["learn","learned / learnt","learned / learnt","aprender","learnt é mais britânico"],
+["leave","left","left","sair, deixar",""],
+["lend","lent","lent","emprestar (dar)",""],
+["let","let","let","deixar, permitir",""],
+["lie","lay","lain","deitar-se","lie, lied, lied (regular) = mentir"],
+["light","lit","lit","acender, iluminar",""],
+["lose","lost","lost","perder",""],
+["make","made","made","fazer, fabricar",""],
+["mean","meant","meant","significar, querer dizer",""],
+["meet","met","met","encontrar, conhecer (pessoa)",""],
+["overcome","overcame","overcome","superar",""],
+["pay","paid","paid","pagar",""],
+["put","put","put","colocar",""],
+["quit","quit","quit","largar, desistir","no Reino Unido também quitted"],
+["read","read","read","ler","escreve igual, mas o passado soa /réd/"],
+["ride","rode","ridden","andar (de bicicleta, cavalo)",""],
+["ring","rang","rung","tocar (campainha, telefone)",""],
+["rise","rose","risen","subir, aumentar",""],
+["run","ran","run","correr, administrar, rodar (programa)",""],
+["say","said","said","dizer","said soa /séd/"],
+["see","saw","seen","ver",""],
+["seek","sought","sought","buscar, procurar",""],
+["sell","sold","sold","vender",""],
+["send","sent","sent","enviar",""],
+["set","set","set","definir, ajustar","set up = configurar, montar"],
+["shake","shook","shaken","sacudir, apertar (mão)",""],
+["shine","shone","shone","brilhar",""],
+["shoot","shot","shot","atirar, filmar, fotografar",""],
+["show","showed","shown","mostrar",""],
+["shrink","shrank","shrunk","encolher",""],
+["shut","shut","shut","fechar","shut down = desligar"],
+["sing","sang","sung","cantar",""],
+["sink","sank","sunk","afundar",""],
+["sit","sat","sat","sentar",""],
+["sleep","slept","slept","dormir",""],
+["slide","slid","slid","deslizar",""],
+["speak","spoke","spoken","falar",""],
+["spend","spent","spent","gastar, passar (tempo)",""],
+["spread","spread","spread","espalhar",""],
+["stand","stood","stood","ficar de pé",""],
+["steal","stole","stolen","roubar",""],
+["stick","stuck","stuck","grudar, ficar preso",""],
+["strike","struck","struck","atingir, fazer greve",""],
+["swear","swore","sworn","jurar, xingar",""],
+["sweep","swept","swept","varrer",""],
+["swell","swelled","swollen / swelled","inchar",""],
+["swim","swam","swum","nadar",""],
+["take","took","taken","pegar, levar, tomar",""],
+["teach","taught","taught","ensinar",""],
+["tear","tore","torn","rasgar",""],
+["tell","told","told","contar, dizer (a alguém)",""],
+["think","thought","thought","pensar, achar",""],
+["throw","threw","thrown","jogar, arremessar",""],
+["undergo","underwent","undergone","passar por (cirurgia, mudança)",""],
+["understand","understood","understood","entender",""],
+["undertake","undertook","undertaken","empreender, assumir (projeto)",""],
+["wake","woke","woken","acordar",""],
+["wear","wore","worn","vestir, usar (roupa)",""],
+["win","won","won","ganhar, vencer","won soa /uân/"],
+["withdraw","withdrew","withdrawn","retirar, sacar",""],
+["write","wrote","written","escrever",""]
+];
+// verbos de cada setor: [base, frase com o passado entre *asteriscos*]
+const SECTOR = {
+geral: [["be","I *was* tired yesterday."],["have","We *had* lunch at noon."],["do","She *did* her homework."],["go","They *went* to the beach."],["get","He *got* a new job."],["make","I *made* coffee for everyone."],["say","She *said* yes."],["see","We *saw* a great film."],["come","My cousin *came* to visit."],["take","I *took* the bus to work."],["know","I *knew* the answer."],["think","I *thought* about you."]],
+porto: [["bring","The pilot *brought* the ship into the channel."],["hold","The terminal *held* the cargo for three days."],["break","A crane *broke* down during loading."],["leave","The vessel *left* the berth at 6 a.m."],["send","The agent *sent* the bill of lading."],["spend","The ship *spent* two days at anchor."],["strike","The dock workers *struck* for better pay."],["drive","The truck driver *drove* the container to the yard."],["keep","Customs *kept* the shipment for inspection."],["sink","A small boat *sank* near the breakwater."]],
+saude: [["bleed","The patient *bled* a lot after the fall."],["bite","A dog *bit* the child's arm."],["break","He *broke* a tooth."],["feel","She *felt* dizzy in the morning."],["hurt","My back *hurt* all night."],["take","The technician *took* an X-ray."],["undergo","She *underwent* surgery last week."],["give","The doctor *gave* him anesthesia."],["swell","His ankle *swelled* up after the game."],["lie","The patient *lay* in bed for two days."],["sleep","He *slept* badly after the operation."],["fall","An elderly woman *fell* in the bathroom."]],
+terceiro: [["lead","Our coordinator *led* the meeting."],["hold","We *held* a workshop for young leaders."],["give","The volunteers *gave* food to 200 families."],["spend","We *spent* the budget on school supplies."],["write","I *wrote* the project proposal."],["seek","The NGO *sought* new funders."],["build","The community *built* a new library."],["meet","We *met* the deadline."],["win","Our project *won* the grant."],["undertake","The team *undertook* a survey in the neighborhood."]],
+viagem: [["fly","We *flew* to Lisbon on Friday."],["buy","I *bought* a SIM card at the airport."],["eat","We *ate* at a local restaurant."],["lose","The airline *lost* my suitcase."],["take","We *took* a taxi to the hotel."],["ride","They *rode* bikes along the coast."],["swim","I *swam* in the hotel pool."],["leave","The guests *left* before breakfast."],["pay","I *paid* the bill in cash."],["sleep","I *slept* on the plane."],["catch","We *caught* the last train."]],
+tecnologia: [["write","I *wrote* the code for the login page."],["build","We *built* a new API."],["run","She *ran* the tests before the release."],["break","The update *broke* the build."],["choose","The team *chose* a new framework."],["send","The system *sent* an alert at midnight."],["find","QA *found* a bug in the checkout."],["shut","We *shut* down the old server."],["set","I *set* up the database."],["lose","The company *lost* data in the attack."],["steal","Hackers *stole* thousands of passwords."]],
+academico: [["read","I *read* three articles for the seminar."],["write","She *wrote* her thesis in two years."],["choose","He *chose* a topic about public health."],["begin","The semester *began* in March."],["give","My advisor *gave* a talk at the conference."],["draw","The authors *drew* clear conclusions."],["find","The study *found* a strong correlation."],["lead","The results *led* to new questions."],["seek","The researchers *sought* funding abroad."],["teach","She *taught* methodology last year."],["take","I *took* the proficiency exam in May."],["understand","I finally *understood* the statistics."]],
+comex: [["buy","The company *bought* raw materials from China."],["sell","We *sold* 500 tons of coffee."],["pay","The importer *paid* by letter of credit."],["send","The supplier *sent* the pro forma invoice."],["deal","Our broker *dealt* with customs."],["rise","Freight prices *rose* in the second quarter."],["fall","The dollar *fell* against the real."],["lose","We *lost* the contract to a competitor."],["cost","Shipping *cost* more than expected."],["withdraw","The buyer *withdrew* the order."],["set","They *set* the price in euros."]],
+atendimento: [["tell","I *told* the customer about the delay."],["say","She *said* she was unhappy with the service."],["give","We *gave* him a refund."],["forget","I *forgot* to call him back."],["understand","I *understood* the problem right away."],["speak","I *spoke* to the manager."],["take","The waiter *took* our order."],["bring","He *brought* the wrong dish."],["hear","I *heard* the complaint calmly."],["keep","Sorry we *kept* you waiting."],["deal","I *dealt* with a difficult complaint."],["make","We *made* a mistake with your booking."]],
+clima: [["rise","The river *rose* two meters overnight."],["fall","Heavy rain *fell* all week."],["blow","A strong wind *blew* the roofs off."],["freeze","The lake *froze* in July."],["grow","The city *grew* without planning."],["burn","The fire *burned* for three days."],["spread","The flames *spread* across the forest."],["strike","Lightning *struck* a tree in the park."],["build","They *built* houses on the riverbank."],["lose","Many families *lost* their homes."],["bring","The storm *brought* floods to the south."]],
+cultura: [["sing","She *sang* the national anthem."],["see","I *saw* the whole series in one weekend."],["become","That video *became* a meme overnight."],["win","The film *won* an Oscar."],["shoot","They *shot* the film in Bahia."],["break","The song *broke* a streaming record."],["wear","She *wore* a vintage dress on stage."],["hear","I *heard* the new album yesterday."],["draw","A fan *drew* amazing fan art."],["fall","The two characters *fell* in love."],["forget","The singer *forgot* the lyrics."],["read","I *read* the book before the series."]]
+};
+const VMAP = Object.fromEntries(VERBS.map(v => [v[0], v]));
+function renderVerbs() {
+  const fav = ls.get("calu-tema", "geral");
+  if (!renderVerbs.t) renderVerbs.t = ls.get("calu-vtema", "todos");
+  const t = renderVerbs.t, q = fold($("vq").value.trim()), quiz = $("vquiz").getAttribute("aria-pressed") === "true";
+  $("vtemas").innerHTML = [["todos", "Lista geral"], ...Object.entries(THEMES)].map(([k, n]) => [k, k === "geral" ? "Os 12 mais usados" : n]).map(([k, n]) => `<button class="chip" data-t="${k}" aria-pressed="${k === t}">${esc(n)}${k === fav ? " ★" : ""}</button>`).join("");
+  $("vtemas").querySelectorAll("button").forEach(b => b.onclick = () => { renderVerbs.t = b.dataset.t; ls.set("calu-vtema", b.dataset.t); renderVerbs(); });
+  const list = t === "todos" ? VERBS.map(v => [v, ""]) : (SECTOR[t] || []).map(([b, ex]) => [VMAP[b], ex]);
+  const rows = list.filter(([v, ex]) => !q || fold(v.join(" ") + " " + ex).includes(q));
+  const cell = (s, lab) => quiz ? `<button class="vhide" aria-label="Mostrar ${lab}">?</button><span class="vans" hidden>${esc(s)}</span>` : esc(s);
+  $("vcount").textContent = `${rows.length} ${rows.length === 1 ? "verbo" : "verbos"}`;
+  $("vlist").innerHTML = rows.map(([v, ex]) => `<li class="vrow"><div class="vforms"><b>${esc(v[0])}</b><span>${cell(v[1], "passado")}</span><span>${cell(v[2], "particípio")}</span></div><p class="small muted">${esc(v[3])}${v[4] ? ` · <i>${esc(v[4])}</i>` : ""}</p>${ex ? `<p class="vex">${quiz ? esc(ex).replace(/\*([^*]+)\*/, "<mark>___</mark>") : esc(ex).replace(/\*([^*]+)\*/, "<mark>$1</mark>")}</p>` : ""}</li>`).join("") || `<li class="muted">Nada encontrado. Tente outra palavra.</li>`;
+  $("vlist").querySelectorAll(".vhide").forEach(b => b.onclick = () => { b.hidden = true; b.nextElementSibling.hidden = false; });
+}
+$("vq").addEventListener("input", renderVerbs);
+$("vquiz").onclick = () => { const b = $("vquiz"); b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); renderVerbs(); };
+
 function route() {
-  const v = location.hash.slice(1) === "indice" ? "indice" : "trilha";
-  $("view-trilha").hidden = v !== "trilha"; $("view-indice").hidden = v !== "indice";
-  $("tab-trilha").setAttribute("aria-current", v === "trilha" ? "page" : "false"); $("tab-indice").setAttribute("aria-current", v === "indice" ? "page" : "false");
-  if (v === "indice") renderIdx(); else render();
+  const hv = location.hash.slice(1); const v = ["indice", "verbos"].includes(hv) ? hv : "trilha";
+  ["trilha", "verbos", "indice"].forEach(k => { $("view-" + k).hidden = v !== k; $("tab-" + k).setAttribute("aria-current", v === k ? "page" : "false"); });
+  if (v === "indice") renderIdx(); else if (v === "verbos") renderVerbs(); else render();
 }
 window.addEventListener("hashchange", route);
 window.addEventListener("focus", () => { if (!$("view-trilha").hidden) render(); });

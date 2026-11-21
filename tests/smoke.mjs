@@ -12,6 +12,7 @@ await new Promise((r) => setTimeout(r, 2500));
 const checks = [
   ["/", "#path .node", 7],
   ["/#indice", "#idx dt", 30],
+  ["/#verbos", "#view-verbos *", 20],
   ["/u1.html#porto", "input, button", 20],
   ["/u3.html#viagem", "input, button", 20],
   ["/u4.html#porto", "input, button", 20],
