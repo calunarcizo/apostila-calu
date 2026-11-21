@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.backlink{display:inline-flex;align-items:center;gap:6px;font:600 .9rem Inter,system-ui,sans-serif;text-decoration:none;color:var(--accent);justify-self:start}
+</style>
+<title>Past Perfect · Nível 4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column; a sticky score strip; each exercise is a numbered step (the order is the learning sequence: controlled to free) */
+:root {
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --ink: #142233;
+  --muted: #586779;
+  --line: #d3dbe4;
+  --accent: #1f5fa8;
+  --accent-ink: #ffffff;
+  --signal: #f2b632;
+  --good: #1d7a4c;
+  --good-bg: #e2f3ea;
+  --bad: #b3362b;
+  --bad-bg: #f8e4e1;
+  --soft: #e3ebf5;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 24px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; }
+.eyebrow { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 14px; min-width: 0; }
+.scorebar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.scorebar .track { flex: 1 1 160px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.scorebar .fill { height: 100%; background: var(--good); width: 0; transition: width .3s; }
+.scorebar span { font-size: .85rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.step-head { display: flex; gap: 12px; align-items: baseline; }
+.step-num { font-family: var(--display); font-weight: 700; color: var(--accent); font-size: 1.4rem; min-width: 1.6em; }
+/* explanation */
+.rule { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.rule > div { background: var(--soft); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; min-width: 0; }
+.rule b { font-family: var(--mono); font-weight: 500; font-size: .92rem; }
+.ex { font-family: var(--mono); font-size: .88rem; }
+.callout { border-left: 4px solid var(--signal); padding: 8px 14px; background: var(--soft); border-radius: 0 10px 10px 0; }
+.pron { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pron div { border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; min-width: 0; }
+.pron .sound { font-family: var(--mono); font-size: 1.1rem; color: var(--accent); }
+.pron small { display: block; color: var(--muted); font-size: .8rem; }
+/* items */
+.items { display: grid; gap: 12px; counter-reset: it; }
+.item { display: grid; gap: 8px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+.item:last-child { border-bottom: 0; padding-bottom: 0; }
+.prompt { font-size: 1.02rem; }
+.prompt .ctx { display: block; font-size: .8rem; color: var(--muted); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); text-decoration: line-through; }
+.opt:disabled { cursor: default; }
+.inline-input { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+input[type=text], textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 0; }
+input[type=text] { flex: 1 1 200px; }
+input.right { border-color: var(--good); background: var(--good-bg); }
+.prompt.blanks { line-height: 2.4; }
+input.slot { width: 7.5em; flex: none; display: inline-block; margin: 0 4px; padding: 2px 6px; border: 0; border-bottom: 2px solid var(--muted); border-radius: 4px 4px 0 0; background: var(--soft); text-align: center; vertical-align: baseline; }
+input.slot.right { border-bottom-color: var(--good); background: var(--good-bg); }
+input.slot.wrong { border-bottom-color: var(--bad); background: var(--bad-bg); }
+input.wrong { border-color: var(--bad); background: var(--bad-bg); }
+textarea { width: 100%; min-height: 150px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+.btn { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 9px 16px; cursor: pointer; background: var(--accent); color: var(--accent-ink); }
+.btn.small { padding: 7px 12px; font-size: .9rem; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.fb { font-size: .9rem; }
+.fb.ok { color: var(--good); }
+.fb.no { color: var(--bad); }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+/* word order */
+.bank, .built { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; padding: 6px; border-radius: 10px; }
+.built { border: 1px dashed var(--line); }
+.tile { font: inherit; font-family: var(--mono); font-size: .9rem; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+/* flashcards */
+.verbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.verb { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: grid; gap: 4px; min-width: 0; }
+.verb label { font-family: var(--mono); font-size: .88rem; }
+.verb label small { color: var(--muted); font-family: var(--body); }
+.verb input { width: 100%; padding: 6px 8px; }
+.checklist { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.checklist li { display: flex; gap: 8px; align-items: flex-start; }
+.checklist input { margin-top: 5px; }
+.ai { white-space: pre-wrap; background: var(--soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; }
+.final { text-align: center; }
+.final .big { font-family: var(--display); font-size: 3rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.themes-box { display: grid; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: .9rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .scorebar .fill { transition: none; } }
+@media (max-width: 420px) { .pron { grid-template-columns: 1fr; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← Voltar à trilha</a>
+  <header style="display:grid;gap:8px">
+    <span class="eyebrow">Inglês com Calú · Nível 4 (B2) · Unidade 6</span>
+    <h1>Past perfect</h1>
+    <p class="muted">Contar uma história com duas ações no passado e deixar claro qual veio primeiro. Uns 25 minutos. Cada exercício corrige na hora.</p>
+  </header>
+
+  <section class="themes-box">
+    <span class="eyebrow">Tema do vocabulário</span>
+    <div class="chips" id="themes"></div>
+    <p class="muted" style="font-size:.88rem">Mesma aula, mesmos exercícios: só muda o vocabulário. Para mandar um tema direto ao aluno, copie o link com ele já escolhido.</p>
+  </section>
+
+  <div class="scorebar" aria-live="polite">
+    <div class="track"><div class="fill" id="scoreFill"></div></div>
+    <span id="scoreText">0 de 0 acertos</span><span id="themeName" class="muted"></span>
+    <button class="btn ghost small" id="resetAll">Recomeçar</button>
+  </div>
+
+  <!-- 0 EXPLICAÇÃO -->
+  <section class="card">
+    <div class="step-head"><span class="step-num">0</span><h2>Como funciona</h2></div>
+    <p>O past perfect é o <strong>passado do passado</strong>: a ação que aconteceu <strong>antes</strong> de outra ação que já é passado.</p>
+    <div class="rule">
+      <div><span class="eyebrow">Como se forma</span><b>had + particípio</b><b>Had you seen? I hadn't seen.</b><span class="muted" style="font-size:.85rem">had é igual para todas as pessoas</span></div>
+      <div><span class="eyebrow">Linha do tempo</span><b>1º the bus had left</b><b>2º I arrived</b><span class="muted" style="font-size:.85rem">When I arrived, the bus had left.</span></div>
+      <div><span class="eyebrow">Andam junto</span><b>by the time, already, just</b><b>still, ever, never… before</b><span class="muted" style="font-size:.85rem">I'd never flown before that trip.</span></div>
+    </div>
+    <p class="callout"><strong>A regra de ouro:</strong> se as ações vêm na ordem em que aconteceram, use só o passado simples: <span class="ex">I woke up, had coffee and left.</span> O past perfect entra quando você <strong>volta no tempo</strong> para explicar algo: <span class="ex">I couldn't enter because I had lost my keys.</span></p>
+    <h3>Quando não precisa (ou muda o sentido)</h3>
+    <div class="rule">
+      <div><span class="eyebrow">Uma ação só</span><b>The Romans spoke Latin.</b><span class="muted" style="font-size:.85rem">Sem outro passado na frase ou no contexto, é passado simples, mesmo que seja muito antigo. Nunca <i>The Romans had spoken Latin.</i></span></div>
+      <div><span class="eyebrow">Com before e after</span><b>After I (had) read the book, I watched the series.</b><span class="muted" style="font-size:.85rem">A palavra já mostra a ordem, então o past perfect é opcional. Os dois estão certos.</span></div>
+      <div><span class="eyebrow">before + had</span><b>The author died before he had finished the series.</b><span class="muted" style="font-size:.85rem">Mostra o que <strong>não chegou</strong> a acontecer ou terminar antes da outra ação.</span></div>
+      <div><span class="eyebrow">Com when, muda tudo</span><b>When I arrived, the movie started.</b><b>When I arrived, the movie had started.</b><span class="muted" style="font-size:.85rem">A primeira: começou quando cheguei. A segunda: já tinha começado.</span></div>
+    </div>
+    <h3>Os três passados juntos</h3>
+    <div class="pron">
+      <div><span class="sound">simple past</span>I lost my keys yesterday.<small>aconteceu e terminou</small></div>
+      <div><span class="sound">present perfect</span>I have lost my keys.<small>e ainda não achei</small></div>
+      <div><span class="sound">past perfect</span>I had lost my keys, so I couldn't enter.<small>antes de outro passado</small></div>
+    </div>
+    <p class="muted" style="font-size:.9rem">Na fala, had vira <span class="ex">'d</span>: <span class="ex">I'd finished, she'd left.</span> Cuidado: <span class="ex">I'd</span> também pode ser <span class="ex">I would</span>. O que vem depois resolve: particípio é had, verbo normal é would.</p>
+  </section>
+
+  <!-- 1 ESCOLHA -->
+  <section class="card" data-ex="A">
+    <div class="step-head"><span class="step-num">1</span><h2>Escolha a forma certa</h2></div>
+    <p class="muted">Toque na opção correta.</p>
+    <div class="items" id="exA"></div>
+  </section>
+
+  <!-- 2 COMPLETE -->
+  <section class="card" data-ex="B">
+    <div class="step-head"><span class="step-num">2</span><h2>Complete com o tempo certo</h2></div>
+    <p class="muted">Escreva só o que falta: had + particípio ou o passado simples. Pode usar hadn't ou had not.</p>
+    <div class="items" id="exB"></div>
+  </section>
+
+  <!-- 3 IRREGULARES -->
+  <section class="card" data-ex="F">
+    <div class="step-head"><span class="step-num">3</span><h2>Mais 20 particípios</h2></div>
+    <p class="muted">Escreva o particípio (a 3ª coluna) de cada um e confira tudo de uma vez. Repita até acertar os 20.</p>
+    <div class="verbs" id="exF"></div>
+    <div class="row"><span class="fb" id="exFfb"></span><button class="btn" id="exFcheck">Conferir os 20</button></div>
+  </section>
+
+  <!-- 4 TRANSFORME -->
+  <section class="card" data-ex="C">
+    <div class="step-head"><span class="step-num">4</span><h2>Transforme a frase</h2></div>
+    <p class="muted">Escreva a frase inteira na forma pedida. Pode usar <span class="ex">hadn't</span> ou <span class="ex">had not</span>.</p>
+    <div class="items" id="exC"></div>
+  </section>
+
+  <!-- 5 CORRIJA -->
+  <section class="card" data-ex="D">
+    <div class="step-head"><span class="step-num">5</span><h2>Ache o erro</h2></div>
+    <p class="muted">Cada frase tem uma palavra errada. Toque nela.</p>
+    <div class="items" id="exD"></div>
+  </section>
+
+  <!-- 6 ORDENE -->
+  <section class="card" data-ex="E">
+    <div class="step-head"><span class="step-num">6</span><h2>Monte a pergunta</h2></div>
+    <p class="muted">Toque nas palavras na ordem certa. Toque de novo para tirar.</p>
+    <div class="items" id="exE"></div>
+  </section>
+
+  <!-- 7 REVISÃO -->
+  <section class="card" data-ex="R">
+    <div class="step-head"><span class="step-num">7</span><h2>Revisão das unidades anteriores</h2></div>
+    <p class="muted">Present perfect e passado simples, misturados. É assim que a gente fixa.</p>
+    <div class="items" id="exR"></div>
+  </section>
+
+  <!-- 8 PRODUÇÃO -->
+  <section class="card" id="prod">
+    <div class="step-head"><span class="step-num">8</span><h2>Agora é com você</h2></div>
+    <p id="storyPrompt"></p>
+    <textarea id="story" placeholder="Last month I went to... / Yesterday I worked..."></textarea>
+    <ul class="checklist" id="selfCheck">
+      <li><input type="checkbox" id="c1"><label for="c1">Usei had + particípio pelo menos 3 vezes</label></li>
+      <li><input type="checkbox" id="c2"><label for="c2">Usei when, before, after ou by the time</label></li>
+      <li><input type="checkbox" id="c3"><label for="c3">As ações em sequência ficaram no passado simples</label></li>
+      <li><input type="checkbox" id="c4"><label for="c4">Usei o past perfect para explicar um motivo (because… had…)</label></li>
+      <li><input type="checkbox" id="c5"><label for="c5">Li em voz alta prestando atenção no 'd (I'd, she'd)</label></li>
+    </ul>
+    <div class="row">
+      <span class="fb muted" id="aiNote">Mande o texto para Calú na próxima aula.</span>
+      <button class="btn" id="aiBtn" hidden>Pedir correção</button>
+    </div>
+    <div class="ai" id="aiOut" hidden></div>
+  </section>
+
+  <section class="card final" id="finalCard">
+    <span class="eyebrow">Seu resultado nesta unidade</span>
+    <span class="big" id="finalPct">0%</span>
+    <p id="finalMsg" class="muted">Faça os exercícios para ver seu resultado.</p>
+  </section>
+</div>
+
+<script>
+// ---------- data
+const F = [{"base": "begin", "ans": ["begun"]}, {"base": "break", "ans": ["broken"]}, {"base": "bring", "ans": ["brought"]}, {"base": "build", "ans": ["built"]}, {"base": "choose", "ans": ["chosen"]}, {"base": "drive", "ans": ["driven"]}, {"base": "fall", "ans": ["fallen"]}, {"base": "fly", "ans": ["flown"]}, {"base": "forget", "ans": ["forgotten"]}, {"base": "grow", "ans": ["grown"]}, {"base": "hear", "ans": ["heard"]}, {"base": "lose", "ans": ["lost"]}, {"base": "pay", "ans": ["paid"]}, {"base": "read", "ans": ["read"]}, {"base": "speak", "ans": ["spoken"]}, {"base": "spend", "ans": ["spent"]}, {"base": "steal", "ans": ["stolen"]}, {"base": "teach", "ans": ["taught"]}, {"base": "wear", "ans": ["worn"]}, {"base": "win", "ans": ["won"]}];
+const THEMES = {
+  geral: {"label": "Geral", "A": [["When I arrived at the party, Ana ___.", ["had already left", "has already left", "already leaves"], 0], ["After she ___ dinner, she watched TV.", ["had cooked", "has cooked", "cooks"], 0], ["I ___ snow before my trip to Chile.", ["had never seen", "have never seen", "never see"], 0], ["By the time we got to the cinema, the movie ___.", ["had started", "has started", "starts"], 0], ["Yesterday I ___ up, had coffee and went to work.", ["woke", "had woken", "have woken"], 0], ["He was tired because he ___ badly.", ["had slept", "has slept", "sleeps"], 0], ["___ English before you started this course?", ["Had you ever studied", "Have you ever studied", "Did you ever studied"], 0], ["I didn't recognize her because she ___ her hair.", ["had cut", "has cut", "cuts"], 0]], "B": [["When I got home, my family ___ (already / eat).", ["had already eaten"]], ["She ___ (never / fly) before that trip.", ["had never flown"]], ["We ___ (arrive) at 8 and the show started at 9.", ["arrived"]], ["I couldn't enter because I ___ (lose) my keys.", ["had lost"]], ["By 2020, they ___ (live) in Santos for ten years.", ["had lived", "had been living"]], ["He ___ (call) me after he had read my message.", ["called"]], ["The bus ___ (leave) when we reached the stop.", ["had left"]], ["I was nervous because I ___ (not / prepare) the presentation.", ["hadn't prepared", "had not prepared"]]], "C": [["She had finished the course.", "negativa", ["she hadn't finished the course", "she had not finished the course"]], ["They had sold the house.", "negativa", ["they hadn't sold the house", "they had not sold the house"]], ["I had seen that movie.", "negativa", ["i hadn't seen that movie", "i had not seen that movie"]], ["You had met him before.", "pergunta", ["had you met him before"]], ["She had called the doctor.", "pergunta", ["had she called the doctor"]], ["They had left the party.", "pergunta", ["had they left the party"]]], "D": [["When I arrived, the train has left.", 5, "has → had (passado antes de outro passado)"], ["She had went home early.", 2, "went → gone (had + particípio)"], ["After he had eat, he went to bed.", 3, "eat → eaten (had + particípio)"], ["Had you ever saw the sea before?", 3, "saw → seen (had + particípio)"], ["By the time we arrived, the class had start.", 8, "start → started (had + particípio)"], ["I was hungry because I hadn't have breakfast.", 6, "have → had (had + particípio: hadn't had)"]], "E": [["had", "you", "ever", "been", "to", "Chile", "before"], ["what", "had", "happened", "before", "you", "arrived"], ["had", "the", "movie", "started"], ["why", "had", "she", "left"]], "Eans": ["had you ever been to Chile before", "what had happened before you arrived", "had the movie started", "why had she left"], "R": [["I ___ (live) in Santos since 2019.", ["have lived"], "present perfect"], ["I ___ (move) to Santos in 2019.", ["moved"], "passado simples"], ["___ you ever ___ (try) sushi?", ["have tried"], "present perfect pergunta"], ["She ___ (not / call) me yesterday.", ["didn't call", "did not call"], "passado negativa"], ["We ___ (already / finish) the course.", ["have already finished"], "present perfect"], ["When ___ you start the course?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>um dia em que tudo deu errado</strong>. Use o past perfect para explicar o que já tinha acontecido antes (When I arrived, the bus had left. I had forgotten my phone…).", "ph": "Last Monday everything went wrong. When I woke up, I had..."},
+  porto: {"label": "Porto e logística", "A": [["When the inspector arrived, we ___ the containers.", ["had already opened", "have already opened", "already open"], 0], ["After the ship ___, the trucks started to move.", ["had docked", "has docked", "docks"], 0], ["I ___ a ship that big before.", ["had never seen", "have never seen", "never see"], 0], ["By the time the pilot came, the storm ___.", ["had stopped", "has stopped", "stops"], 0], ["Yesterday the ship ___ at 6, unloaded and left at 10.", ["arrived", "had arrived", "has arrived"], 0], ["The crew was tired because they ___ all night.", ["had worked", "have worked", "work"], 0], ["___ on a terminal before this job?", ["Had you ever worked", "Have you ever worked", "Did you ever worked"], 0], ["The cargo was late because customs ___ it.", ["had held", "has held", "holds"], 0]], "B": [["When I got to the terminal, the vessel ___ (already / leave).", ["had already left"]], ["We ___ (never / handle) dangerous cargo before 2020.", ["had never handled"]], ["The truck ___ (arrive) at 7 and left at 9.", ["arrived"]], ["The agent couldn't send the bill because he ___ (lose) the file.", ["had lost"]], ["By 2022, the port ___ (grow) a lot.", ["had grown"]], ["The captain ___ (call) the agent after he had checked the cargo.", ["called"]], ["By the time the rain started, the crane ___ (already / stop).", ["had already stopped"]], ["We were worried because we ___ (not / receive) the documents.", ["hadn't received", "had not received"]]], "C": [["The ship had arrived.", "negativa", ["the ship hadn't arrived", "the ship had not arrived"]], ["They had paid the fees.", "negativa", ["they hadn't paid the fees", "they had not paid the fees"]], ["The crew had checked the cargo.", "negativa", ["the crew hadn't checked the cargo", "the crew had not checked the cargo"]], ["The storm had stopped.", "pergunta", ["had the storm stopped"]], ["The agent had sent the documents.", "pergunta", ["had the agent sent the documents"]], ["They had closed the gate.", "pergunta", ["had they closed the gate"]]], "D": [["When we arrived, the ship has left.", 5, "has → had (passado antes de outro passado)"], ["The crew had took the cargo to the yard.", 3, "took → taken (had + particípio)"], ["After they had load the ship, it left.", 3, "load → loaded (had + particípio)"], ["Had you ever saw a cargo ship before?", 3, "saw → seen (had + particípio)"], ["By the time the pilot came, the ship had dock.", 9, "dock → docked (had + particípio)"], ["The truck was late because it hadn't leave on time.", 7, "leave → left (had + particípio: hadn't left)"]], "E": [["had", "the", "ship", "arrived", "when", "you", "got", "there"], ["what", "had", "happened", "to", "the", "cargo"], ["had", "the", "agent", "sent", "the", "documents"], ["why", "had", "the", "truck", "stopped"]], "Eans": ["had the ship arrived when you got there", "what had happened to the cargo", "had the agent sent the documents", "why had the truck stopped"], "R": [["I ___ (work) at the port since 2018.", ["have worked"], "present perfect"], ["The ship ___ (leave) two hours ago.", ["left"], "passado simples"], ["___ the truck ___ (arrive) yet?", ["has arrived"], "present perfect pergunta"], ["We ___ (not / work) last Sunday.", ["didn't work", "did not work"], "passado negativa"], ["We ___ (already / unload) the cargo.", ["have already unloaded"], "present perfect"], ["When ___ the vessel leave?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>um dia complicado no porto</strong>. Use o past perfect para explicar o que já tinha acontecido antes (When I arrived, the ship had already left. The agent had forgotten…).", "ph": "Last week we had a problem. When I arrived at the terminal, the ship had..."},
+  saude: {"label": "Saúde", "A": [["When the dentist arrived, the patient ___.", ["had already left", "has already left", "already leaves"], 0], ["After the patient ___ the form, the nurse called him.", ["had signed", "has signed", "signs"], 0], ["I ___ a case like that before.", ["had never seen", "have never seen", "never see"], 0], ["By the time the ambulance came, the bleeding ___.", ["had stopped", "has stopped", "stops"], 0], ["Yesterday the patient ___ in, sat down and opened his mouth.", ["came", "had come", "has come"], 0], ["She was in pain because she ___ the medicine.", ["hadn't taken", "hasn't taken", "doesn't take"], 0], ["___ surgery before this one?", ["Had you ever had", "Have you ever had", "Did you ever had"], 0], ["The results were wrong because the lab ___ the samples.", ["had mixed up", "has mixed up", "mixes up"], 0]], "B": [["When I got to the clinic, the nurse ___ (already / prepare) the room.", ["had already prepared"]], ["She ___ (never / do) a root canal before 2023.", ["had never done"]], ["The patient ___ (arrive) at 9 and left at 10.", ["arrived"]], ["He couldn't eat because he ___ (break) a tooth.", ["had broken"]], ["By the end of the study, the authors ___ (follow) 200 patients.", ["had followed"]], ["The nurse ___ (call) the doctor after she had checked the pressure.", ["called"]], ["The patient ___ (eat) before the surgery, so they canceled it.", ["had eaten", "ate"]], ["We were worried because the lab ___ (not / send) the results.", ["hadn't sent", "had not sent"]]], "C": [["The patient had taken the medicine.", "negativa", ["the patient hadn't taken the medicine", "the patient had not taken the medicine"]], ["She had finished the treatment.", "negativa", ["she hadn't finished the treatment", "she had not finished the treatment"]], ["They had published the study.", "negativa", ["they hadn't published the study", "they had not published the study"]], ["The bleeding had stopped.", "pergunta", ["had the bleeding stopped"]], ["He had eaten before the surgery.", "pergunta", ["had he eaten before the surgery"]], ["They had collected the samples.", "pergunta", ["had they collected the samples"]]], "D": [["When I arrived, the patient has left.", 5, "has → had (passado antes de outro passado)"], ["She had broke her tooth before the trip.", 2, "broke → broken (had + particípio)"], ["After he had took the medicine, he slept.", 3, "took → taken (had + particípio)"], ["Had you ever saw this disease before?", 3, "saw → seen (had + particípio)"], ["By the time the doctor came, the pain had stop.", 9, "stop → stopped (had + particípio)"], ["She felt dizzy because she hadn't eat anything.", 6, "eat → eaten (had + particípio: hadn't eaten)"]], "E": [["had", "you", "ever", "had", "this", "pain", "before"], ["what", "had", "the", "patient", "eaten"], ["had", "the", "lab", "sent", "the", "results"], ["why", "had", "the", "bleeding", "started"]], "Eans": ["had you ever had this pain before", "what had the patient eaten", "had the lab sent the results", "why had the bleeding started"], "R": [["I ___ (work) as a nurse since 2015.", ["have worked"], "present perfect"], ["The patient ___ (fall) at home two days ago.", ["fell"], "passado simples"], ["___ you ___ (take) the medicine today?", ["have taken"], "present perfect pergunta"], ["He ___ (not / sleep) well last night.", ["didn't sleep", "did not sleep"], "passado negativa"], ["We ___ (already / publish) two articles.", ["have already published"], "present perfect"], ["When ___ the pain start?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>um caso clínico ou um dia difícil no trabalho</strong>. Use o past perfect para explicar o que tinha acontecido antes (When the patient arrived, he had already taken… The lab had forgotten…).", "ph": "Last month a patient came to the clinic. He had..."},
+  terceiro: {"label": "Terceiro setor", "A": [["When we arrived at the meeting, the funder ___.", ["had already left", "has already left", "already leaves"], 0], ["After we ___ the report, the foundation approved the grant.", ["had sent", "have sent", "send"], 0], ["I ___ at an international event before 2024.", ["had never spoken", "have never spoken", "never speak"], 0], ["By the time the mayor came, the volunteers ___ the food.", ["had served", "have served", "serve"], 0], ["Yesterday we ___ the families, gave out the kits and went back.", ["visited", "had visited", "have visited"], 0], ["She was nervous because she ___ the presentation.", ["hadn't practiced", "hasn't practiced", "doesn't practice"], 0], ["___ a grant before this one?", ["Had you ever received", "Have you ever received", "Did you ever received"], 0], ["The event was a success because the team ___ for months.", ["had planned", "has planned", "plans"], 0]], "B": [["When the funder called, we ___ (already / spend) the money.", ["had already spent"]], ["Our NGO ___ (never / work) with a European funder before 2021.", ["had never worked"]], ["The volunteers ___ (arrive) at 8 and started at 9.", ["arrived"]], ["We couldn't apply because we ___ (miss) the deadline.", ["had missed"]], ["By 2023, the project ___ (help) 5,000 people.", ["had helped"]], ["The director ___ (thank) everyone after the event had ended.", ["thanked"]], ["The funder ___ (read) our report before the meeting.", ["had read", "read"]], ["We were worried because the bank ___ (not / transfer) the money.", ["hadn't transferred", "had not transferred"]]], "C": [["The funder had approved the budget.", "negativa", ["the funder hadn't approved the budget", "the funder had not approved the budget"]], ["We had met the deadline.", "negativa", ["we hadn't met the deadline", "we had not met the deadline"]], ["They had finished the report.", "negativa", ["they hadn't finished the report", "they had not finished the report"]], ["The volunteers had arrived.", "pergunta", ["had the volunteers arrived"]], ["She had written the proposal.", "pergunta", ["had she written the proposal"]], ["They had visited the community.", "pergunta", ["had they visited the community"]]], "D": [["When we arrived, the meeting has started.", 5, "has → had (passado antes de outro passado)"], ["She had wrote the proposal before the deadline.", 2, "wrote → written (had + particípio)"], ["After we had receive the grant, we hired two people.", 3, "receive → received (had + particípio)"], ["Had you ever spoke with this funder before?", 3, "spoke → spoken (had + particípio)"], ["By the time the mayor came, the event had end.", 9, "end → ended (had + particípio)"], ["We were late because we hadn't leave on time.", 6, "leave → left (had + particípio: hadn't left)"]], "E": [["had", "you", "ever", "received", "a", "grant", "before"], ["what", "had", "the", "funder", "asked"], ["had", "the", "volunteers", "arrived"], ["why", "had", "the", "meeting", "ended", "early"]], "Eans": ["had you ever received a grant before", "what had the funder asked", "had the volunteers arrived", "why had the meeting ended early"], "R": [["Our NGO ___ (work) here since 2012.", ["has worked"], "present perfect"], ["She ___ (write) the report last month.", ["wrote"], "passado simples"], ["___ you ___ (send) the budget yet?", ["have sent"], "present perfect pergunta"], ["We ___ (not / get) the grant last year.", ["didn't get", "did not get"], "passado negativa"], ["We ___ (already / raise) R$ 20,000.", ["have already raised"], "present perfect"], ["What ___ the funder say?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>a história de um projeto ou evento da sua organização</strong>. Use o past perfect para o que já tinha acontecido antes (Before the event, we had raised… When the funder arrived, the volunteers had…).", "ph": "Last year we organized an event. Before that, we had..."},
+  viagem: {"label": "Viagem e hotelaria", "A": [["When we got to the airport, our flight ___.", ["had already left", "has already left", "already leaves"], 0], ["After we ___ in, we went to the beach.", ["had checked", "have checked", "check"], 0], ["I ___ abroad before that trip.", ["had never traveled", "have never traveled", "never travel"], 0], ["By the time we arrived, the restaurant ___.", ["had closed", "has closed", "closes"], 0], ["Yesterday we ___ the museum, had lunch and took a walk.", ["visited", "had visited", "have visited"], 0], ["She was worried because she ___ her passport.", ["had lost", "has lost", "loses"], 0], ["___ to Europe before this trip?", ["Had you ever been", "Have you ever been", "Did you ever been"], 0], ["The guest was angry because nobody ___ the room.", ["had cleaned", "has cleaned", "cleans"], 0]], "B": [["When we arrived at the hotel, the receptionist ___ (already / go) home.", ["had already gone"]], ["We ___ (never / see) the sea in winter before.", ["had never seen"]], ["We ___ (land) at 6 and took a taxi.", ["landed"]], ["I couldn't pay because I ___ (forget) my card.", ["had forgotten"]], ["By the end of the trip, we ___ (spend) all our money.", ["had spent"]], ["The guest ___ (complain) after he had seen the room.", ["complained"]], ["The tour ___ (start) when we found the group.", ["had started"]], ["We were hungry because we ___ (not / eat) on the plane.", ["hadn't eaten", "had not eaten"]]], "C": [["The guests had paid the bill.", "negativa", ["the guests hadn't paid the bill", "the guests had not paid the bill"]], ["She had booked the hotel.", "negativa", ["she hadn't booked the hotel", "she had not booked the hotel"]], ["We had checked out.", "negativa", ["we hadn't checked out", "we had not checked out"]], ["The flight had landed.", "pergunta", ["had the flight landed"]], ["They had visited Lisbon.", "pergunta", ["had they visited lisbon"]], ["He had lost his luggage.", "pergunta", ["had he lost his luggage"]]], "D": [["When we arrived, the bus has left.", 5, "has → had (passado antes de outro passado)"], ["She had flew to London before.", 2, "flew → flown (had + particípio)"], ["After we had eat, we went to the hotel.", 3, "eat → eaten (had + particípio)"], ["Had you ever went to Disney before?", 3, "went → been (had + particípio: had you ever been)"], ["By the time we arrived, the tour had start.", 8, "start → started (had + particípio)"], ["We were tired because we hadn't sleep on the plane.", 6, "sleep → slept (had + particípio: hadn't slept)"]], "E": [["had", "you", "ever", "been", "to", "Europe", "before"], ["what", "had", "happened", "to", "your", "luggage"], ["had", "the", "flight", "landed"], ["why", "had", "the", "hotel", "closed"]], "Eans": ["had you ever been to Europe before", "what had happened to your luggage", "had the flight landed", "why had the hotel closed"], "R": [["I ___ (be) to Portugal three times.", ["have been"], "present perfect"], ["We ___ (fly) to Orlando in 2023.", ["flew"], "passado simples"], ["___ you ___ (book) the hotel yet?", ["have booked"], "present perfect pergunta"], ["I ___ (not / take) a taxi yesterday.", ["didn't take", "did not take"], "passado negativa"], ["We ___ (already / check) in.", ["have already checked"], "present perfect"], ["Where ___ you stay in Lisbon?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>um perrengue de viagem</strong>. Use o past perfect para o que já tinha acontecido antes (When we got to the airport, the flight had left. I had forgotten…).", "ph": "On my last trip, when we arrived at the airport, our flight had..."},
+  tecnologia: {"label": "Tecnologia", "A": [["When I opened the app, the update ___.", ["had already finished", "has already finished", "already finishes"], 0], ["After we ___ the tests, we deployed the code.", ["had run", "have run", "run"], 0], ["I ___ with Python before this job.", ["had never worked", "have never worked", "never work"], 0], ["By the time the team noticed, the hacker ___ the data.", ["had stolen", "has stolen", "steals"], 0], ["Yesterday I ___ the code, ran the tests and pushed it.", ["wrote", "had written", "have written"], 0], ["The system crashed because someone ___ the database.", ["had deleted", "has deleted", "deletes"], 0], ["___ an API before this project?", ["Had you ever built", "Have you ever built", "Did you ever built"], 0], ["The client was angry because we ___ the deadline.", ["had missed", "have missed", "miss"], 0]], "B": [["When I logged in, someone ___ (already / change) my password.", ["had already changed"]], ["She ___ (never / use) Linux before 2020.", ["had never used"]], ["We ___ (release) the app on Monday and fixed a bug on Tuesday.", ["released"]], ["I couldn't log in because I ___ (forget) my password.", ["had forgotten"]], ["By 2024, the company ___ (move) everything to the cloud.", ["had moved"]], ["He ___ (restart) the server after he had saved the logs.", ["restarted"]], ["The bug ___ (appear) before the update.", ["had appeared", "appeared"]], ["The app failed because we ___ (not / test) it on Android.", ["hadn't tested", "had not tested"]]], "C": [["The tests had passed.", "negativa", ["the tests hadn't passed", "the tests had not passed"]], ["She had merged the branch.", "negativa", ["she hadn't merged the branch", "she had not merged the branch"]], ["They had backed up the data.", "negativa", ["they hadn't backed up the data", "they had not backed up the data"]], ["The server had crashed.", "pergunta", ["had the server crashed"]], ["He had updated the system.", "pergunta", ["had he updated the system"]], ["They had fixed the bug.", "pergunta", ["had they fixed the bug"]]], "D": [["When I checked, the server has crashed.", 5, "has → had (passado antes de outro passado)"], ["She had wrote the code before the meeting.", 2, "wrote → written (had + particípio)"], ["After we had fix the bug, the app worked.", 3, "fix → fixed (had + particípio)"], ["Had you ever build a website before?", 3, "build → built (had + particípio)"], ["By the time we noticed, the hacker had steal the data.", 8, "steal → stolen (had + particípio)"], ["The app crashed because we hadn't test it.", 6, "test → tested (had + particípio: hadn't tested)"]], "E": [["had", "you", "ever", "used", "Python", "before"], ["what", "had", "caused", "the", "crash"], ["had", "the", "tests", "passed"], ["why", "had", "the", "server", "stopped"]], "Eans": ["had you ever used Python before", "what had caused the crash", "had the tests passed", "why had the server stopped"], "R": [["I ___ (work) as a developer since 2021.", ["have worked"], "present perfect"], ["She ___ (fix) the bug yesterday.", ["fixed"], "passado simples"], ["___ you ___ (test) the feature yet?", ["have tested"], "present perfect pergunta"], ["We ___ (not / deploy) last Friday.", ["didn't deploy", "did not deploy"], "passado negativa"], ["We ___ (already / release) the update.", ["have already released"], "present perfect"], ["When ___ the system crash?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>um incidente ou bug que você viveu</strong>. Use o past perfect para o que tinha acontecido antes (When we noticed, the server had already crashed. Someone had deleted…).", "ph": "Last month our system crashed. Before that, someone had..."},
+  academico: {"label": "Vida acadêmica", "A": [["When I submitted my article, the journal ___ the call.", ["had already closed", "has already closed", "already closes"], 0], ["After we ___ the data, we started the analysis.", ["had collected", "have collected", "collect"], 0], ["I ___ at a congress before 2024.", ["had never presented", "have never presented", "never present"], 0], ["By the time I finished, the other group ___ the same study.", ["had published", "has published", "publishes"], 0], ["Yesterday I ___ the abstract, revised it and sent it.", ["wrote", "had written", "have written"], 0], ["She was nervous because she ___ the slides.", ["hadn't finished", "hasn't finished", "doesn't finish"], 0], ["___ an article in English before your master's?", ["Had you ever read", "Have you ever read", "Did you ever read"], 0], ["The results surprised us because no one ___ this before.", ["had tested", "has tested", "tests"], 0]], "B": [["When my advisor read the chapter, I ___ (already / change) it.", ["had already changed"]], ["We ___ (never / use) this method before 2022.", ["had never used"]], ["I ___ (submit) the article in March and got the answer in May.", ["submitted"]], ["I couldn't present because I ___ (lose) my slides.", ["had lost"]], ["By the end of 2023, the group ___ (publish) ten papers.", ["had published"]], ["She ___ (defend) her thesis after she had finished the fieldwork.", ["defended"]], ["Other researchers ___ (study) this topic before us.", ["had studied", "studied"]], ["The study failed because they ___ (not / include) a control group.", ["hadn't included", "had not included"]]], "C": [["The journal had accepted the paper.", "negativa", ["the journal hadn't accepted the paper", "the journal had not accepted the paper"]], ["She had passed the exam.", "negativa", ["she hadn't passed the exam", "she had not passed the exam"]], ["They had collected the data.", "negativa", ["they hadn't collected the data", "they had not collected the data"]], ["The committee had approved the project.", "pergunta", ["had the committee approved the project"]], ["He had read the article.", "pergunta", ["had he read the article"]], ["They had finished the analysis.", "pergunta", ["had they finished the analysis"]]], "D": [["When I arrived, the presentation has started.", 5, "has → had (passado antes de outro passado)"], ["She had wrote three chapters before the deadline.", 2, "wrote → written (had + particípio)"], ["After we had analyze the data, we wrote the paper.", 3, "analyze → analyzed (had + particípio)"], ["Had you ever gave a talk in English before?", 3, "gave → given (had + particípio)"], ["By the time I finished, the deadline had pass.", 8, "pass → passed (had + particípio)"], ["The paper was rejected because we hadn't follow the rules.", 7, "follow → followed (had + particípio: hadn't followed)"]], "E": [["had", "you", "ever", "presented", "at", "a", "congress", "before"], ["what", "had", "other", "studies", "found"], ["had", "the", "journal", "answered"], ["why", "had", "the", "paper", "been", "rejected"]], "Eans": ["had you ever presented at a congress before", "what had other studies found", "had the journal answered", "why had the paper been rejected"], "R": [["I ___ (study) this topic since 2021.", ["have studied"], "present perfect"], ["She ___ (give) a talk last week.", ["gave"], "passado simples"], ["___ you ___ (take) the proficiency exam yet?", ["have taken"], "present perfect pergunta"], ["I ___ (not / write) anything last night.", ["didn't write", "did not write"], "passado negativa"], ["We ___ (already / collect) the data.", ["have already collected"], "present perfect"], ["What ___ the study find?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>a história da sua pesquisa</strong> ou de um congresso. Use o past perfect para o que já tinha acontecido antes (Before my research, other authors had found… When I presented, I had practiced…).", "ph": "Before I started my research, other authors had..."},
+  comex: {"label": "Comércio exterior", "A": [["When the client called, we ___ the goods.", ["had already shipped", "have already shipped", "already ship"], 0], ["After the broker ___ the taxes, the cargo cleared customs.", ["had paid", "has paid", "pays"], 0], ["I ___ in English before this job.", ["had never negotiated", "have never negotiated", "never negotiate"], 0], ["By the time the cargo arrived, the client ___ the order.", ["had canceled", "has canceled", "cancels"], 0], ["Yesterday we ___ the invoice, checked it and paid it.", ["received", "had received", "have received"], 0], ["The cargo was held because the supplier ___ the wrong invoice.", ["had sent", "has sent", "sends"], 0], ["___ from China before 2020?", ["Had you ever imported", "Have you ever imported", "Did you ever imported"], 0], ["The boxes were damaged because nobody ___ them properly.", ["had packed", "has packed", "packs"], 0]], "B": [["When the AWB arrived, the plane ___ (already / leave).", ["had already left"]], ["We ___ (never / export) to Europe before 2021.", ["had never exported"]], ["The cargo ___ (arrive) on Monday and cleared customs on Wednesday.", ["arrived"]], ["We couldn't ship because the supplier ___ (not / send) the documents.", ["hadn't sent", "had not sent"]], ["By the end of the year, freight costs ___ (rise) 20%.", ["had risen"]], ["The client ___ (pay) after he had received the goods.", ["paid"]], ["The supplier ___ (change) the price before we signed.", ["had changed", "changed"]], ["The cargo was late because the ship ___ (break) down.", ["had broken"]]], "C": [["The supplier had confirmed the order.", "negativa", ["the supplier hadn't confirmed the order", "the supplier had not confirmed the order"]], ["We had received the documents.", "negativa", ["we hadn't received the documents", "we had not received the documents"]], ["They had paid the invoice.", "negativa", ["they hadn't paid the invoice", "they had not paid the invoice"]], ["The cargo had cleared customs.", "pergunta", ["had the cargo cleared customs"]], ["She had called the broker.", "pergunta", ["had she called the broker"]], ["They had shipped the goods.", "pergunta", ["had they shipped the goods"]]], "D": [["When we checked, the cargo has arrived.", 5, "has → had (passado antes de outro passado)"], ["The supplier had sended the invoice.", 3, "sended → sent (had + particípio)"], ["After they had pay the taxes, the cargo was released.", 3, "pay → paid (had + particípio)"], ["Had you ever spoke with this supplier before?", 3, "spoke → spoken (had + particípio)"], ["By the time the ship arrived, the client had cancel.", 9, "cancel → canceled (had + particípio)"], ["The cargo was held because we hadn't pay the fees.", 7, "pay → paid (had + particípio: hadn't paid)"]], "E": [["had", "you", "ever", "imported", "from", "China", "before"], ["what", "had", "the", "supplier", "sent"], ["had", "the", "cargo", "cleared", "customs"], ["why", "had", "the", "client", "canceled"]], "Eans": ["had you ever imported from China before", "what had the supplier sent", "had the cargo cleared customs", "why had the client canceled"], "R": [["We ___ (work) with this supplier since 2019.", ["have worked"], "present perfect"], ["The broker ___ (pay) the taxes last Monday.", ["paid"], "passado simples"], ["___ you ___ (receive) the AWB yet?", ["have received"], "present perfect pergunta"], ["We ___ (not / ship) by air last month.", ["didn't ship", "did not ship"], "passado negativa"], ["We ___ (already / ship) the order.", ["have already shipped"], "present perfect"], ["How much ___ you pay?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>uma operação que deu problema</strong>. Use o past perfect para o que tinha acontecido antes (When the cargo arrived, the client had canceled. The supplier had sent the wrong…).", "ph": "Last year we had a problem with a shipment. The supplier had..."},
+  atendimento: {"label": "Atendimento e entrevista", "A": [["When I arrived for the interview, the manager ___.", ["had already left", "has already left", "already leaves"], 0], ["After the customer ___, we cleaned the table.", ["had left", "has left", "leaves"], 0], ["I ___ with customers before that job.", ["had never worked", "have never worked", "never work"], 0], ["By the time the manager came, I ___ the problem.", ["had solved", "have solved", "solve"], 0], ["Yesterday the customer ___ in, ordered and paid.", ["came", "had come", "has come"], 0], ["The customer was angry because we ___ his order.", ["had forgotten", "have forgotten", "forget"], 0], ["___ in a restaurant before this job?", ["Had you ever worked", "Have you ever worked", "Did you ever worked"], 0], ["I got the job because I ___ a lot for the interview.", ["had prepared", "have prepared", "prepare"], 0]], "B": [["When the customer called back, I ___ (already / send) the email.", ["had already sent"]], ["I ___ (never / speak) English at work before 2022.", ["had never spoken"]], ["I ___ (start) at 8 and finished at 6.", ["started"]], ["I couldn't answer because I ___ (not / read) the email.", ["hadn't read", "had not read"]], ["By the end of the day, she ___ (answer) 90 calls.", ["had answered"]], ["The manager ___ (call) me after he had read my CV.", ["called"]], ["The client ___ (pay) before we sent the receipt.", ["had paid", "paid"]], ["The guest complained because nobody ___ (clean) the room.", ["had cleaned"]]], "C": [["The customer had paid the bill.", "negativa", ["the customer hadn't paid the bill", "the customer had not paid the bill"]], ["She had finished the training.", "negativa", ["she hadn't finished the training", "she had not finished the training"]], ["They had read my CV.", "negativa", ["they hadn't read my cv", "they had not read my cv"]], ["The guest had checked out.", "pergunta", ["had the guest checked out"]], ["He had called the client.", "pergunta", ["had he called the client"]], ["They had hired someone else.", "pergunta", ["had they hired someone else"]]], "D": [["When I arrived, the interview has started.", 5, "has → had (passado antes de outro passado)"], ["She had spoke with the manager before.", 2, "spoke → spoken (had + particípio)"], ["After the customer had order, I brought the drinks.", 4, "order → ordered (had + particípio)"], ["Had you ever went to a job interview in English?", 3, "went → been (had you ever been)"], ["By the time I called, they had hire someone else.", 7, "hire → hired (had + particípio)"], ["The customer was angry because we hadn't bring his food.", 7, "bring → brought (had + particípio: hadn't brought)"]], "E": [["had", "you", "ever", "worked", "with", "customers", "before"], ["what", "had", "the", "customer", "ordered"], ["had", "the", "manager", "read", "your", "CV"], ["why", "had", "the", "guest", "complained"]], "Eans": ["had you ever worked with customers before", "what had the customer ordered", "had the manager read your CV", "why had the guest complained"], "R": [["I ___ (work) in customer service since 2020.", ["have worked"], "present perfect"], ["I ___ (leave) my last job in December.", ["left"], "passado simples"], ["___ you ___ (send) your CV yet?", ["have sent"], "present perfect pergunta"], ["I ___ (not / work) last night.", ["didn't work", "did not work"], "passado negativa"], ["We ___ (already / solve) the problem.", ["have already solved"], "present perfect"], ["Why ___ you leave the company?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>um atendimento difícil ou uma entrevista de emprego</strong>. Use o past perfect para o que tinha acontecido antes (When the customer arrived, we had already closed. I had prepared…).", "ph": "Last year I had a difficult customer. When he arrived, we had..."},
+  clima: {"label": "Clima e território", "A": [["When the firefighters arrived, the water ___ the houses.", ["had already reached", "has already reached", "already reaches"], 0], ["After the city ___ the river, the floods decreased.", ["had cleaned", "has cleaned", "cleans"], 0], ["I ___ at an international panel before COP30.", ["had never spoken", "have never spoken", "never speak"], 0], ["By the time the mayor came, the residents ___ a plan.", ["had made", "have made", "make"], 0], ["Yesterday we ___ the community, talked to the residents and went back.", ["visited", "had visited", "have visited"], 0], ["The street flooded because the city ___ the drains.", ["hadn't cleaned", "hasn't cleaned", "doesn't clean"], 0], ["___ to a climate conference before?", ["Had you ever been", "Have you ever been", "Did you ever been"], 0], ["The trees died because nobody ___ them.", ["had watered", "has watered", "waters"], 0]], "B": [["When the rain stopped, the river ___ (already / rise) two meters.", ["had already risen"]], ["Our collective ___ (never / work) with the government before 2023.", ["had never worked"]], ["The storm ___ (start) at night and ended in the morning.", ["started"]], ["We couldn't enter because the water ___ (cover) the street.", ["had covered"]], ["By 2024, the residents ___ (plant) 5,000 trees.", ["had planted"]], ["The mayor ___ (promise) help after he had visited the area.", ["promised"]], ["Scientists ___ (warn) about the risk years before.", ["had warned", "warned"]], ["Many families lost their homes because the city ___ (not / build) walls.", ["hadn't built", "had not built"]]], "C": [["The city had cleaned the drains.", "negativa", ["the city hadn't cleaned the drains", "the city had not cleaned the drains"]], ["They had mapped the risk areas.", "negativa", ["they hadn't mapped the risk areas", "they had not mapped the risk areas"]], ["We had received the report.", "negativa", ["we hadn't received the report", "we had not received the report"]], ["The river had risen.", "pergunta", ["had the river risen"]], ["She had spoken at the panel.", "pergunta", ["had she spoken at the panel"]], ["They had visited the community.", "pergunta", ["had they visited the community"]]], "D": [["When we arrived, the river has flooded.", 5, "has → had (passado antes de outro passado)"], ["They had grew vegetables before the drought.", 2, "grew → grown (had + particípio)"], ["After the city had clean the river, the smell stopped.", 4, "clean → cleaned (had + particípio)"], ["Had you ever spoke at a COP before?", 3, "spoke → spoken (had + particípio)"], ["By the time help came, the water had destroy the bridge.", 8, "destroy → destroyed (had + particípio)"], ["The street flooded because they hadn't build the drains.", 6, "build → built (had + particípio: hadn't built)"]], "E": [["had", "you", "ever", "been", "to", "a", "COP", "before"], ["what", "had", "happened", "to", "the", "river"], ["had", "the", "city", "cleaned", "the", "drains"], ["why", "had", "the", "street", "flooded"]], "Eans": ["had you ever been to a COP before", "what had happened to the river", "had the city cleaned the drains", "why had the street flooded"], "R": [["Temperatures ___ (rise) a lot in the last decades.", ["have risen"], "present perfect"], ["The river ___ (rise) two meters last night.", ["rose"], "passado simples"], ["___ the city ___ (invest) in sanitation yet?", ["has invested"], "present perfect pergunta"], ["We ___ (not / travel) for work last month.", ["didn't travel", "did not travel"], "passado negativa"], ["We ___ (already / map) the risk areas.", ["have already mapped"], "present perfect"], ["What ___ the residents say?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>um evento climático no seu território</strong>. Use o past perfect para o que já tinha acontecido antes (Before the flood, the city had not cleaned… Scientists had warned…).", "ph": "In 2024 there was a big flood. Before that, the city had..."},
+  cultura: {"label": "Séries, música e memes", "A": [["When I turned on the TV, the episode ___.", ["had already started", "has already started", "already starts"], 0], ["After I ___ the book, I watched the series.", ["had read", "have read", "read"], 0], ["I ___ a concert abroad before 2023.", ["had never been to", "have never been to", "never go to"], 0], ["By the time we arrived, the band ___.", ["had finished", "has finished", "finishes"], 0], ["Last night I ___ dinner, watched two episodes and went to bed.", ["had", "had had", "have had"], 0], ["I didn't get the meme because I ___ the movie.", ["hadn't seen", "haven't seen", "don't see"], 0], ["___ The Office before you started English classes?", ["Had you ever watched", "Have you ever watched", "Did you ever watched"], 0], ["Everybody knew the ending because someone ___ it online.", ["had posted", "has posted", "posts"], 0]], "B": [["When I finally watched it, everybody ___ (already / see) the finale.", ["had already seen"]], ["I ___ (never / hear) this band before that festival.", ["had never heard"]], ["We ___ (buy) the tickets in May and went to the show in June.", ["bought"]], ["I couldn't sing because I ___ (forget) the lyrics.", ["had forgotten"]], ["By 2020, the series ___ (win) five awards.", ["had won"]], ["She ___ (cry) after she had watched the last episode.", ["cried"]], ["The video ___ (become) a meme before the singer saw it.", ["had become", "became"]], ["I didn't laugh because I ___ (not / understand) the joke.", ["hadn't understood", "had not understood"]]], "C": [["She had seen the movie.", "negativa", ["she hadn't seen the movie", "she had not seen the movie"]], ["They had bought the tickets.", "negativa", ["they hadn't bought the tickets", "they had not bought the tickets"]], ["I had read the book.", "negativa", ["i hadn't read the book", "i had not read the book"]], ["The show had started.", "pergunta", ["had the show started"]], ["He had heard the album.", "pergunta", ["had he heard the album"]], ["They had watched the finale.", "pergunta", ["had they watched the finale"]]], "D": [["When we arrived, the show has started.", 5, "has → had (passado antes de outro passado)"], ["She had saw the movie before.", 2, "saw → seen (had + particípio)"], ["After I had watch the trailer, I wanted to see it.", 3, "watch → watched (had + particípio)"], ["Had you ever went to a festival before?", 3, "went → been (had you ever been)"], ["By the time I logged in, the meme had became famous.", 9, "became → become (had + particípio)"], ["I didn't laugh because I hadn't understand the joke.", 6, "understand → understood (had + particípio: hadn't understood)"]], "E": [["had", "you", "ever", "seen", "this", "series", "before"], ["what", "had", "happened", "in", "the", "last", "episode"], ["had", "the", "show", "started"], ["why", "had", "the", "band", "canceled"]], "Eans": ["had you ever seen this series before", "what had happened in the last episode", "had the show started", "why had the band canceled"], "R": [["I ___ (watch) The Office three times.", ["have watched"], "present perfect"], ["We ___ (see) the new movie last night.", ["saw"], "passado simples"], ["___ you ___ (hear) the new album yet?", ["have heard"], "present perfect pergunta"], ["I ___ (not / listen) to music yesterday.", ["didn't listen", "did not listen"], "passado negativa"], ["We ___ (already / watch) the first episode.", ["have already watched"], "present perfect"], ["Who ___ you see at the concert?", ["did"], "pergunta no passado"]], "story": "Conte, em 5 a 8 frases, <strong>a história de uma série, filme ou música</strong>, ou de um show que você foi. Use o past perfect para o que já tinha acontecido antes (Before the last season, the main character had… When we arrived, the band had…).", "ph": "In the last season, the main character found out that her friend had..."},
+};
+let A, B, C, D, E, Eans, R, theme, KEY, results = {}, TOTAL = 0;
+function themeKey() { return "calu-pf-u6-" + theme; }
+
+// ---------- state & scoring
+let saved = {};
+function persist() {
+  try { localStorage.setItem(themeKey(), JSON.stringify({ results, story: document.getElementById("story").value, total: TOTAL, t: Date.now() })); } catch {}
+  try { const d = new Date().toLocaleDateString("sv"); const days = JSON.parse(localStorage.getItem("calu-days") || "[]"); if (!days.includes(d)) { days.push(d); localStorage.setItem("calu-days", JSON.stringify(days.slice(-400))); } } catch {}
+}
+function mark(id, ok) { if (!(id in results)) results[id] = ok; else if (ok) results[id] = results[id] || false; updateScore(); persist(); }
+function updateScore() {
+  const done = Object.keys(results).length;
+  const right = Object.values(results).filter(Boolean).length;
+  document.getElementById("scoreText").textContent = `${right} de ${done} acertos · ${TOTAL - done} faltando`;
+  document.getElementById("scoreFill").style.width = (done / TOTAL * 100) + "%";
+  const pct = done ? Math.round(right / TOTAL * 100) : 0;
+  document.getElementById("finalPct").textContent = pct + "%";
+  document.getElementById("finalMsg").textContent =
+    done < TOTAL ? `Você respondeu ${done} de ${TOTAL}. Termine para ver o resultado completo.` :
+    pct >= 85 ? "Excelente. Você já pode seguir para a próxima unidade (voz passiva)." :
+    pct >= 65 ? "Bom caminho. Refaça os exercícios 1 e 5 amanhã antes de seguir." :
+    "Vale refazer a unidade com calma. Comece pela explicação e pelos 20 particípios.";
+}
+const norm = s => s.toLowerCase().replace(/[’']/g, "'").replace(/[.?!,]+$/g, "").replace(/\s+/g, " ").trim();
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+function blankify(text) { return text.replace("___", "_____"); }
+
+// ---------- builders
+function buildChoice(container, list, prefix) {
+  list.forEach(([q, opts, ans, ctx], i) => {
+    const id = prefix + i, item = el("div", "item");
+    const p = el("p", "prompt"); if (ctx) p.appendChild(el("span", "ctx", ctx)); p.appendChild(document.createTextNode(blankify(q)));
+    const row = el("div", "opts"), fb = el("span", "fb");
+    opts.forEach((o, k) => {
+      const b = el("button", "opt", o); b.type = "button";
+      b.addEventListener("click", () => {
+        if (k === ans) { b.classList.add("right"); row.querySelectorAll("button").forEach(x => x.disabled = true); fb.className = "fb ok"; fb.textContent = "Isso."; mark(id, !row.dataset.missed); }
+        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = "Tente de novo."; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+      });
+      row.appendChild(b);
+    });
+    item.append(p, row, fb); container.appendChild(item);
+  });
+}
+function buildTyped(container, list, prefix, opts = {}) {
+  list.forEach((row, i) => {
+    const [q, answers, hint] = opts.transform ? [row[0], row[2], null] : row;
+    const id = prefix + i, item = el("div", "item");
+    const p = el("p", "prompt");
+    if (opts.transform) { p.appendChild(el("span", "ctx", /^(negativa|pergunta)$/.test(row[1]) ? "Passe para a " + row[1] : row[1])); p.appendChild(document.createTextNode(q)); }
+    const mk = (cls, sid, label) => { const x = el("input", cls); x.type = "text"; x.id = sid; x.autocomplete = "off"; x.spellcheck = false; x.setAttribute("autocapitalize", "off"); x.setAttribute("aria-label", label); return x; };
+    let slots = [];
+    if (opts.transform) { /* one field for the whole sentence */ }
+    else {
+      if (hint) p.appendChild(el("span", "ctx", hint));
+      const parts = q.split("___"), k = parts.length - 1;
+      if (k > 0) {
+        // one blank line per word of the answer: "I ___ ___ (know)" for "have known"
+        const words = answers[0].trim().split(/\s+/);
+        const counts = Array(k).fill(1); counts[k - 1] = Math.max(1, words.length - (k - 1));
+        p.classList.add("blanks");
+        parts.forEach((t, j) => {
+          if (t) p.appendChild(document.createTextNode(t));
+          if (j < k) for (let m = 0; m < counts[j]; m++) { const n = slots.length; const x = mk("slot", "in-" + id + (n ? "-" + n : ""), "Palavra " + (n + 1)); slots.push(x); p.appendChild(x); }
+        });
+      } else p.appendChild(document.createTextNode(q));
+    }
+    const wrap = el("div", "inline-input");
+    const inp = slots.length ? slots[0] : mk("", "in-" + id, "Resposta");
+    const fields = slots.length ? slots : [inp];
+    const btn = el("button", "btn small", "Conferir"); btn.type = "button";
+    const fb = el("span", "fb");
+    const check = () => {
+      const v = norm(fields.map(f => f.value.trim()).filter(Boolean).join(" ")); if (!v) return;
+      const ok = answers.map(norm).includes(v);
+      fields.forEach(f => { f.classList.toggle("right", ok); f.classList.toggle("wrong", !ok); });
+      if (ok) { fb.className = "fb ok"; fb.textContent = "Isso."; fields.forEach(f => f.readOnly = true); btn.disabled = true; mark(id, !inp.dataset.missed); }
+      else {
+        fb.className = "fb no";
+        if (inp.dataset.missed) { fb.textContent = "Resposta: " + answers[0]; }
+        else { fb.textContent = "Quase. Confira a regra e tente mais uma vez."; }
+        inp.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); }
+      }
+    };
+    btn.addEventListener("click", check); fields.forEach(f => f.addEventListener("keydown", e => { if (e.key === "Enter") check(); }));
+    if (slots.length) wrap.append(btn); else wrap.append(inp, btn);
+    item.append(p, wrap, fb); container.appendChild(item);
+  });
+}
+function buildFind(container) {
+  D.forEach(([s, wrongIdx, why], i) => {
+    const id = "D" + i, item = el("div", "item"), row = el("div", "opts"), fb = el("span", "fb");
+    s.split(" ").forEach((w, k) => {
+      const b = el("button", "opt", w); b.type = "button";
+      b.addEventListener("click", () => {
+        if (k === wrongIdx) { b.classList.add("right"); row.querySelectorAll("button").forEach(x => x.disabled = true); fb.className = "fb ok"; fb.textContent = why; mark(id, !row.dataset.missed); }
+        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = "Essa está certa. Procure outra."; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+      });
+      row.appendChild(b);
+    });
+    item.append(row, fb); container.appendChild(item);
+  });
+}
+function shuffle(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+function buildOrder(container) {
+  E.forEach((words, i) => {
+    const id = "E" + i, item = el("div", "item");
+    const built = el("div", "built"), bank = el("div", "bank"), fb = el("span", "fb");
+    const actions = el("div", "row"); const btn = el("button", "btn small", "Conferir"); btn.type = "button";
+    const refresh = () => { btn.disabled = bank.children.length > 0; };
+    shuffle(words).forEach(w => {
+      const t = el("button", "tile", w); t.type = "button";
+      t.addEventListener("click", () => { if (item.dataset.done) return; (t.parentElement === bank ? built : bank).appendChild(t); refresh(); });
+      bank.appendChild(t);
+    });
+    btn.addEventListener("click", () => {
+      const v = [...built.children].map(t => t.textContent).join(" ");
+      if (v === Eans[i]) { fb.className = "fb ok"; fb.textContent = "Isso: " + v.charAt(0).toUpperCase() + v.slice(1) + "?"; item.dataset.done = "1"; btn.disabled = true; mark(id, !item.dataset.missed); }
+      else { fb.className = "fb no"; fb.textContent = "Ainda não. Lembre: palavra de pergunta + did + pessoa + verbo."; item.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+    });
+    refresh(); actions.append(fb, btn);
+    item.append(built, bank, actions); container.appendChild(item);
+  });
+}
+function buildVerbs() {
+  const box = document.getElementById("exF"); box.textContent = ""; document.getElementById("exFfb").textContent = "";
+  F.forEach((v, i) => {
+    const d = el("div", "verb");
+    const lab = el("label"); lab.htmlFor = "verb-" + i; lab.textContent = v.base + " ";
+    lab.appendChild(el("small", null, "→ particípio"));
+    const inp = el("input"); inp.type = "text"; inp.id = "verb-" + i; inp.autocomplete = "off"; inp.spellcheck = false; inp.setAttribute("autocapitalize", "off");
+    d.append(lab, inp); box.appendChild(d);
+  });
+}
+function checkVerbs() {
+  {
+    let right = 0, answered = 0;
+    F.forEach((v, i) => {
+      const inp = document.getElementById("verb-" + i), val = norm(inp.value);
+      if (!val) { inp.classList.remove("right","wrong"); return; }
+      answered++;
+      const ok = v.ans.map(norm).includes(val);
+      inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+      if (ok) right++;
+      mark("F" + i, ok);
+    });
+    const fb = document.getElementById("exFfb");
+    fb.className = "fb " + (right === F.length ? "ok" : "no");
+    fb.textContent = answered === 0 ? "Preencha alguns verbos primeiro." :
+      right === F.length ? "Os 20 certos. Excelente." :
+      `${right} de ${F.length} certos. Corrija os vermelhos e confira de novo.`;
+  }
+}
+document.getElementById("exFcheck").addEventListener("click", checkVerbs);
+
+function applyTheme(name) {
+  theme = THEMES[name] ? name : "geral";
+  const T = THEMES[theme];
+  ({ A, B, C, D, E, Eans, R } = T);
+  TOTAL = A.length + B.length + F.length + C.length + D.length + E.length + R.length;
+  try { saved = JSON.parse(localStorage.getItem(themeKey()) || "{}"); } catch { saved = {}; }
+  results = saved.results || {};
+  ["exA","exB","exC","exD","exE","exR"].forEach(id => document.getElementById(id).textContent = "");
+  buildChoice(document.getElementById("exA"), A, "A");
+  buildTyped(document.getElementById("exB"), B, "B");
+  buildVerbs();
+  buildTyped(document.getElementById("exC"), C, "C", { transform: true });
+  buildFind(document.getElementById("exD"));
+  buildOrder(document.getElementById("exE"));
+  buildTyped(document.getElementById("exR"), R, "R");
+  document.getElementById("storyPrompt").innerHTML = T.story;
+  const st = document.getElementById("story"); st.value = saved.story || ""; st.placeholder = T.ph;
+  document.getElementById("aiOut").hidden = true;
+  document.querySelectorAll("#themes .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.theme === theme)));
+  document.getElementById("themeName").textContent = T.label;
+  updateScore();
+}
+const themeBox = document.getElementById("themes");
+Object.entries(THEMES).forEach(([k, t]) => {
+  const b = el("button", "chip", t.label); b.type = "button"; b.dataset.theme = k;
+  b.addEventListener("click", () => { if (k !== theme) { history.replaceState(null, "", k === "geral" ? location.pathname + location.search : "#" + k); applyTheme(k); } });
+  themeBox.appendChild(b);
+});
+document.getElementById("story").addEventListener("input", persist);
+document.getElementById("resetAll").addEventListener("click", () => {
+  try { localStorage.removeItem(themeKey()); } catch {}
+  applyTheme(theme); window.scrollTo({ top: 0 });
+});
+window.addEventListener("hashchange", () => applyTheme(location.hash.slice(1)));
+applyTheme(location.hash.slice(1));
+
+// ---------- optional AI feedback on the free text
+(async () => {
+  let sample = null;
+  try { sample = await window.claude?.use?.("sample"); } catch { sample = null; }
+  if (!sample) return;
+  const btn = document.getElementById("aiBtn"), out = document.getElementById("aiOut"), note = document.getElementById("aiNote");
+  btn.hidden = false; note.textContent = "Receba uma correção agora, ou mande o texto para Calú.";
+  btn.addEventListener("click", async () => {
+    const text = document.getElementById("story").value.trim();
+    if (text.length < 20) { note.textContent = "Escreva pelo menos duas frases antes de pedir correção."; return; }
+    btn.disabled = true; out.hidden = false; out.textContent = "Lendo seu texto…";
+    const prompt = `Você é professor(a) de inglês de um aluno brasileiro de nível B2 que está estudando o past perfect. Corrija o texto abaixo em português do Brasil, com tom gentil e encorajador, porque o aluno costuma travar por medo de errar.
+Formato:
+1. Uma frase curta elogiando algo específico.
+2. Lista dos erros, um por linha, no formato: "frase original → frase corrigida (motivo curto)". No máximo 6. Priorize erros de past perfect (had + particípio, ordem das ações, quando usar só o passado simples, particípios irregulares).
+3. A versão corrigida completa do texto.
+4. Uma dica para a próxima vez.
+Não invente erros. Se estiver tudo certo, diga isso.
+
+Texto do aluno:
+"""${text.slice(0, 3000)}"""`;
+    try {
+      const r = await sample(prompt, { onText: ({ text }) => { out.textContent = text; }, modelTier: "quick", cache: false });
+      out.textContent = r.text;
+    } catch (e) {
+      out.textContent = e && e.code === "rate_limited" ? "Muitos pedidos agora. Tente de novo em alguns minutos." : "Não deu para corrigir agora. Mande o texto para Calú.";
+    } finally { btn.disabled = false; }
+  });
+})();
+</script>
+
+</body>
+</html>

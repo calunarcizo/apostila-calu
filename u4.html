@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.backlink{display:inline-flex;align-items:center;gap:6px;font:600 .9rem Inter,system-ui,sans-serif;text-decoration:none;color:var(--accent);justify-self:start}
+</style>
+<title>Passado Simples · Nível 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column; a sticky score strip; each exercise is a numbered step (the order is the learning sequence: controlled to free) */
+:root {
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --ink: #142233;
+  --muted: #586779;
+  --line: #d3dbe4;
+  --accent: #1f5fa8;
+  --accent-ink: #ffffff;
+  --signal: #f2b632;
+  --good: #1d7a4c;
+  --good-bg: #e2f3ea;
+  --bad: #b3362b;
+  --bad-bg: #f8e4e1;
+  --soft: #e3ebf5;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 24px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; }
+.eyebrow { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 14px; min-width: 0; }
+.scorebar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.scorebar .track { flex: 1 1 160px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.scorebar .fill { height: 100%; background: var(--good); width: 0; transition: width .3s; }
+.scorebar span { font-size: .85rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.step-head { display: flex; gap: 12px; align-items: baseline; }
+.step-num { font-family: var(--display); font-weight: 700; color: var(--accent); font-size: 1.4rem; min-width: 1.6em; }
+/* explanation */
+.rule { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.rule > div { background: var(--soft); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; min-width: 0; }
+.rule b { font-family: var(--mono); font-weight: 500; font-size: .92rem; }
+.ex { font-family: var(--mono); font-size: .88rem; }
+.callout { border-left: 4px solid var(--signal); padding: 8px 14px; background: var(--soft); border-radius: 0 10px 10px 0; }
+.pron { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pron div { border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; min-width: 0; }
+.pron .sound { font-family: var(--mono); font-size: 1.1rem; color: var(--accent); }
+.pron small { display: block; color: var(--muted); font-size: .8rem; }
+/* items */
+.items { display: grid; gap: 12px; counter-reset: it; }
+.item { display: grid; gap: 8px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+.item:last-child { border-bottom: 0; padding-bottom: 0; }
+.prompt { font-size: 1.02rem; }
+.prompt .ctx { display: block; font-size: .8rem; color: var(--muted); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); text-decoration: line-through; }
+.opt:disabled { cursor: default; }
+.inline-input { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+input[type=text], textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 0; }
+input[type=text] { flex: 1 1 200px; }
+input.right { border-color: var(--good); background: var(--good-bg); }
+.prompt.blanks { line-height: 2.4; }
+input.slot { width: 7.5em; flex: none; display: inline-block; margin: 0 4px; padding: 2px 6px; border: 0; border-bottom: 2px solid var(--muted); border-radius: 4px 4px 0 0; background: var(--soft); text-align: center; vertical-align: baseline; }
+input.slot.right { border-bottom-color: var(--good); background: var(--good-bg); }
+input.slot.wrong { border-bottom-color: var(--bad); background: var(--bad-bg); }
+input.wrong { border-color: var(--bad); background: var(--bad-bg); }
+textarea { width: 100%; min-height: 150px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+.btn { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 9px 16px; cursor: pointer; background: var(--accent); color: var(--accent-ink); }
+.btn.small { padding: 7px 12px; font-size: .9rem; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.fb { font-size: .9rem; }
+.fb.ok { color: var(--good); }
+.fb.no { color: var(--bad); }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+/* word order */
+.bank, .built { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; padding: 6px; border-radius: 10px; }
+.built { border: 1px dashed var(--line); }
+.tile { font: inherit; font-family: var(--mono); font-size: .9rem; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+/* flashcards */
+.verbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.verb { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: grid; gap: 4px; min-width: 0; }
+.verb label { font-family: var(--mono); font-size: .88rem; }
+.verb label small { color: var(--muted); font-family: var(--body); }
+.verb input { width: 100%; padding: 6px 8px; }
+.checklist { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.checklist li { display: flex; gap: 8px; align-items: flex-start; }
+.checklist input { margin-top: 5px; }
+.ai { white-space: pre-wrap; background: var(--soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; }
+.final { text-align: center; }
+.final .big { font-family: var(--display); font-size: 3rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.themes-box { display: grid; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: .9rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .scorebar .fill { transition: none; } }
+@media (max-width: 420px) { .pron { grid-template-columns: 1fr; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← Voltar à trilha</a>
+  <header style="display:grid;gap:8px">
+    <span class="eyebrow">Inglês com Calú · Nível 2 (A2) · Unidade 4</span>
+    <h1>Passado simples</h1>
+    <p class="muted">Contar o que aconteceu: no trabalho, na viagem, no fim de semana. Uns 20 minutos. Cada exercício corrige na hora.</p>
+  </header>
+
+  <section class="themes-box">
+    <span class="eyebrow">Tema do vocabulário</span>
+    <div class="chips" id="themes"></div>
+    <p class="muted" style="font-size:.88rem">Mesma aula, mesmos exercícios: só muda o vocabulário. Para mandar um tema direto ao aluno, copie o link com ele já escolhido.</p>
+  </section>
+
+  <div class="scorebar" aria-live="polite">
+    <div class="track"><div class="fill" id="scoreFill"></div></div>
+    <span id="scoreText">0 de 0 acertos</span><span id="themeName" class="muted"></span>
+    <button class="btn ghost small" id="resetAll">Recomeçar</button>
+  </div>
+
+  <!-- 0 EXPLICAÇÃO -->
+  <section class="card">
+    <div class="step-head"><span class="step-num">0</span><h2>Como funciona</h2></div>
+    <p>O passado simples fala de uma ação que <strong>começou e terminou</strong> no passado. Quase sempre vem com uma marca de tempo: <span class="ex">yesterday</span>, <span class="ex">last week</span>, <span class="ex">two days ago</span>, <span class="ex">in 2019</span>.</p>
+    <div class="rule">
+      <div><span class="eyebrow">Afirmativa</span><b>I worked</b><b>She went</b><span class="muted" style="font-size:.85rem">regular: + ed · irregular: decorar</span></div>
+      <div><span class="eyebrow">Negativa</span><b>I didn't work</b><b>She didn't go</b><span class="muted" style="font-size:.85rem">didn't + verbo normal</span></div>
+      <div><span class="eyebrow">Pergunta</span><b>Did you work?</b><b>Did she go?</b><span class="muted" style="font-size:.85rem">Did + pessoa + verbo normal</span></div>
+    </div>
+    <p class="callout"><strong>A regra de ouro:</strong> o passado aparece <strong>uma vez só</strong>. Se já tem <span class="ex">did</span> ou <span class="ex">didn't</span>, o verbo volta ao normal. <span class="ex">I didn't <s>went</s> go.</span> <span class="ex">Did you <s>saw</s> see?</span></p>
+    <h3>Como se fala o -ed</h3>
+    <div class="pron">
+      <div><span class="sound">/t/</span>worked, stopped, watched<small>depois de som surdo</small></div>
+      <div><span class="sound">/d/</span>played, called, cleaned<small>depois de som sonoro</small></div>
+      <div><span class="sound">/ɪd/</span>wanted, needed, started<small>só depois de t ou d</small></div>
+    </div>
+    <p class="muted" style="font-size:.9rem">O verbo <span class="ex">to be</span> é diferente: <span class="ex">I/he/she/it was</span>, <span class="ex">you/we/they were</span>. Na negativa e na pergunta ele não usa did: <span class="ex">I wasn't tired. Were you at the port?</span></p>
+  </section>
+
+  <!-- 1 ESCOLHA -->
+  <section class="card" data-ex="A">
+    <div class="step-head"><span class="step-num">1</span><h2>Escolha a forma certa</h2></div>
+    <p class="muted">Toque na opção correta.</p>
+    <div class="items" id="exA"></div>
+  </section>
+
+  <!-- 2 COMPLETE -->
+  <section class="card" data-ex="B">
+    <div class="step-head"><span class="step-num">2</span><h2>Complete com o verbo no passado</h2></div>
+    <p class="muted">Escreva só o verbo. Aperte Enter ou “Conferir”.</p>
+    <div class="items" id="exB"></div>
+  </section>
+
+  <!-- 3 IRREGULARES -->
+  <section class="card" data-ex="F">
+    <div class="step-head"><span class="step-num">3</span><h2>Os 20 irregulares que mais aparecem</h2></div>
+    <p class="muted">Escreva o passado de cada um e confira tudo de uma vez. Repita até acertar os 20.</p>
+    <div class="verbs" id="exF"></div>
+    <div class="row"><span class="fb" id="exFfb"></span><button class="btn" id="exFcheck">Conferir os 20</button></div>
+  </section>
+
+  <!-- 4 TRANSFORME -->
+  <section class="card" data-ex="C">
+    <div class="step-head"><span class="step-num">4</span><h2>Transforme a frase</h2></div>
+    <p class="muted">Escreva a frase inteira na forma pedida. Pode usar <span class="ex">didn't</span> ou <span class="ex">did not</span>.</p>
+    <div class="items" id="exC"></div>
+  </section>
+
+  <!-- 5 CORRIJA -->
+  <section class="card" data-ex="D">
+    <div class="step-head"><span class="step-num">5</span><h2>Ache o erro</h2></div>
+    <p class="muted">Cada frase tem uma palavra errada. Toque nela.</p>
+    <div class="items" id="exD"></div>
+  </section>
+
+  <!-- 6 ORDENE -->
+  <section class="card" data-ex="E">
+    <div class="step-head"><span class="step-num">6</span><h2>Monte a pergunta</h2></div>
+    <p class="muted">Toque nas palavras na ordem certa. Toque de novo para tirar.</p>
+    <div class="items" id="exE"></div>
+  </section>
+
+  <!-- 7 REVISÃO -->
+  <section class="card" data-ex="R">
+    <div class="step-head"><span class="step-num">7</span><h2>Revisão das unidades anteriores</h2></div>
+    <p class="muted">Presente simples e verbo to be, misturados com o passado. É assim que a gente fixa.</p>
+    <div class="items" id="exR"></div>
+  </section>
+
+  <!-- 8 PRODUÇÃO -->
+  <section class="card" id="prod">
+    <div class="step-head"><span class="step-num">8</span><h2>Agora é com você</h2></div>
+    <p id="storyPrompt"></p>
+    <textarea id="story" placeholder="Last month I went to... / Yesterday I worked..."></textarea>
+    <ul class="checklist" id="selfCheck">
+      <li><input type="checkbox" id="c1"><label for="c1">Usei pelo menos uma marca de tempo (yesterday, last…, …ago)</label></li>
+      <li><input type="checkbox" id="c2"><label for="c2">Usei 3 verbos irregulares (went, saw, had…)</label></li>
+      <li><input type="checkbox" id="c3"><label for="c3">Escrevi uma frase negativa com didn't + verbo normal</label></li>
+      <li><input type="checkbox" id="c4"><label for="c4">Usei was ou were</label></li>
+      <li><input type="checkbox" id="c5"><label for="c5">Li em voz alta prestando atenção no som do -ed</label></li>
+    </ul>
+    <div class="row">
+      <span class="fb muted" id="aiNote">Mande o texto para Calú na próxima aula.</span>
+      <button class="btn" id="aiBtn" hidden>Pedir correção</button>
+    </div>
+    <div class="ai" id="aiOut" hidden></div>
+  </section>
+
+  <section class="card final" id="finalCard">
+    <span class="eyebrow">Seu resultado nesta unidade</span>
+    <span class="big" id="finalPct">0%</span>
+    <p id="finalMsg" class="muted">Faça os exercícios para ver seu resultado.</p>
+  </section>
+</div>
+
+<script>
+// ---------- data
+const gA = [
+  ["Yesterday I ___ to the dentist.", ["go","went","goed"], 1],
+  ["The ship ___ at the port last night.", ["arrive","arrived","arriving"], 1],
+  ["We ___ a meeting with the funder on Monday.", ["had","have","haved"], 0],
+  ["___ you see the email?", ["Do","Did","Was"], 1],
+  ["She didn't ___ the report.", ["finished","finish","finishes"], 1],
+  ["I ___ very nervous in the interview.", ["was","were","did"], 0],
+  ["They ___ at the hotel last weekend.", ["was","were","did"], 1],
+  ["The patient ___ about pain in the tooth.", ["complained","complain","complainned"], 0],
+];
+const gB = [
+  ["Last week we ___ (work) on the new project.", ["worked"]],
+  ["I ___ (buy) a souvenir for my niece at Disney.", ["bought"]],
+  ["The container ___ (leave) the terminal two hours ago.", ["left"]],
+  ["She ___ (study) dentistry in Brasília.", ["studied"]],
+  ["We ___ (stop) the meeting at 5 p.m.", ["stopped"]],
+  ["He ___ (tell) the client about the delay.", ["told"]],
+  ["I ___ (read) the abstract yesterday.", ["read"]],
+  ["They ___ (plan) the volunteer event in March.", ["planned"]],
+];
+const F = [
+  ["be","was / were",["was","were","was/were","was / were","was, were","was or were"]],
+  ["have",["had"]],["do",["did"]],["go",["went"]],["get",["got"]],["make",["made"]],
+  ["say",["said"]],["see",["saw"]],["come",["came"]],["take",["took"]],["know",["knew"]],
+  ["think",["thought"]],["give",["gave"]],["find",["found"]],["tell",["told"]],["feel",["felt"]],
+  ["leave",["left"]],["buy",["bought"]],["send",["sent"]],["meet",["met"]],
+].map(v => Array.isArray(v[1]) ? { base: v[0], ans: v[1] } : { base: v[0], ans: v[2] });
+const gC = [
+  ["I sent the invoice.", "negativa", ["i didn't send the invoice", "i did not send the invoice"]],
+  ["She went to the conference.", "pergunta", ["did she go to the conference"]],
+  ["They found the problem.", "negativa", ["they didn't find the problem", "they did not find the problem"]],
+  ["You met the new manager.", "pergunta", ["did you meet the new manager"]],
+  ["He was at the port.", "negativa", ["he wasn't at the port", "he was not at the port"]],
+  ["The flight was late.", "pergunta", ["was the flight late"]],
+];
+const gD = [
+  ["I didn't went to work yesterday.", 2, "went → go (depois de didn't, verbo normal)"],
+  ["Did you saw the message?", 2, "saw → see (depois de did, verbo normal)"],
+  ["We was very tired after the trip.", 1, "was → were (we usa were)"],
+  ["She buyed a new phone last week.", 1, "buyed → bought (buy é irregular)"],
+  ["They arrive at the airport two hours ago.", 1, "arrive → arrived (ago pede passado)"],
+  ["Where you went last weekend?", 1, "you → did you (Where did you go…?)"],
+];
+const gE = [
+  ["did","you","what","do","yesterday"],
+  ["did","where","they","go","last","weekend"],
+  ["did","the","ship","when","arrive"],
+  ["you","were","nervous","in","the","interview"],
+];
+const gEans = ["what did you do yesterday","where did they go last weekend","when did the ship arrive","were you nervous in the interview"];
+const gR = [
+  ["Every day she ___ (go) to the clinic by bus.", ["goes"], "presente: he/she + s"],
+  ["Yesterday she ___ (go) to the clinic by car.", ["went"], "passado"],
+  ["I usually ___ (not / have) lunch at 1 p.m.", ["don't have","do not have"], "presente negativa"],
+  ["Last Friday I ___ (not / have) lunch.", ["didn't have","did not have"], "passado negativa"],
+  ["Where ___ you from? I'm from Santos.", ["are"], "to be presente"],
+  ["Where ___ you last night?", ["were"], "to be passado"],
+];
+
+const THEMES = {
+  geral: { label: "Geral", A: gA, B: gB, C: gC, D: gD, E: gE, Eans: gEans, R: gR,
+    story: "Conte, em 5 a 8 frases, sobre <strong>um dia de trabalho ou uma viagem</strong> que você lembra bem. O que você fez? Aonde foi? Com quem falou? Aconteceu algum problema?",
+    ph: "Last month I went to... / Yesterday I worked..." },
+  porto: { label: "Porto e logística",
+    A: [
+      ["The ship ___ at the terminal last night.", ["arrive","arrived","arriving"], 1],
+      ["We ___ the containers yesterday morning.", ["inspected","inspect","inspecting"], 0],
+      ["___ the crane operator finish the shift?", ["Do","Did","Was"], 1],
+      ["The truck didn't ___ on time.", ["arrived","arrive","arrives"], 1],
+      ["I ___ at the port at 6 a.m.", ["was","were","did"], 0],
+      ["The documents ___ ready last Friday.", ["was","were","did"], 1],
+      ["The captain ___ the delay to the agent.", ["explained","explain","explainned"], 0],
+      ["We ___ a problem with the customs paperwork.", ["had","have","haved"], 0],
+    ],
+    B: [
+      ["The vessel ___ (leave) the port two hours ago.", ["left"]],
+      ["We ___ (load) 300 containers last week.", ["loaded"]],
+      ["The agent ___ (send) the bill of lading yesterday.", ["sent"]],
+      ["I ___ (check) the cargo list this morning.", ["checked"]],
+      ["The storm ___ (stop) the operations on Monday.", ["stopped"]],
+      ["Customs ___ (hold) the shipment for three days.", ["held"]],
+      ["The pilot ___ (bring) the ship into the channel.", ["brought"]],
+      ["We ___ (plan) the berth schedule in March.", ["planned"]],
+    ],
+    C: [
+      ["The crew finished the inspection.", "negativa", ["the crew didn't finish the inspection","the crew did not finish the inspection"]],
+      ["The ship arrived on schedule.", "pergunta", ["did the ship arrive on schedule"]],
+      ["They paid the port fees.", "negativa", ["they didn't pay the port fees","they did not pay the port fees"]],
+      ["You spoke with the terminal manager.", "pergunta", ["did you speak with the terminal manager"]],
+      ["The container was damaged.", "negativa", ["the container wasn't damaged","the container was not damaged"]],
+      ["The cargo was in the warehouse.", "pergunta", ["was the cargo in the warehouse"]],
+    ],
+    D: [
+      ["The ship didn't arrived yesterday.", 3, "arrived → arrive (depois de didn't, verbo normal)"],
+      ["Did they loaded the containers?", 2, "loaded → load (depois de did, verbo normal)"],
+      ["The trucks was late this morning.", 2, "was → were (plural usa were)"],
+      ["We sended the documents last week.", 1, "sended → sent (send é irregular)"],
+      ["The crane stop working two hours ago.", 2, "stop → stopped (ago pede passado)"],
+      ["When did the vessel left the port?", 4, "left → leave (depois de did, verbo normal)"],
+    ],
+    E: [["did","the","ship","when","arrive"],["did","the","inspector","what","say"],["did","they","where","unload","the","cargo"],["the","was","container","damaged"]],
+    Eans: ["when did the ship arrive","what did the inspector say","where did they unload the cargo","was the container damaged"],
+    R: [
+      ["Every day the ferry ___ (leave) at 8 a.m.", ["leaves"], "presente: it + s"],
+      ["Yesterday the ferry ___ (leave) at 10 a.m.", ["left"], "passado"],
+      ["We usually ___ (not / work) on Sundays.", ["don't work","do not work"], "presente negativa"],
+      ["Last Sunday we ___ (not / work).", ["didn't work","did not work"], "passado negativa"],
+      ["The cargo ___ in the warehouse now.", ["is"], "to be presente"],
+      ["The cargo ___ in the warehouse last night.", ["was"], "to be passado"],
+    ],
+    story: "Conte, em 5 a 8 frases, sobre <strong>um dia de trabalho no porto</strong> que você lembra bem. Que navio chegou? O que vocês fizeram? Teve atraso ou problema? Como resolveram?",
+    ph: "Last week a big ship arrived at the terminal..." },
+  saude: { label: "Saúde",
+    A: [
+      ["The patient ___ about pain in the tooth.", ["complained","complain","complainned"], 0],
+      ["I ___ the abstract yesterday.", ["read","readed","reads"], 0],
+      ["___ you take any medicine this morning?", ["Do","Did","Were"], 1],
+      ["The X-ray didn't ___ any problem.", ["showed","show","shows"], 1],
+      ["She ___ very anxious before the surgery.", ["was","were","did"], 0],
+      ["The results ___ positive.", ["was","were","did"], 1],
+      ["We ___ the article at the study group on Monday.", ["discussed","discuss","discussing"], 0],
+      ["The dentist ___ the tooth out last week.", ["took","take","taked"], 0],
+    ],
+    B: [
+      ["The patient ___ (feel) dizzy after the procedure.", ["felt"]],
+      ["I ___ (write) the case report last month.", ["wrote"]],
+      ["The authors ___ (find) a link between HPV and oral cancer.", ["found"]],
+      ["She ___ (brush) her teeth before the appointment.", ["brushed"]],
+      ["We ___ (give) the patient a local anesthetic.", ["gave"]],
+      ["He ___ (sleep) badly last night.", ["slept"]],
+      ["The researchers ___ (study) 200 patients.", ["studied"]],
+      ["The nurse ___ (put) the wristband on the patient.", ["put"]],
+    ],
+    C: [
+      ["The patient had a fever.", "negativa", ["the patient didn't have a fever","the patient did not have a fever"]],
+      ["She took the antibiotic.", "pergunta", ["did she take the antibiotic"]],
+      ["The study included children.", "negativa", ["the study didn't include children","the study did not include children"]],
+      ["You felt pain when you chewed.", "pergunta", ["did you feel pain when you chewed"]],
+      ["The bleeding was normal.", "negativa", ["the bleeding wasn't normal","the bleeding was not normal"]],
+      ["The patient was allergic to penicillin.", "pergunta", ["was the patient allergic to penicillin"]],
+    ],
+    D: [
+      ["The patient didn't slept well.", 3, "slept → sleep (depois de didn't, verbo normal)"],
+      ["Did you felt any pain?", 2, "felt → feel (depois de did, verbo normal)"],
+      ["The results was very clear.", 2, "was → were (plural usa were)"],
+      ["The authors finded a new marker.", 2, "finded → found (find é irregular)"],
+      ["She start the treatment two weeks ago.", 1, "start → started (ago pede passado)"],
+      ["Where did the pain started?", 4, "started → start (depois de did, verbo normal)"],
+    ],
+    E: [["did","the","pain","when","start"],["did","you","what","eat","yesterday"],["the","did","patient","sign","the","form"],["you","were","nervous","before","the","surgery"]],
+    Eans: ["when did the pain start","what did you eat yesterday","did the patient sign the form","were you nervous before the surgery"],
+    R: [
+      ["Every morning she ___ (see) ten patients.", ["sees"], "presente: she + s"],
+      ["Yesterday she ___ (see) fifteen patients.", ["saw"], "passado"],
+      ["I usually ___ (not / read) articles at night.", ["don't read","do not read"], "presente negativa"],
+      ["Last night I ___ (not / read) the article.", ["didn't read","did not read"], "passado negativa"],
+      ["The patient ___ in room 4 now.", ["is"], "to be presente"],
+      ["The patient ___ in room 4 yesterday.", ["was"], "to be passado"],
+    ],
+    story: "Conte, em 5 a 8 frases, sobre <strong>um atendimento ou um artigo</strong> que marcou você. Qual era o caso? O que o paciente sentia? O que você fez? Ou: o que os autores estudaram e o que descobriram?",
+    ph: "Last week a patient came to the clinic with..." },
+  terceiro: { label: "Terceiro setor",
+    A: [
+      ["We ___ a meeting with the funder on Monday.", ["had","have","haved"], 0],
+      ["The volunteers ___ 500 meals last weekend.", ["served","serve","serving"], 0],
+      ["___ you send the report to the donors?", ["Do","Did","Were"], 1],
+      ["The board didn't ___ the budget.", ["approved","approve","approves"], 1],
+      ["I ___ nervous during the presentation.", ["was","were","did"], 0],
+      ["The donations ___ higher last year.", ["was","were","did"], 1],
+      ["She ___ the project to the foundation.", ["presented","present","presentted"], 0],
+      ["We ___ a grant in 2024.", ["got","get","getted"], 0],
+    ],
+    B: [
+      ["The NGO ___ (raise) R$ 50,000 last year.", ["raised"]],
+      ["I ___ (write) the proposal last month.", ["wrote"]],
+      ["The funder ___ (ask) for more data.", ["asked"]],
+      ["We ___ (hold) a workshop for the community.", ["held"]],
+      ["The team ___ (meet) the mayor on Tuesday.", ["met"]],
+      ["She ___ (lead) the volunteer training.", ["led"]],
+      ["They ___ (spend) the money on books.", ["spent"]],
+      ["We ___ (try) a new approach this year.", ["tried"]],
+    ],
+    C: [
+      ["We met the deadline.", "negativa", ["we didn't meet the deadline","we did not meet the deadline"]],
+      ["The funder approved the proposal.", "pergunta", ["did the funder approve the proposal"]],
+      ["They sent the impact report.", "negativa", ["they didn't send the impact report","they did not send the impact report"]],
+      ["You talked to the volunteers.", "pergunta", ["did you talk to the volunteers"]],
+      ["The event was a success.", "negativa", ["the event wasn't a success","the event was not a success"]],
+      ["The donors were happy with the results.", "pergunta", ["were the donors happy with the results"]],
+    ],
+    D: [
+      ["We didn't received the grant.", 2, "received → receive (depois de didn't, verbo normal)"],
+      ["Did you sent the budget?", 2, "sent → send (depois de did, verbo normal)"],
+      ["The volunteers was very helpful.", 2, "was → were (plural usa were)"],
+      ["She teached English to the kids.", 1, "teached → taught (teach é irregular)"],
+      ["We start the project three months ago.", 1, "start → started (ago pede passado)"],
+      ["What did the funder said?", 4, "said → say (depois de did, verbo normal)"],
+    ],
+    E: [["did","the","funder","what","say"],["people","how","many","did","you","help"],["the","did","board","approve","the","budget"],["the","was","meeting","productive"]],
+    Eans: ["what did the funder say","how many people did you help","did the board approve the budget","was the meeting productive"],
+    R: [
+      ["Every month the NGO ___ (send) a newsletter.", ["sends"], "presente: it + s"],
+      ["Last month the NGO ___ (send) two newsletters.", ["sent"], "passado"],
+      ["We usually ___ (not / have) meetings on Fridays.", ["don't have","do not have"], "presente negativa"],
+      ["Last Friday we ___ (not / have) a meeting.", ["didn't have","did not have"], "passado negativa"],
+      ["The director ___ in Brasília this week.", ["is"], "to be presente"],
+      ["The director ___ in Brasília last week.", ["was"], "to be passado"],
+    ],
+    story: "Conte, em 5 a 8 frases, sobre <strong>um projeto ou uma reunião</strong> da sua organização. O que vocês fizeram? Quantas pessoas ajudaram? O que o financiador perguntou? O que deu certo e o que não deu?",
+    ph: "Last year our NGO started a project in..." },
+  viagem: { label: "Viagem e hotelaria",
+    A: [
+      ["Yesterday we ___ to Disney.", ["go","went","goed"], 1],
+      ["I ___ a room for two nights.", ["booked","book","booking"], 0],
+      ["___ you sleep well last night?", ["Do","Did","Were"], 1],
+      ["The flight didn't ___ on time.", ["left","leave","leaves"], 1],
+      ["The hotel ___ very clean.", ["was","were","did"], 0],
+      ["The museums ___ closed on Monday.", ["was","were","did"], 1],
+      ["The waiter ___ the menu to us.", ["explained","explain","explainned"], 0],
+      ["I ___ a souvenir for my niece.", ["bought","buy","buyed"], 0],
+    ],
+    B: [
+      ["We ___ (arrive) at the airport at 6 a.m.", ["arrived"]],
+      ["The immigration officer ___ (ask) about my trip.", ["asked"]],
+      ["I ___ (lose) my passport at the hotel!", ["lost"]],
+      ["We ___ (eat) at a great restaurant last night.", ["ate"]],
+      ["She ___ (pay) the bill with a credit card.", ["paid"]],
+      ["They ___ (take) a taxi to the hotel.", ["took"]],
+      ["I ___ (stay) at my friend's house for a week.", ["stayed"]],
+      ["The receptionist ___ (give) us the keys.", ["gave"]],
+    ],
+    C: [
+      ["We checked in at 3 p.m.", "negativa", ["we didn't check in at 3 p.m","we did not check in at 3 p.m","we didn't check in at 3 pm","we did not check in at 3 pm"]],
+      ["She ordered the vegetarian dish.", "pergunta", ["did she order the vegetarian dish"]],
+      ["I found the bus stop.", "negativa", ["i didn't find the bus stop","i did not find the bus stop"]],
+      ["You visited the museum.", "pergunta", ["did you visit the museum"]],
+      ["The room was ready.", "negativa", ["the room wasn't ready","the room was not ready"]],
+      ["The tickets were expensive.", "pergunta", ["were the tickets expensive"]],
+    ],
+    D: [
+      ["I didn't knew the way to the hotel.", 2, "knew → know (depois de didn't, verbo normal)"],
+      ["Did you ate at the hotel?", 2, "ate → eat (depois de did, verbo normal)"],
+      ["The beds was very comfortable.", 2, "was → were (plural usa were)"],
+      ["We flyed to Orlando last week.", 1, "flyed → flew (fly é irregular)"],
+      ["They arrive at the hotel an hour ago.", 1, "arrive → arrived (ago pede passado)"],
+      ["Where did you stayed in Lisbon?", 3, "stayed → stay (depois de did, verbo normal)"],
+    ],
+    E: [["did","you","where","stay"],["time","what","did","the","flight","leave"],["you","did","like","the","food"],["the","was","hotel","near","the","park"]],
+    Eans: ["where did you stay","what time did the flight leave","did you like the food","was the hotel near the park"],
+    R: [
+      ["Every summer my family ___ (travel) to the beach.", ["travels"], "presente: it + s"],
+      ["Last summer my family ___ (travel) to Portugal.", ["traveled","travelled"], "passado"],
+      ["I usually ___ (not / take) taxis.", ["don't take","do not take"], "presente negativa"],
+      ["Yesterday I ___ (not / take) a taxi.", ["didn't take","did not take"], "passado negativa"],
+      ["Where ___ you from? I'm from Brazil.", ["are"], "to be presente"],
+      ["Where ___ you last night?", ["were"], "to be passado"],
+    ],
+    story: "Conte, em 5 a 8 frases, sobre <strong>uma viagem</strong> que você fez ou um hóspede que você atendeu. Aonde foi? Onde ficou? O que comeu? Teve algum problema na imigração, no hotel ou no restaurante?",
+    ph: "Last year I traveled to..." },
+  tecnologia: {"label": "Tecnologia", "A": [["Yesterday I ___ a bug in the login page.", ["fixed", "fix", "fixing"], 0], ["We ___ the new version on Friday.", ["released", "release", "releasing"], 0], ["___ you test the code before the deploy?", ["Do", "Did", "Were"], 1], ["The server didn't ___ after the update.", ["restarted", "restart", "restarts"], 1], ["I ___ very nervous in the technical interview.", ["was", "were", "did"], 0], ["The logs ___ full of errors.", ["was", "were", "did"], 1], ["The hacker ___ a weak password.", ["used", "use", "useed"], 0], ["We ___ a meeting with the client about the app.", ["had", "have", "haved"], 0]], "B": [["I ___ (write) the documentation last week.", ["wrote"]], ["The team ___ (find) a security problem.", ["found"]], ["She ___ (send) the pull request this morning.", ["sent"]], ["We ___ (deploy) the app at midnight.", ["deployed"]], ["The system ___ (stop) working at 3 p.m.", ["stopped"]], ["I ___ (learn) Python in 2022.", ["learned", "learnt"]], ["He ___ (build) the API in two weeks.", ["built"]], ["They ___ (choose) a new framework.", ["chose"]]], "C": [["The tests passed.", "negativa", ["the tests didn't pass", "the tests did not pass"]], ["She merged the branch.", "pergunta", ["did she merge the branch"]], ["We backed up the database.", "negativa", ["we didn't back up the database", "we did not back up the database"]], ["You updated the password.", "pergunta", ["did you update the password"]], ["The website was online.", "negativa", ["the website wasn't online", "the website was not online"]], ["The users were happy with the update.", "pergunta", ["were the users happy with the update"]]], "D": [["The app didn't worked on Android.", 3, "worked → work (depois de didn't, verbo normal)"], ["Did you pushed the code?", 2, "pushed → push (depois de did, verbo normal)"], ["The servers was down all night.", 2, "was → were (plural usa were)"], ["I writed the script yesterday.", 1, "writed → wrote (write é irregular)"], ["We fix the bug two days ago.", 1, "fix → fixed (ago pede passado)"], ["When did the error happened?", 4, "happened → happen (depois de did, verbo normal)"]], "E": [["did", "you", "what", "change"], ["did", "the", "system", "when", "crash"], ["the", "did", "client", "approve", "the", "design"], ["the", "was", "meeting", "online"]], "Eans": ["what did you change", "when did the system crash", "did the client approve the design", "was the meeting online"], "R": [["Every day he ___ (check) the logs.", ["checks"], "presente: he + s"], ["Yesterday he ___ (check) the logs twice.", ["checked"], "passado"], ["We usually ___ (not / deploy) on Fridays.", ["don't deploy", "do not deploy"], "presente negativa"], ["Last Friday we ___ (not / deploy).", ["didn't deploy", "did not deploy"], "passado negativa"], ["The server ___ in São Paulo now.", ["is"], "to be presente"], ["The server ___ in Virginia last year.", ["was"], "to be passado"]], "story": "Conte, em 5 a 8 frases, sobre <strong>um projeto, um bug difícil ou uma entrevista técnica</strong>. O que aconteceu? O que você fez? Quem ajudou? Como terminou?", "ph": "Last week our team found a bug in..."},
+  academico: {"label": "Vida acadêmica", "A": [["I ___ my research topic in 2023.", ["chose", "choose", "choosed"], 0], ["The authors ___ 120 participants.", ["interviewed", "interview", "interviewing"], 0], ["___ you present at the congress last year?", ["Do", "Did", "Were"], 1], ["The study didn't ___ a control group.", ["had", "have", "has"], 1], ["I ___ very nervous during my presentation.", ["was", "were", "did"], 0], ["The results ___ significant.", ["was", "were", "did"], 1], ["My advisor ___ my first chapter.", ["reviewed", "review", "reviewing"], 0], ["We ___ the data in the lab.", ["collected", "collect", "collectted"], 0]], "B": [["I ___ (submit) the article in March.", ["submitted"]], ["The researchers ___ (analyze) the samples.", ["analyzed", "analysed"]], ["She ___ (give) a talk at the conference.", ["gave"]], ["We ___ (read) twenty papers for the review.", ["read"]], ["The committee ___ (approve) my project.", ["approved"]], ["I ___ (spend) two years on the fieldwork.", ["spent"]], ["The study ___ (show) a clear difference.", ["showed"]], ["He ___ (begin) the master's program in 2024.", ["began"]]], "C": [["The journal accepted the paper.", "negativa", ["the journal didn't accept the paper", "the journal did not accept the paper"]], ["She finished the literature review.", "pergunta", ["did she finish the literature review"]], ["The authors used a survey.", "negativa", ["the authors didn't use a survey", "the authors did not use a survey"]], ["You passed the proficiency exam.", "pergunta", ["did you pass the proficiency exam"]], ["The sample was large.", "negativa", ["the sample wasn't large", "the sample was not large"]], ["The participants were students.", "pergunta", ["were the participants students"]]], "D": [["The authors didn't found any difference.", 3, "found → find (depois de didn't, verbo normal)"], ["Did you wrote the abstract?", 2, "wrote → write (depois de did, verbo normal)"], ["The results was surprising.", 2, "was → were (plural usa were)"], ["We choosed a qualitative method.", 1, "choosed → chose (choose é irregular)"], ["I present my research two weeks ago.", 1, "present → presented (ago pede passado)"], ["What did the reviewers said?", 4, "said → say (depois de did, verbo normal)"]], "E": [["did", "the", "study", "what", "find"], ["did", "they", "how", "collect", "the", "data"], ["you", "did", "pass", "the", "exam"], ["the", "was", "conference", "in", "English"]], "Eans": ["what did the study find", "how did they collect the data", "did you pass the exam", "was the conference in English"], "R": [["Every week our group ___ (discuss) an article.", ["discusses"], "presente: it + es"], ["Last week our group ___ (discuss) two articles.", ["discussed"], "passado"], ["I usually ___ (not / write) at night.", ["don't write", "do not write"], "presente negativa"], ["Last night I ___ (not / write) anything.", ["didn't write", "did not write"], "passado negativa"], ["My advisor ___ in Portugal this month.", ["is"], "to be presente"], ["My advisor ___ in Portugal last month.", ["was"], "to be passado"]], "story": "Conte, em 5 a 8 frases, sobre <strong>a sua pesquisa ou um congresso</strong>. Como a pesquisa começou? O que vocês fizeram? O que descobriram? Ou: como foi apresentar num congresso?", "ph": "In 2024 I started my research about..."},
+  comex: {"label": "Comércio exterior", "A": [["The supplier ___ the invoice yesterday.", ["sent", "send", "sended"], 0], ["We ___ the goods from China last month.", ["imported", "import", "importing"], 0], ["___ the cargo clear customs?", ["Do", "Did", "Was"], 1], ["The airline didn't ___ the AWB.", ["issued", "issue", "issues"], 1], ["The shipment ___ late.", ["was", "were", "did"], 0], ["The boxes ___ damaged.", ["was", "were", "did"], 1], ["The client ___ about the delay.", ["complained", "complain", "complainned"], 0], ["We ___ the payment on Monday.", ["made", "make", "maked"], 0]], "B": [["The shipment ___ (arrive) at Guarulhos airport.", ["arrived"]], ["I ___ (check) the tracking number.", ["checked"]], ["The broker ___ (pay) the import taxes.", ["paid"]], ["We ___ (lose) a box during transport.", ["lost"]], ["The client ___ (sign) the contract last week.", ["signed"]], ["The freight cost ___ (rise) 10% last year.", ["rose"]], ["She ___ (speak) with the supplier in English.", ["spoke"]], ["They ___ (ship) the order on May 3rd.", ["shipped"]]], "C": [["The supplier confirmed the order.", "negativa", ["the supplier didn't confirm the order", "the supplier did not confirm the order"]], ["The cargo left the warehouse.", "pergunta", ["did the cargo leave the warehouse"]], ["We received the documents.", "negativa", ["we didn't receive the documents", "we did not receive the documents"]], ["You called the customs broker.", "pergunta", ["did you call the customs broker"]], ["The invoice was correct.", "negativa", ["the invoice wasn't correct", "the invoice was not correct"]], ["The containers were on the ship.", "pergunta", ["were the containers on the ship"]]], "D": [["The client didn't paid the invoice.", 3, "paid → pay (depois de didn't, verbo normal)"], ["Did you checked the AWB?", 2, "checked → check (depois de did, verbo normal)"], ["The prices was higher in May.", 2, "was → were (plural usa were)"], ["We payed the taxes yesterday.", 1, "payed → paid (pay é irregular)"], ["The cargo arrive three days ago.", 2, "arrive → arrived (ago pede passado)"], ["When did the shipment arrived?", 4, "arrived → arrive (depois de did, verbo normal)"]], "E": [["did", "the", "cargo", "when", "arrive"], ["much", "how", "did", "you", "pay"], ["the", "did", "supplier", "send", "the", "invoice"], ["the", "was", "shipment", "insured"]], "Eans": ["when did the cargo arrive", "how much did you pay", "did the supplier send the invoice", "was the shipment insured"], "R": [["Every week the company ___ (import) parts from China.", ["imports"], "presente: it + s"], ["Last week the company ___ (import) two tons of parts.", ["imported"], "passado"], ["We usually ___ (not / ship) by air.", ["don't ship", "do not ship"], "presente negativa"], ["Last month we ___ (not / ship) by air.", ["didn't ship", "did not ship"], "passado negativa"], ["The cargo ___ at the airport now.", ["is"], "to be presente"], ["The cargo ___ at the airport yesterday.", ["was"], "to be passado"]], "story": "Conte, em 5 a 8 frases, sobre <strong>uma importação ou exportação que deu trabalho</strong>. O que vocês compraram ou venderam? De onde veio? Teve atraso, taxa ou documento errado? Como resolveram?", "ph": "Last month we imported..."},
+  atendimento: {"label": "Atendimento e entrevista", "A": [["I ___ as a receptionist for three years.", ["worked", "work", "working"], 0], ["The customer ___ for a table for four.", ["asked", "ask", "asking"], 0], ["___ you call the client back?", ["Do", "Did", "Were"], 1], ["The client didn't ___ the bill.", ["paid", "pay", "pays"], 1], ["I ___ very nervous in the job interview.", ["was", "were", "did"], 0], ["The customers ___ happy with the service.", ["was", "were", "did"], 1], ["The manager ___ me the job.", ["offered", "offer", "offerred"], 0], ["I ___ a lot in my last job.", ["learned", "learn", "learning"], 0]], "B": [["I ___ (start) my last job in 2021.", ["started"]], ["The customer ___ (order) the fish of the day.", ["ordered"]], ["I ___ (leave) the company in December.", ["left"]], ["She ___ (bring) the menu to the table.", ["brought"]], ["The client ___ (promise) to pay on Friday.", ["promised"]], ["I ___ (solve) the problem in ten minutes.", ["solved"]], ["They ___ (hire) me after the second interview.", ["hired"]], ["The waiter ___ (forget) the drinks.", ["forgot"]]], "C": [["The customer liked the dessert.", "negativa", ["the customer didn't like the dessert", "the customer did not like the dessert"]], ["She applied for the job.", "pergunta", ["did she apply for the job"]], ["I finished my degree.", "negativa", ["i didn't finish my degree", "i did not finish my degree"]], ["You worked with customers.", "pergunta", ["did you work with customers"]], ["The interview was difficult.", "negativa", ["the interview wasn't difficult", "the interview was not difficult"]], ["The guests were satisfied.", "pergunta", ["were the guests satisfied"]]], "D": [["I didn't worked on weekends.", 2, "worked → work (depois de didn't, verbo normal)"], ["Did you liked your last job?", 2, "liked → like (depois de did, verbo normal)"], ["The clients was very polite.", 2, "was → were (plural usa were)"], ["I leaved the company last year.", 1, "leaved → left (leave é irregular)"], ["She call the customer an hour ago.", 1, "call → called (ago pede passado)"], ["Why did you left your last job?", 3, "left → leave (depois de did, verbo normal)"]], "E": [["did", "you", "why", "leave", "the", "company"], ["did", "the", "customer", "what", "order"], ["you", "did", "work", "with", "sales"], ["the", "was", "client", "satisfied"]], "Eans": ["why did you leave the company", "what did the customer order", "did you work with sales", "was the client satisfied"], "R": [["Every day she ___ (answer) 50 calls.", ["answers"], "presente: she + s"], ["Yesterday she ___ (answer) 80 calls.", ["answered"], "passado"], ["I usually ___ (not / work) at night.", ["don't work", "do not work"], "presente negativa"], ["Last night I ___ (not / work).", ["didn't work", "did not work"], "passado negativa"], ["Where ___ you from? I'm from Santos.", ["are"], "to be presente"], ["Where ___ you yesterday afternoon?", ["were"], "to be passado"]], "story": "Conte, em 5 a 8 frases, sobre <strong>o seu último emprego</strong>, como numa entrevista: onde trabalhou, o que fazia, o que aprendeu e por que saiu. Ou conte um atendimento difícil e como você resolveu.", "ph": "In my last job I worked as..."},
+  clima: {"label": "Clima e território", "A": [["The heavy rain ___ the neighborhood last summer.", ["flooded", "flood", "flooding"], 0], ["We ___ the community in Rio das Pedras.", ["visited", "visit", "visitted"], 0], ["___ you go to COP30 in Belém?", ["Do", "Did", "Were"], 1], ["The city didn't ___ the sewage system.", ["improved", "improve", "improves"], 1], ["I ___ nervous on my first international panel.", ["was", "were", "did"], 0], ["The temperatures ___ very high in 2024.", ["was", "were", "did"], 1], ["Our team ___ a report on climate justice.", ["published", "publish", "publishing"], 0], ["Many families ___ their homes in the flood.", ["lost", "lose", "losed"], 0]], "B": [["The residents ___ (build) a community garden.", ["built"]], ["We ___ (plant) 2,000 trees last year.", ["planted"]], ["The mayor ___ (promise) new sanitation projects.", ["promised"]], ["I ___ (speak) about our territory at the G20.", ["spoke"]], ["The river ___ (rise) two meters in one night.", ["rose"]], ["They ___ (map) the risk areas in 2023.", ["mapped"]], ["She ___ (meet) activists from Nigeria.", ["met"]], ["The project ___ (bring) clean water to 300 homes.", ["brought"]]], "C": [["The government kept its promise.", "negativa", ["the government didn't keep its promise", "the government did not keep its promise"]], ["They measured the air quality.", "pergunta", ["did they measure the air quality"]], ["The project reached its goal.", "negativa", ["the project didn't reach its goal", "the project did not reach its goal"]], ["You attended the climate summit.", "pergunta", ["did you attend the climate summit"]], ["The water was clean.", "negativa", ["the water wasn't clean", "the water was not clean"]], ["The residents were part of the decision.", "pergunta", ["were the residents part of the decision"]]], "D": [["The city didn't cleaned the river.", 3, "cleaned → clean (depois de didn't, verbo normal)"], ["Did you saw the new report?", 2, "saw → see (depois de did, verbo normal)"], ["The streets was full of water.", 2, "was → were (plural usa were)"], ["We growed vegetables in the garden.", 1, "growed → grew (grow é irregular)"], ["The storm destroy the bridge last week.", 2, "destroy → destroyed (last week pede passado)"], ["Where did the flood started?", 4, "started → start (depois de did, verbo normal)"]], "E": [["did", "the", "residents", "what", "say"], ["did", "the", "flood", "when", "happen"], ["the", "did", "city", "invest", "in", "sanitation"], ["the", "was", "panel", "in", "English"]], "Eans": ["what did the residents say", "when did the flood happen", "did the city invest in sanitation", "was the panel in English"], "R": [["Every year the rainy season ___ (start) in December.", ["starts"], "presente: it + s"], ["Last year the rainy season ___ (start) in November.", ["started"], "passado"], ["We usually ___ (not / travel) for work.", ["don't travel", "do not travel"], "presente negativa"], ["Last month we ___ (not / travel) for work.", ["didn't travel", "did not travel"], "passado negativa"], ["The situation ___ better now.", ["is"], "to be presente"], ["The situation ___ very bad last year.", ["was"], "to be passado"]], "story": "Conte, em 5 a 8 frases, sobre <strong>um projeto no seu território ou um evento climático</strong> (COP, G20, uma enchente). O que aconteceu? O que vocês fizeram? Quem participou? Qual foi o resultado?", "ph": "Last year our organization started a project in..."},
+  cultura: {"label": "Séries, música e memes", "A": [["Last night I ___ two episodes of The Office.", ["watched", "watch", "watching"], 0], ["The singer ___ a new album in May.", ["released", "release", "releasing"], 0], ["___ you see the last season?", ["Do", "Did", "Were"], 1], ["I didn't ___ the joke in the meme.", ["understood", "understand", "understands"], 1], ["The concert ___ amazing.", ["was", "were", "did"], 0], ["The actors ___ really funny.", ["was", "were", "did"], 1], ["My friend ___ me a meme about Mondays.", ["sent", "send", "sended"], 0], ["We ___ the song in the car.", ["sang", "sing", "singed"], 0]], "B": [["I ___ (listen) to the new album yesterday.", ["listened"]], ["The main character ___ (fall) in love with her boss.", ["fell"]], ["We ___ (laugh) a lot at the movie.", ["laughed"]], ["She ___ (win) an Oscar in 2023.", ["won"]], ["I ___ (read) the book before the series.", ["read"]], ["The band ___ (play) in São Paulo last year.", ["played"]], ["Michael ___ (say) something terrible at the meeting.", ["said"]], ["The video ___ (become) a meme in one day.", ["became"]]], "C": [["I liked the ending.", "negativa", ["i didn't like the ending", "i did not like the ending"]], ["She cried at the end of the movie.", "pergunta", ["did she cry at the end of the movie"]], ["They understood the lyrics.", "negativa", ["they didn't understand the lyrics", "they did not understand the lyrics"]], ["You heard the new song.", "pergunta", ["did you hear the new song"]], ["The show was popular in Brazil.", "negativa", ["the show wasn't popular in brazil", "the show was not popular in brazil"]], ["The tickets were cheap.", "pergunta", ["were the tickets cheap"]]], "D": [["I didn't liked the last episode.", 2, "liked → like (depois de didn't, verbo normal)"], ["Did you watched the finale?", 2, "watched → watch (depois de did, verbo normal)"], ["The songs was really good.", 2, "was → were (plural usa were)"], ["We singed karaoke on Saturday.", 1, "singed → sang (sing é irregular)"], ["The series end two years ago.", 2, "end → ended (ago pede passado)"], ["Who did you saw at the concert?", 3, "saw → see (depois de did, verbo normal)"]], "E": [["did", "you", "what", "watch", "last", "night"], ["did", "the", "series", "when", "start"], ["you", "did", "understand", "the", "meme"], ["the", "was", "movie", "good"]], "Eans": ["what did you watch last night", "when did the series start", "did you understand the meme", "was the movie good"], "R": [["Every night my sister ___ (watch) a series.", ["watches"], "presente: she + es"], ["Last night my sister ___ (watch) a horror movie.", ["watched"], "passado"], ["I usually ___ (not / listen) to rap.", ["don't listen", "do not listen"], "presente negativa"], ["Yesterday I ___ (not / listen) to music.", ["didn't listen", "did not listen"], "passado negativa"], ["My favorite show ___ on Netflix now.", ["is"], "to be presente"], ["My favorite show ___ on TV in the 2000s.", ["was"], "to be passado"]], "story": "Conte, em 5 a 8 frases, sobre <strong>uma série, um filme ou um show</strong> que você viu. O que aconteceu na história? Do que você gostou ou não gostou? Com quem você viu?", "ph": "Last weekend I watched..."},
+};
+let A, B, C, D, E, Eans, R, theme, KEY, results = {}, TOTAL = 0;
+function themeKey() { return "calu-ps-u4-" + theme; }
+
+// ---------- state & scoring
+let saved = {};
+function persist() {
+  try { localStorage.setItem(themeKey(), JSON.stringify({ results, story: document.getElementById("story").value, total: TOTAL, t: Date.now() })); } catch {}
+  try { const d = new Date().toLocaleDateString("sv"); const days = JSON.parse(localStorage.getItem("calu-days") || "[]"); if (!days.includes(d)) { days.push(d); localStorage.setItem("calu-days", JSON.stringify(days.slice(-400))); } } catch {}
+}
+function mark(id, ok) { if (!(id in results)) results[id] = ok; else if (ok) results[id] = results[id] || false; updateScore(); persist(); }
+function updateScore() {
+  const done = Object.keys(results).length;
+  const right = Object.values(results).filter(Boolean).length;
+  document.getElementById("scoreText").textContent = `${right} de ${done} acertos · ${TOTAL - done} faltando`;
+  document.getElementById("scoreFill").style.width = (done / TOTAL * 100) + "%";
+  const pct = done ? Math.round(right / TOTAL * 100) : 0;
+  document.getElementById("finalPct").textContent = pct + "%";
+  document.getElementById("finalMsg").textContent =
+    done < TOTAL ? `Você respondeu ${done} de ${TOTAL}. Termine para ver o resultado completo.` :
+    pct >= 85 ? "Excelente. Você já pode seguir para a próxima unidade (passado contínuo)." :
+    pct >= 65 ? "Bom caminho. Refaça os exercícios 3 e 5 amanhã antes de seguir." :
+    "Vale refazer a unidade com calma. Comece pela explicação e pelos 20 irregulares.";
+}
+const norm = s => s.toLowerCase().replace(/[’']/g, "'").replace(/[.?!,]+$/g, "").replace(/\s+/g, " ").trim();
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+function blankify(text) { return text.replace("___", "_____"); }
+
+// ---------- builders
+function buildChoice(container, list, prefix) {
+  list.forEach(([q, opts, ans, ctx], i) => {
+    const id = prefix + i, item = el("div", "item");
+    const p = el("p", "prompt"); if (ctx) p.appendChild(el("span", "ctx", ctx)); p.appendChild(document.createTextNode(blankify(q)));
+    const row = el("div", "opts"), fb = el("span", "fb");
+    opts.forEach((o, k) => {
+      const b = el("button", "opt", o); b.type = "button";
+      b.addEventListener("click", () => {
+        if (k === ans) { b.classList.add("right"); row.querySelectorAll("button").forEach(x => x.disabled = true); fb.className = "fb ok"; fb.textContent = "Isso."; mark(id, !row.dataset.missed); }
+        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = "Tente de novo."; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+      });
+      row.appendChild(b);
+    });
+    item.append(p, row, fb); container.appendChild(item);
+  });
+}
+function buildTyped(container, list, prefix, opts = {}) {
+  list.forEach((row, i) => {
+    const [q, answers, hint] = opts.transform ? [row[0], row[2], null] : row;
+    const id = prefix + i, item = el("div", "item");
+    const p = el("p", "prompt");
+    if (opts.transform) { p.appendChild(el("span", "ctx", "Passe para a " + row[1])); p.appendChild(document.createTextNode(q)); }
+    const mk = (cls, sid, label) => { const x = el("input", cls); x.type = "text"; x.id = sid; x.autocomplete = "off"; x.spellcheck = false; x.setAttribute("autocapitalize", "off"); x.setAttribute("aria-label", label); return x; };
+    let slots = [];
+    if (opts.transform) { /* one field for the whole sentence */ }
+    else {
+      if (hint) p.appendChild(el("span", "ctx", hint));
+      const parts = q.split("___"), k = parts.length - 1;
+      if (k > 0) {
+        // one blank line per word of the answer: "I ___ ___ (know)" for "have known"
+        const words = answers[0].trim().split(/\s+/);
+        const counts = Array(k).fill(1); counts[k - 1] = Math.max(1, words.length - (k - 1));
+        p.classList.add("blanks");
+        parts.forEach((t, j) => {
+          if (t) p.appendChild(document.createTextNode(t));
+          if (j < k) for (let m = 0; m < counts[j]; m++) { const n = slots.length; const x = mk("slot", "in-" + id + (n ? "-" + n : ""), "Palavra " + (n + 1)); slots.push(x); p.appendChild(x); }
+        });
+      } else p.appendChild(document.createTextNode(q));
+    }
+    const wrap = el("div", "inline-input");
+    const inp = slots.length ? slots[0] : mk("", "in-" + id, "Resposta");
+    const fields = slots.length ? slots : [inp];
+    const btn = el("button", "btn small", "Conferir"); btn.type = "button";
+    const fb = el("span", "fb");
+    const check = () => {
+      const v = norm(fields.map(f => f.value.trim()).filter(Boolean).join(" ")); if (!v) return;
+      const ok = answers.map(norm).includes(v);
+      fields.forEach(f => { f.classList.toggle("right", ok); f.classList.toggle("wrong", !ok); });
+      if (ok) { fb.className = "fb ok"; fb.textContent = "Isso."; fields.forEach(f => f.readOnly = true); btn.disabled = true; mark(id, !inp.dataset.missed); }
+      else {
+        fb.className = "fb no";
+        if (inp.dataset.missed) { fb.textContent = "Resposta: " + answers[0]; }
+        else { fb.textContent = "Quase. Confira a regra e tente mais uma vez."; }
+        inp.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); }
+      }
+    };
+    btn.addEventListener("click", check); fields.forEach(f => f.addEventListener("keydown", e => { if (e.key === "Enter") check(); }));
+    if (slots.length) wrap.append(btn); else wrap.append(inp, btn);
+    item.append(p, wrap, fb); container.appendChild(item);
+  });
+}
+function buildFind(container) {
+  D.forEach(([s, wrongIdx, why], i) => {
+    const id = "D" + i, item = el("div", "item"), row = el("div", "opts"), fb = el("span", "fb");
+    s.split(" ").forEach((w, k) => {
+      const b = el("button", "opt", w); b.type = "button";
+      b.addEventListener("click", () => {
+        if (k === wrongIdx) { b.classList.add("right"); row.querySelectorAll("button").forEach(x => x.disabled = true); fb.className = "fb ok"; fb.textContent = why; mark(id, !row.dataset.missed); }
+        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = "Essa está certa. Procure outra."; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+      });
+      row.appendChild(b);
+    });
+    item.append(row, fb); container.appendChild(item);
+  });
+}
+function shuffle(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+function buildOrder(container) {
+  E.forEach((words, i) => {
+    const id = "E" + i, item = el("div", "item");
+    const built = el("div", "built"), bank = el("div", "bank"), fb = el("span", "fb");
+    const actions = el("div", "row"); const btn = el("button", "btn small", "Conferir"); btn.type = "button";
+    const refresh = () => { btn.disabled = bank.children.length > 0; };
+    shuffle(words).forEach(w => {
+      const t = el("button", "tile", w); t.type = "button";
+      t.addEventListener("click", () => { if (item.dataset.done) return; (t.parentElement === bank ? built : bank).appendChild(t); refresh(); });
+      bank.appendChild(t);
+    });
+    btn.addEventListener("click", () => {
+      const v = [...built.children].map(t => t.textContent).join(" ");
+      if (v === Eans[i]) { fb.className = "fb ok"; fb.textContent = "Isso: " + v.charAt(0).toUpperCase() + v.slice(1) + "?"; item.dataset.done = "1"; btn.disabled = true; mark(id, !item.dataset.missed); }
+      else { fb.className = "fb no"; fb.textContent = "Ainda não. Lembre: palavra de pergunta + did + pessoa + verbo."; item.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+    });
+    refresh(); actions.append(fb, btn);
+    item.append(built, bank, actions); container.appendChild(item);
+  });
+}
+function buildVerbs() {
+  const box = document.getElementById("exF"); box.textContent = ""; document.getElementById("exFfb").textContent = "";
+  F.forEach((v, i) => {
+    const d = el("div", "verb");
+    const lab = el("label"); lab.htmlFor = "verb-" + i; lab.textContent = v.base + " ";
+    lab.appendChild(el("small", null, "→ passado"));
+    const inp = el("input"); inp.type = "text"; inp.id = "verb-" + i; inp.autocomplete = "off"; inp.spellcheck = false; inp.setAttribute("autocapitalize", "off");
+    d.append(lab, inp); box.appendChild(d);
+  });
+}
+function checkVerbs() {
+  {
+    let right = 0, answered = 0;
+    F.forEach((v, i) => {
+      const inp = document.getElementById("verb-" + i), val = norm(inp.value);
+      if (!val) { inp.classList.remove("right","wrong"); return; }
+      answered++;
+      const ok = v.ans.map(norm).includes(val) || (v.base === "be" && /^(was|were)$/.test(val));
+      inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+      if (ok) right++;
+      mark("F" + i, ok);
+    });
+    const fb = document.getElementById("exFfb");
+    fb.className = "fb " + (right === F.length ? "ok" : "no");
+    fb.textContent = answered === 0 ? "Preencha alguns verbos primeiro." :
+      right === F.length ? "Os 20 certos. Excelente." :
+      `${right} de ${F.length} certos. Corrija os vermelhos e confira de novo.`;
+  }
+}
+document.getElementById("exFcheck").addEventListener("click", checkVerbs);
+
+function applyTheme(name) {
+  theme = THEMES[name] ? name : "geral";
+  const T = THEMES[theme];
+  ({ A, B, C, D, E, Eans, R } = T);
+  TOTAL = A.length + B.length + F.length + C.length + D.length + E.length + R.length;
+  try { saved = JSON.parse(localStorage.getItem(themeKey()) || "{}"); } catch { saved = {}; }
+  results = saved.results || {};
+  ["exA","exB","exC","exD","exE","exR"].forEach(id => document.getElementById(id).textContent = "");
+  buildChoice(document.getElementById("exA"), A, "A");
+  buildTyped(document.getElementById("exB"), B, "B");
+  buildVerbs();
+  buildTyped(document.getElementById("exC"), C, "C", { transform: true });
+  buildFind(document.getElementById("exD"));
+  buildOrder(document.getElementById("exE"));
+  buildTyped(document.getElementById("exR"), R, "R");
+  document.getElementById("storyPrompt").innerHTML = T.story;
+  const st = document.getElementById("story"); st.value = saved.story || ""; st.placeholder = T.ph;
+  document.getElementById("aiOut").hidden = true;
+  document.querySelectorAll("#themes .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.theme === theme)));
+  document.getElementById("themeName").textContent = T.label;
+  updateScore();
+}
+const themeBox = document.getElementById("themes");
+Object.entries(THEMES).forEach(([k, t]) => {
+  const b = el("button", "chip", t.label); b.type = "button"; b.dataset.theme = k;
+  b.addEventListener("click", () => { if (k !== theme) { history.replaceState(null, "", k === "geral" ? location.pathname + location.search : "#" + k); applyTheme(k); } });
+  themeBox.appendChild(b);
+});
+document.getElementById("story").addEventListener("input", persist);
+document.getElementById("resetAll").addEventListener("click", () => {
+  try { localStorage.removeItem(themeKey()); } catch {}
+  applyTheme(theme); window.scrollTo({ top: 0 });
+});
+window.addEventListener("hashchange", () => applyTheme(location.hash.slice(1)));
+applyTheme(location.hash.slice(1));
+
+// ---------- optional AI feedback on the free text
+(async () => {
+  let sample = null;
+  try { sample = await window.claude?.use?.("sample"); } catch { sample = null; }
+  if (!sample) return;
+  const btn = document.getElementById("aiBtn"), out = document.getElementById("aiOut"), note = document.getElementById("aiNote");
+  btn.hidden = false; note.textContent = "Receba uma correção agora, ou mande o texto para Calú.";
+  btn.addEventListener("click", async () => {
+    const text = document.getElementById("story").value.trim();
+    if (text.length < 20) { note.textContent = "Escreva pelo menos duas frases antes de pedir correção."; return; }
+    btn.disabled = true; out.hidden = false; out.textContent = "Lendo seu texto…";
+    const prompt = `Você é professor(a) de inglês de um aluno brasileiro de nível A2 que está estudando o passado simples. Corrija o texto abaixo em português do Brasil, com tom gentil e encorajador, porque o aluno costuma travar por medo de errar.
+Formato:
+1. Uma frase curta elogiando algo específico.
+2. Lista dos erros, um por linha, no formato: "frase original → frase corrigida (motivo curto)". No máximo 6. Priorize erros de passado simples (did/didn't + verbo normal, irregulares, was/were, -ed).
+3. A versão corrigida completa do texto.
+4. Uma dica para a próxima vez.
+Não invente erros. Se estiver tudo certo, diga isso.
+
+Texto do aluno:
+"""${text.slice(0, 3000)}"""`;
+    try {
+      const r = await sample(prompt, { onText: ({ text }) => { out.textContent = text; }, modelTier: "quick", cache: false });
+      out.textContent = r.text;
+    } catch (e) {
+      out.textContent = e && e.code === "rate_limited" ? "Muitos pedidos agora. Tente de novo em alguns minutos." : "Não deu para corrigir agora. Mande o texto para Calú.";
+    } finally { btn.disabled = false; }
+  });
+})();
+</script>
+
+</body>
+</html>
