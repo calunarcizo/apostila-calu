@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.backlink{display:inline-flex;align-items:center;gap:6px;font:600 .9rem Inter,system-ui,sans-serif;text-decoration:none;color:var(--accent);justify-self:start}
+</style>
+<title>Presente Simples · Nível 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column; a sticky score strip; each exercise is a numbered step (the order is the learning sequence: controlled to free) */
+:root {
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --ink: #142233;
+  --muted: #586779;
+  --line: #d3dbe4;
+  --accent: #1f5fa8;
+  --accent-ink: #ffffff;
+  --signal: #f2b632;
+  --good: #1d7a4c;
+  --good-bg: #e2f3ea;
+  --bad: #b3362b;
+  --bad-bg: #f8e4e1;
+  --soft: #e3ebf5;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 24px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; }
+.eyebrow { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 14px; min-width: 0; }
+.scorebar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.scorebar .track { flex: 1 1 160px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.scorebar .fill { height: 100%; background: var(--good); width: 0; transition: width .3s; }
+.scorebar span { font-size: .85rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.step-head { display: flex; gap: 12px; align-items: baseline; }
+.step-num { font-family: var(--display); font-weight: 700; color: var(--accent); font-size: 1.4rem; min-width: 1.6em; }
+/* explanation */
+.rule { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.rule > div { background: var(--soft); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; min-width: 0; }
+.rule b { font-family: var(--mono); font-weight: 500; font-size: .92rem; }
+.ex { font-family: var(--mono); font-size: .88rem; }
+.callout { border-left: 4px solid var(--signal); padding: 8px 14px; background: var(--soft); border-radius: 0 10px 10px 0; }
+.pron { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pron div { border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; min-width: 0; }
+.pron .sound { display: block; font-family: var(--mono); font-size: 1.1rem; color: var(--accent); margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.pron small { display: block; color: var(--muted); font-size: .8rem; }
+/* items */
+.items { display: grid; gap: 12px; counter-reset: it; }
+.item { display: grid; gap: 8px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+.item:last-child { border-bottom: 0; padding-bottom: 0; }
+.prompt { font-size: 1.02rem; }
+.prompt .ctx { display: block; font-size: .8rem; color: var(--muted); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); text-decoration: line-through; }
+.opt:disabled { cursor: default; }
+.inline-input { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+input[type=text], textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 0; }
+input[type=text] { flex: 1 1 200px; }
+input.right { border-color: var(--good); background: var(--good-bg); }
+.prompt.blanks { line-height: 2.4; }
+input.slot { width: 7.5em; flex: none; display: inline-block; margin: 0 4px; padding: 2px 6px; border: 0; border-bottom: 2px solid var(--muted); border-radius: 4px 4px 0 0; background: var(--soft); text-align: center; vertical-align: baseline; }
+input.slot.right { border-bottom-color: var(--good); background: var(--good-bg); }
+input.slot.wrong { border-bottom-color: var(--bad); background: var(--bad-bg); }
+input.wrong { border-color: var(--bad); background: var(--bad-bg); }
+textarea { width: 100%; min-height: 150px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+.btn { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 9px 16px; cursor: pointer; background: var(--accent); color: var(--accent-ink); }
+.btn.small { padding: 7px 12px; font-size: .9rem; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.fb { font-size: .9rem; }
+.fb.ok { color: var(--good); }
+.fb.no { color: var(--bad); }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+/* word order */
+.bank, .built { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; padding: 6px; border-radius: 10px; }
+.built { border: 1px dashed var(--line); }
+.tile { font: inherit; font-family: var(--mono); font-size: .9rem; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+/* flashcards */
+.verbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.verb { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: grid; gap: 4px; min-width: 0; }
+.verb label { font-family: var(--mono); font-size: .88rem; }
+.verb label small { color: var(--muted); font-family: var(--body); }
+.verb input { width: 100%; padding: 6px 8px; }
+.checklist { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.checklist li { display: flex; gap: 8px; align-items: flex-start; }
+.checklist input { margin-top: 5px; }
+.ai { white-space: pre-wrap; background: var(--soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; }
+.final { text-align: center; }
+.final .big { font-family: var(--display); font-size: 3rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.themes-box { display: grid; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: .9rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .scorebar .fill { transition: none; } }
+@media (max-width: 420px) { .pron { grid-template-columns: 1fr; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← Voltar à trilha</a>
+  <header style="display:grid;gap:8px">
+    <span class="eyebrow">Inglês com Calú · Nível 1 (A1) · Unidade 1</span>
+    <h1>Presente simples</h1>
+    <p class="muted">Falar da sua rotina, do seu trabalho e de como as coisas funcionam. Uns 20 minutos. Cada exercício corrige na hora.</p>
+  </header>
+
+  <section class="themes-box">
+    <span class="eyebrow">Tema do vocabulário</span>
+    <div class="chips" id="themes"></div>
+    <p class="muted" style="font-size:.88rem">Mesma aula, mesmos exercícios: só muda o vocabulário. Para mandar um tema direto ao aluno, copie o link com ele já escolhido.</p>
+  </section>
+
+  <div class="scorebar" aria-live="polite">
+    <div class="track"><div class="fill" id="scoreFill"></div></div>
+    <span id="scoreText">0 de 0 acertos</span><span id="themeName" class="muted"></span>
+    <button class="btn ghost small" id="resetAll">Recomeçar</button>
+  </div>
+
+  <!-- 0 EXPLICAÇÃO -->
+  <section class="card">
+    <div class="step-head"><span class="step-num">0</span><h2>Como funciona</h2></div>
+    <p>O presente simples fala de <strong>rotina, hábitos e coisas que são sempre verdade</strong>: o que você faz todo dia, o que a empresa faz, como as coisas funcionam.</p>
+    <div class="rule">
+      <div><span class="eyebrow">Afirmativa</span><b>I / you / we / they work</b><b>he / she / it works</b><span class="muted" style="font-size:.85rem">só he, she, it ganham -s</span></div>
+      <div><span class="eyebrow">Negativa</span><b>I don't work</b><b>she doesn't work</b><span class="muted" style="font-size:.85rem">don't / doesn't + verbo normal</span></div>
+      <div><span class="eyebrow">Pergunta</span><b>Do you work?</b><b>Where does she work?</b><span class="muted" style="font-size:.85rem">(palavra de pergunta) + do/does + pessoa + verbo</span></div>
+    </div>
+    <p class="callout"><strong>A regra de ouro:</strong> o -s aparece uma vez só. Se entrou does ou doesn't, o verbo perde o -s: <span class="ex">She works. Does she work? She doesn't work.</span> E não coloque am/is/are antes de outro verbo: <span class="ex"><s>I am work.</s> I work.</span></p>
+    <h3>O som do -s</h3>
+    <div class="pron">
+      <div><span class="sound">/s/</span>works, helps, eats<small>depois de som surdo</small></div>
+      <div><span class="sound">/z/</span>plays, lives, goes<small>depois de som vozeado</small></div>
+      <div><span class="sound">/ɪz/</span>watches, fixes, misses<small>uma sílaba a mais</small></div>
+    </div>
+    <p class="muted" style="font-size:.9rem">Escrita: <span class="ex">watch → watches, go → goes, do → does, study → studies, have → has</span>. Always, usually, sometimes e never vêm antes do verbo (<span class="ex">I always drink coffee</span>), mas depois do to be (<span class="ex">I am never late</span>).</p>
+  </section>
+
+  <!-- 1 ESCOLHA -->
+  <section class="card" data-ex="A">
+    <div class="step-head"><span class="step-num">1</span><h2>Escolha a forma certa</h2></div>
+    <p class="muted">Toque na opção correta.</p>
+    <div class="items" id="exA"></div>
+  </section>
+
+  <!-- 2 COMPLETE -->
+  <section class="card" data-ex="B">
+    <div class="step-head"><span class="step-num">2</span><h2>Complete com o tempo certo</h2></div>
+    <p class="muted">Escreva só o que falta: o verbo (com ou sem -s) ou do/does + verbo. Pode usar don't ou do not.</p>
+    <div class="items" id="exB"></div>
+  </section>
+
+  <!-- 3 IRREGULARES -->
+  <section class="card" data-ex="F">
+    <div class="step-head"><span class="step-num">3</span><h2>20 verbos com he, she, it</h2></div>
+    <p class="muted">Escreva cada verbo como fica com he, she ou it e confira tudo de uma vez. Repita até acertar os 20.</p>
+    <div class="verbs" id="exF"></div>
+    <div class="row"><span class="fb" id="exFfb"></span><button class="btn" id="exFcheck">Conferir os 20</button></div>
+  </section>
+
+  <!-- 4 TRANSFORME -->
+  <section class="card" data-ex="C">
+    <div class="step-head"><span class="step-num">4</span><h2>Transforme a frase</h2></div>
+    <p class="muted">Escreva a frase inteira na forma pedida. Pode usar <span class="ex">doesn't</span> ou <span class="ex">does not</span>.</p>
+    <div class="items" id="exC"></div>
+  </section>
+
+  <!-- 5 CORRIJA -->
+  <section class="card" data-ex="D">
+    <div class="step-head"><span class="step-num">5</span><h2>Ache o erro</h2></div>
+    <p class="muted">Cada frase tem uma palavra errada. Toque nela.</p>
+    <div class="items" id="exD"></div>
+  </section>
+
+  <!-- 6 ORDENE -->
+  <section class="card" data-ex="E">
+    <div class="step-head"><span class="step-num">6</span><h2>Monte a pergunta</h2></div>
+    <p class="muted">Toque nas palavras na ordem certa. Toque de novo para tirar.</p>
+    <div class="items" id="exE"></div>
+  </section>
+
+  <!-- 7 REVISÃO -->
+  <section class="card" data-ex="R">
+    <div class="step-head"><span class="step-num">7</span><h2>Revisão das unidades anteriores</h2></div>
+    <p class="muted">Verbo to be (am, is, are), que vem junto com o presente simples. É assim que a gente fixa.</p>
+    <div class="items" id="exR"></div>
+  </section>
+
+  <!-- 8 PRODUÇÃO -->
+  <section class="card" id="prod">
+    <div class="step-head"><span class="step-num">8</span><h2>Agora é com você</h2></div>
+    <p id="storyPrompt"></p>
+    <textarea id="story" placeholder="Last month I went to... / Yesterday I worked..."></textarea>
+    <ul class="checklist" id="selfCheck">
+      <li><input type="checkbox" id="c1"><label for="c1">Usei he, she ou it com o verbo com -s</label></li>
+      <li><input type="checkbox" id="c2"><label for="c2">Usei don't ou doesn't pelo menos uma vez</label></li>
+      <li><input type="checkbox" id="c3"><label for="c3">Usei always, usually, sometimes ou never</label></li>
+      <li><input type="checkbox" id="c4"><label for="c4">Não coloquei am/is/are antes de outro verbo</label></li>
+      <li><input type="checkbox" id="c5"><label for="c5">Li em voz alta prestando atenção no som do -s</label></li>
+    </ul>
+    <div class="row">
+      <span class="fb muted" id="aiNote">Mande o texto para Calú na próxima aula.</span>
+      <button class="btn" id="aiBtn" hidden>Pedir correção</button>
+    </div>
+    <div class="ai" id="aiOut" hidden></div>
+  </section>
+
+  <section class="card final" id="finalCard">
+    <span class="eyebrow">Seu resultado nesta unidade</span>
+    <span class="big" id="finalPct">0%</span>
+    <p id="finalMsg" class="muted">Faça os exercícios para ver seu resultado.</p>
+  </section>
+</div>
+
+<script>
+// ---------- data
+const F = [{"base": "work", "ans": ["works"]}, {"base": "go", "ans": ["goes"]}, {"base": "do", "ans": ["does"]}, {"base": "have", "ans": ["has"]}, {"base": "watch", "ans": ["watches"]}, {"base": "study", "ans": ["studies"]}, {"base": "play", "ans": ["plays"]}, {"base": "fix", "ans": ["fixes"]}, {"base": "wash", "ans": ["washes"]}, {"base": "try", "ans": ["tries"]}, {"base": "buy", "ans": ["buys"]}, {"base": "finish", "ans": ["finishes"]}, {"base": "carry", "ans": ["carries"]}, {"base": "teach", "ans": ["teaches"]}, {"base": "miss", "ans": ["misses"]}, {"base": "fly", "ans": ["flies"]}, {"base": "say", "ans": ["says"]}, {"base": "relax", "ans": ["relaxes"]}, {"base": "enjoy", "ans": ["enjoys"]}, {"base": "push", "ans": ["pushes"]}];
+const THEMES = {
+  geral: {"label": "Geral", "A": [["She ___ at a bank.", ["is work", "work", "works"], 2], ["I ___ coffee in the morning.", ["am drink", "drinks", "drink"], 2], ["___ you live near here?", ["Are", "Does", "Do"], 2], ["He ___ like fish.", ["doesn't", "don't", "isn't"], 0], ["My brother ___ two kids.", ["have", "haves", "has"], 2], ["We ___ go out on Mondays.", ["doesn't", "don't", "aren't"], 1], ["Where ___ she work?", ["do", "does", "is"], 1], ["I ___ late for work.", ["never", "am never", "never am"], 1]], "B": [["My mother ___ (cook) on Sundays.", ["cooks"]], ["I ___ (wake) up at 6.", ["wake"]], ["He ___ (watch) TV at night.", ["watches"]], ["She ___ (study) English on Tuesdays.", ["studies"]], ["They ___ (not / work) on weekends.", ["don't work", "do not work"]], ["My father ___ (not / drink) coffee.", ["doesn't drink", "does not drink"]], ["___ you ___ (like) pizza?", ["do like"]], ["What time ___ he ___ (get) up?", ["does get"]]], "C": [["She works at a school.", "negativa", ["she doesn't work at a school", "she does not work at a school"]], ["I live with my parents.", "negativa", ["i don't live with my parents", "i do not live with my parents"]], ["He plays soccer on Saturdays.", "negativa", ["he doesn't play soccer on saturdays", "he does not play soccer on saturdays"]], ["You like coffee.", "pergunta", ["do you like coffee"]], ["She speaks Spanish.", "pergunta", ["does she speak spanish"]], ["They go to the gym.", "pergunta", ["do they go to the gym"]]], "D": [["She work at a hospital.", 1, "work → works (she pede -s)"], ["He don't like cats.", 1, "don't → doesn't (he usa doesn't)"], ["Does she likes music?", 2, "likes → like (depois de does, verbo sem -s)"], ["I am work every day.", 1, "am → (tire o am: I work)"], ["My sister haves a car.", 2, "haves → has (have fica has com he/she/it)"], ["Where you live?", 1, "you → do you (Where do you live?)"]], "E": [["where", "do", "you", "live"], ["what", "time", "does", "she", "wake", "up"], ["do", "you", "have", "kids"], ["what", "does", "he", "do"]], "Eans": ["where do you live", "what time does she wake up", "do you have kids", "what does he do"], "R": [["I ___ a teacher.", ["am"], "verbo to be"], ["She ___ at home now.", ["is"], "verbo to be"], ["They ___ (not) from Brazil.", ["aren't", "are not"], "to be negativa"], ["___ you tired?", ["are"], "to be pergunta"], ["My parents ___ very kind.", ["are"], "verbo to be"], ["He ___ (not) my boss.", ["isn't", "is not"], "to be negativa"]], "story": "Conte, em 5 a 8 frases, <strong>a sua rotina num dia de semana</strong>. Use horários e palavras de frequência (always, usually, sometimes, never). Fale também de uma pessoa da sua casa (she works…, he doesn't…).", "ph": "I wake up at 6. I usually drink coffee and... My sister works..."},
+  porto: {"label": "Porto e logística", "A": [["The ship ___ every Monday.", ["arrives", "arrive", "is arrive"], 0], ["The crane operators ___ at night.", ["work", "works", "are work"], 0], ["___ the terminal open on Sundays?", ["Is it", "Do", "Does"], 2], ["The truck driver ___ have the documents.", ["don't", "doesn't", "isn't"], 1], ["Customs ___ the containers every day.", ["checks", "checking", "check"], 0], ["We ___ load cargo when it rains.", ["aren't", "don't", "doesn't"], 1], ["How many containers ___ the ship carry?", ["do", "is", "does"], 2], ["The pilot ___ the ship into the port.", ["always guides", "always guide", "guides always"], 0]], "B": [["The vessel ___ (leave) at 10 p.m.", ["leaves"]], ["I ___ (start) my shift at 7.", ["start"]], ["The supervisor ___ (check) the cargo list.", ["checks"]], ["The crane ___ (carry) 40 containers per hour.", ["carries"]], ["The drivers ___ (not / wait) at the gate.", ["don't wait", "do not wait"]], ["The ship ___ (not / stop) in Santos.", ["doesn't stop", "does not stop"]], ["___ you ___ (work) on the night shift?", ["do work"]], ["When ___ the vessel ___ (arrive)?", ["does arrive"]]], "C": [["The ship carries containers.", "negativa", ["the ship doesn't carry containers", "the ship does not carry containers"]], ["We work on Sundays.", "negativa", ["we don't work on sundays", "we do not work on sundays"]], ["The agent sends the documents.", "negativa", ["the agent doesn't send the documents", "the agent does not send the documents"]], ["The truck goes to the yard.", "pergunta", ["does the truck go to the yard"]], ["They check the seals.", "pergunta", ["do they check the seals"]], ["The terminal opens at 6.", "pergunta", ["does the terminal open at 6"]]], "D": [["The ship arrive on Tuesdays.", 2, "arrive → arrives (the ship = it, pede -s)"], ["The captain don't speak Portuguese.", 2, "don't → doesn't (the captain = he)"], ["Does the crane works at night?", 3, "works → work (depois de does, verbo sem -s)"], ["We are load the ship at 8.", 1, "are → (tire o are: We load)"], ["The terminal haves five cranes.", 2, "haves → has (have fica has com it)"], ["What time the ship leaves?", 2, "the → does the (What time does the ship leave?)"]], "E": [["when", "does", "the", "ship", "arrive"], ["where", "do", "the", "trucks", "park"], ["does", "the", "crane", "work", "at", "night"], ["how", "many", "containers", "do", "you", "load"]], "Eans": ["when does the ship arrive", "where do the trucks park", "does the crane work at night", "how many containers do you load"], "R": [["The terminal ___ very busy today.", ["is"], "verbo to be"], ["The containers ___ in the yard.", ["are"], "verbo to be"], ["I ___ (not) on the night shift.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ the ship late?", ["is"], "to be pergunta"], ["The cranes ___ (not) old.", ["aren't", "are not"], "to be negativa"], ["The agent ___ in the office.", ["is"], "verbo to be"]], "story": "Conte, em 5 a 8 frases, <strong>a rotina de um dia de trabalho no porto ou no armazém</strong>. Diga o que você faz, a que horas, e o que outra pessoa da equipe faz (the supervisor checks…).", "ph": "I start my shift at 7. First, I check the... The supervisor..."},
+  saude: {"label": "Saúde", "A": [["The dentist ___ patients from 8 to 5.", ["is see", "sees", "see"], 1], ["Nurses ___ in shifts.", ["works", "work", "are work"], 1], ["___ the clinic open on Saturdays?", ["Do", "Is it", "Does"], 2], ["The patient ___ take his medicine.", ["don't", "doesn't", "isn't"], 1], ["She ___ her teeth three times a day.", ["brushs", "brush", "brushes"], 2], ["We ___ accept cards at the front desk.", ["aren't", "doesn't", "don't"], 2], ["How often ___ you floss?", ["are", "do", "does"], 1], ["I ___ my hands before an exam.", ["wash always", "always washes", "always wash"], 2]], "B": [["The nurse ___ (check) the blood pressure.", ["checks"]], ["I ___ (see) ten patients a day.", ["see"]], ["The doctor ___ (finish) at 6.", ["finishes"]], ["My son ___ (cry) at the dentist.", ["cries"]], ["Many patients ___ (not / floss).", ["don't floss", "do not floss"]], ["The baby ___ (not / sleep) well.", ["doesn't sleep", "does not sleep"]], ["___ you ___ (feel) pain here?", ["do feel"]], ["How often ___ she ___ (take) the medicine?", ["does take"]]], "C": [["The patient smokes every day.", "negativa", ["the patient doesn't smoke every day", "the patient does not smoke every day"]], ["I work on weekends.", "negativa", ["i don't work on weekends", "i do not work on weekends"]], ["She takes antibiotics.", "negativa", ["she doesn't take antibiotics", "she does not take antibiotics"]], ["He feels pain.", "pergunta", ["does he feel pain"]], ["You brush twice a day.", "pergunta", ["do you brush twice a day"]], ["The clinic accepts insurance.", "pergunta", ["does the clinic accept insurance"]]], "D": [["The patient feel pain at night.", 2, "feel → feels (the patient = he/she, pede -s)"], ["She don't eat sugar.", 1, "don't → doesn't (she usa doesn't)"], ["Does it hurts when you chew?", 2, "hurts → hurt (depois de does, verbo sem -s)"], ["I am see patients in the morning.", 1, "am → (tire o am: I see)"], ["The clinic haves two nurses.", 2, "haves → has (have fica has com it)"], ["How often you brush your teeth?", 2, "you → do you (How often do you brush…?)"]], "E": [["where", "does", "it", "hurt"], ["do", "you", "take", "any", "medicine"], ["how", "often", "do", "you", "brush", "your", "teeth"], ["does", "the", "pain", "wake", "you", "up"]], "Eans": ["where does it hurt", "do you take any medicine", "how often do you brush your teeth", "does the pain wake you up"], "R": [["The patient ___ nervous.", ["is"], "verbo to be"], ["My teeth ___ sensitive.", ["are"], "verbo to be"], ["I ___ (not) allergic to penicillin.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ you pregnant?", ["are"], "to be pergunta"], ["The results ___ (not) ready.", ["aren't", "are not"], "to be negativa"], ["Dr. Silva ___ in room 3.", ["is"], "verbo to be"]], "story": "Conte, em 5 a 8 frases, <strong>a rotina da clínica ou do hospital onde você trabalha</strong>, ou os hábitos de saúde de um paciente (He smokes…, he doesn't floss…).", "ph": "I arrive at the clinic at 8. The nurse prepares the... The patients usually..."},
+  terceiro: {"label": "Terceiro setor", "A": [["Our NGO ___ 200 families.", ["helps", "is help", "help"], 0], ["The volunteers ___ on Saturdays.", ["are work", "works", "work"], 2], ["___ the project receive public money?", ["Is", "Does", "Do"], 1], ["The foundation ___ fund small projects.", ["don't", "doesn't", "isn't"], 1], ["She ___ the reports every month.", ["write", "writes", "is write"], 1], ["We ___ charge for the classes.", ["don't", "doesn't", "aren't"], 0], ["Who ___ the donations?", ["does organizes", "organize", "organizes"], 2], ["The team ___ on Mondays.", ["usually meet", "usually meets", "meets usually"], 1]], "B": [["The coordinator ___ (plan) the activities.", ["plans"]], ["We ___ (teach) reading to adults.", ["teach"]], ["The project ___ (reach) three cities.", ["reaches"]], ["The director ___ (fly) to Brasília every month.", ["flies"]], ["The volunteers ___ (not / get) paid.", ["don't get", "do not get"]], ["The NGO ___ (not / have) a website.", ["doesn't have", "does not have"]], ["___ you ___ (need) more volunteers?", ["do need"]], ["How ___ the foundation ___ (choose) the projects?", ["does choose"]]], "C": [["The NGO works with children.", "negativa", ["the ngo doesn't work with children", "the ngo does not work with children"]], ["We receive donations.", "negativa", ["we don't receive donations", "we do not receive donations"]], ["She coordinates the project.", "negativa", ["she doesn't coordinate the project", "she does not coordinate the project"]], ["The funder visits the community.", "pergunta", ["does the funder visit the community"]], ["They need volunteers.", "pergunta", ["do they need volunteers"]], ["The project has a budget.", "pergunta", ["does the project have a budget"]]], "D": [["The NGO help women in the community.", 2, "help → helps (the NGO = it, pede -s)"], ["The funder don't accept late reports.", 2, "don't → doesn't (the funder = it/he)"], ["Does she works with children?", 2, "works → work (depois de does, verbo sem -s)"], ["We are teach English to teenagers.", 1, "are → (tire o are: We teach)"], ["The project haves three partners.", 2, "haves → has (have fica has com it)"], ["How many families you help?", 3, "you → do you (How many families do you help?)"]], "E": [["how", "many", "families", "do", "you", "help"], ["where", "does", "the", "project", "work"], ["do", "you", "need", "volunteers"], ["who", "funds", "the", "project"]], "Eans": ["how many families do you help", "where does the project work", "do you need volunteers", "who funds the project"], "R": [["The project ___ in São Paulo.", ["is"], "verbo to be"], ["The volunteers ___ very engaged.", ["are"], "verbo to be"], ["I ___ (not) the coordinator.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ the report ready?", ["is"], "to be pergunta"], ["The kits ___ (not) here yet.", ["aren't", "are not"], "to be negativa"], ["Our director ___ in Brasília this week.", ["is"], "verbo to be"]], "story": "Conte, em 5 a 8 frases, <strong>como funciona o projeto ou a ONG em que você trabalha</strong>: quem vocês atendem, o que fazem toda semana e quem faz o quê.", "ph": "Our NGO works with... Every week we... The coordinator..."},
+  viagem: {"label": "Viagem e hotelaria", "A": [["The hotel ___ breakfast from 6 to 10.", ["is serve", "serves", "serve"], 1], ["Most guests ___ at noon.", ["check out", "are check out", "checks out"], 0], ["___ the room have air conditioning?", ["Does", "Is", "Do"], 0], ["The bus ___ stop here on Sundays.", ["doesn't", "don't", "isn't"], 0], ["The receptionist ___ three languages.", ["is speak", "speak", "speaks"], 2], ["We ___ allow pets in the rooms.", ["don't", "doesn't", "aren't"], 0], ["What time ___ the museum open?", ["do", "is", "does"], 2], ["I ___ my passport in the safe.", ["keep always", "always keeps", "always keep"], 2]], "B": [["The tour ___ (start) at 9.", ["starts"]], ["We ___ (travel) every July.", ["travel"]], ["The flight ___ (leave) from gate 12.", ["leaves"]], ["The guide ___ (carry) a red flag.", ["carries"]], ["The guests ___ (not / pay) for parking.", ["don't pay", "do not pay"]], ["The hotel ___ (not / have) a pool.", ["doesn't have", "does not have"]], ["___ you ___ (want) a window seat?", ["do want"]], ["How much ___ the room ___ (cost)?", ["does cost"]]], "C": [["The hotel has a gym.", "negativa", ["the hotel doesn't have a gym", "the hotel does not have a gym"]], ["We serve dinner until 11.", "negativa", ["we don't serve dinner until 11", "we do not serve dinner until 11"]], ["The shuttle goes to the airport.", "negativa", ["the shuttle doesn't go to the airport", "the shuttle does not go to the airport"]], ["The room includes breakfast.", "pergunta", ["does the room include breakfast"]], ["You accept credit cards.", "pergunta", ["do you accept credit cards"]], ["The tour takes three hours.", "pergunta", ["does the tour take three hours"]]], "D": [["The bus leave every hour.", 2, "leave → leaves (the bus = it, pede -s)"], ["The hotel don't have parking.", 2, "don't → doesn't (the hotel = it)"], ["Does the room includes breakfast?", 3, "includes → include (depois de does, verbo sem -s)"], ["I am travel every year.", 1, "am → (tire o am: I travel)"], ["The room haves a balcony.", 2, "haves → has (have fica has com it)"], ["Where the bus stops?", 1, "the → does the (Where does the bus stop?)"]], "E": [["what", "time", "does", "the", "tour", "start"], ["does", "the", "room", "have", "a", "view"], ["where", "do", "you", "want", "to", "go"], ["how", "much", "does", "it", "cost"]], "Eans": ["what time does the tour start", "does the room have a view", "where do you want to go", "how much does it cost"], "R": [["The room ___ ready.", ["is"], "verbo to be"], ["The guests ___ in the lobby.", ["are"], "verbo to be"], ["I ___ (not) a guest here.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ the museum far from here?", ["is"], "to be pergunta"], ["The towels ___ (not) clean.", ["aren't", "are not"], "to be negativa"], ["Breakfast ___ in the restaurant.", ["is"], "verbo to be"]], "story": "Conte, em 5 a 8 frases, <strong>a rotina do hotel onde você trabalha ou o que você costuma fazer quando viaja</strong>. Use usually, always e never.", "ph": "When I travel, I usually... The hotel serves... The receptionist..."},
+  tecnologia: {"label": "Tecnologia", "A": [["The app ___ data every hour.", ["is update", "updates", "update"], 1], ["Our developers ___ from home.", ["works", "work", "are work"], 1], ["___ the system send alerts?", ["Do", "Does", "Is"], 1], ["The old laptop ___ run this program.", ["isn't", "don't", "doesn't"], 2], ["She ___ the code before lunch.", ["tests", "is test", "test"], 0], ["We ___ deploy on Fridays.", ["doesn't", "aren't", "don't"], 2], ["How often ___ the team meet?", ["do", "is", "does"], 2], ["I ___ my password every three months.", ["always changes", "always change", "change always"], 1]], "B": [["The server ___ (restart) every night.", ["restarts"]], ["We ___ (use) Python and SQL.", ["use"]], ["The tester ___ (fix) small bugs.", ["fixes"]], ["The system ___ (copy) the files to the cloud.", ["copies"]], ["Our clients ___ (not / use) Linux.", ["don't use", "do not use"]], ["The app ___ (not / work) offline.", ["doesn't work", "does not work"]], ["___ you ___ (have) a GitHub account?", ["do have"]], ["What ___ this function ___ (do)?", ["does do"]]], "C": [["The app saves your data.", "negativa", ["the app doesn't save your data", "the app does not save your data"]], ["We use Scrum.", "negativa", ["we don't use scrum", "we do not use scrum"]], ["The manager reviews the code.", "negativa", ["the manager doesn't review the code", "the manager does not review the code"]], ["The system sends emails.", "pergunta", ["does the system send emails"]], ["They work remotely.", "pergunta", ["do they work remotely"]], ["The bug appears on Android.", "pergunta", ["does the bug appear on android"]]], "D": [["The app crash on old phones.", 2, "crash → crashes (the app = it, pede -es)"], ["The server don't respond.", 2, "don't → doesn't (the server = it)"], ["Does the program needs internet?", 3, "needs → need (depois de does, verbo sem -s)"], ["We are use Teams for meetings.", 1, "are → (tire o are: We use)"], ["The company haves 50 developers.", 2, "haves → has (have fica has com it)"], ["Which language you use?", 2, "you → do you (Which language do you use?)"]], "E": [["what", "does", "this", "button", "do"], ["do", "you", "work", "remotely"], ["how", "often", "does", "the", "system", "update"], ["which", "tools", "do", "you", "use"]], "Eans": ["what does this button do", "do you work remotely", "how often does the system update", "which tools do you use"], "R": [["The server ___ down.", ["is"], "verbo to be"], ["The tests ___ green.", ["are"], "verbo to be"], ["I ___ (not) a developer.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ the app free?", ["is"], "to be pergunta"], ["The files ___ (not) in the cloud.", ["aren't", "are not"], "to be negativa"], ["My team ___ in Recife.", ["is"], "verbo to be"]], "story": "Conte, em 5 a 8 frases, <strong>a rotina da sua equipe de tecnologia ou como você usa a tecnologia no dia a dia</strong>. Diga o que cada pessoa faz (the tester checks…).", "ph": "Every morning we have a daily meeting. I usually... The tester..."},
+  academico: {"label": "Vida acadêmica", "A": [["My advisor ___ my chapters every month.", ["read", "is read", "reads"], 2], ["Master's students ___ two articles a week.", ["reads", "read", "are read"], 1], ["___ the library open at night?", ["Does", "Is it", "Do"], 0], ["The professor ___ accept late papers.", ["doesn't", "don't", "isn't"], 0], ["She ___ her research in English.", ["publishs", "publish", "publishes"], 2], ["We ___ have classes on Fridays.", ["don't", "aren't", "doesn't"], 0], ["What ___ your research focus on?", ["does", "is", "do"], 0], ["I ___ my notes after class.", ["always reviews", "always review", "review always"], 1]], "B": [["The seminar ___ (start) at 2.", ["starts"]], ["I ___ (study) public policy.", ["study"]], ["My advisor ___ (teach) two courses.", ["teaches"]], ["The group ___ (study) migration.", ["studies"]], ["Many students ___ (not / read) in English.", ["don't read", "do not read"]], ["The program ___ (not / offer) scholarships.", ["doesn't offer", "does not offer"]], ["___ you ___ (work) and study?", ["do work"]], ["How often ___ the group ___ (meet)?", ["does meet"]]], "C": [["The article discusses climate policy.", "negativa", ["the article doesn't discuss climate policy", "the article does not discuss climate policy"]], ["I write in Portuguese.", "negativa", ["i don't write in portuguese", "i do not write in portuguese"]], ["The program requires an English exam.", "negativa", ["the program doesn't require an english exam", "the program does not require an english exam"]], ["She teaches statistics.", "pergunta", ["does she teach statistics"]], ["They use interviews.", "pergunta", ["do they use interviews"]], ["The study compares two cities.", "pergunta", ["does the study compare two cities"]]], "D": [["The study compare three cities.", 2, "compare → compares (the study = it, pede -s)"], ["My advisor don't answer emails.", 2, "don't → doesn't (my advisor = he/she)"], ["Does the program requires a proficiency test?", 3, "requires → require (depois de does, verbo sem -s)"], ["I am study at night.", 1, "am → (tire o am: I study)"], ["The library haves a quiet room.", 2, "haves → has (have fica has com it)"], ["What your research is about?", 1, "your → is your (What is your research about?)"]], "E": [["what", "does", "your", "research", "focus", "on"], ["how", "often", "do", "you", "meet", "your", "advisor"], ["does", "the", "program", "have", "scholarships"], ["which", "methods", "do", "you", "use"]], "Eans": ["what does your research focus on", "how often do you meet your advisor", "does the program have scholarships", "which methods do you use"], "R": [["My thesis ___ about migration.", ["is"], "verbo to be"], ["The classes ___ online.", ["are"], "verbo to be"], ["I ___ (not) a PhD student.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ the exam difficult?", ["is"], "to be pergunta"], ["The articles ___ (not) in Portuguese.", ["aren't", "are not"], "to be negativa"], ["My advisor ___ very patient.", ["is"], "verbo to be"]], "story": "Conte, em 5 a 8 frases, <strong>a sua rotina de estudos e pesquisa</strong>: quando você lê, onde estuda, como funciona o seu grupo e o que seu orientador faz.", "ph": "I study in the morning. I usually read... My advisor..."},
+  comex: {"label": "Comércio exterior", "A": [["Our supplier ___ the goods from China.", ["is ship", "ship", "ships"], 2], ["Our clients ___ in dollars.", ["pays", "pay", "are pay"], 1], ["___ the price include freight?", ["Is", "Do", "Does"], 2], ["The broker ___ work on weekends.", ["don't", "isn't", "doesn't"], 2], ["She ___ the invoices every Friday.", ["is check", "checks", "check"], 1], ["We ___ export to the US.", ["doesn't", "aren't", "don't"], 2], ["How long ___ customs clearance take?", ["is", "does", "do"], 1], ["I ___ the tracking before I call the client.", ["always check", "always checks", "check always"], 0]], "B": [["The broker ___ (pay) the import taxes.", ["pays"]], ["We ___ (import) machines from Germany.", ["import"]], ["The client ___ (wish) to change the order.", ["wishes"]], ["The company ___ (buy) coffee from Minas.", ["buys"]], ["Our suppliers ___ (not / accept) checks.", ["don't accept", "do not accept"]], ["The quote ___ (not / include) insurance.", ["doesn't include", "does not include"]], ["___ you ___ (ship) by air or by sea?", ["do ship"]], ["When ___ the container ___ (arrive)?", ["does arrive"]]], "C": [["The supplier sends samples.", "negativa", ["the supplier doesn't send samples", "the supplier does not send samples"]], ["We pay in advance.", "negativa", ["we don't pay in advance", "we do not pay in advance"]], ["The client needs the certificate.", "negativa", ["the client doesn't need the certificate", "the client does not need the certificate"]], ["The price includes freight.", "pergunta", ["does the price include freight"]], ["They export to Europe.", "pergunta", ["do they export to europe"]], ["The broker handles the documents.", "pergunta", ["does the broker handle the documents"]]], "D": [["The supplier send the invoice by email.", 2, "send → sends (the supplier = he/it, pede -s)"], ["The price don't include taxes.", 2, "don't → doesn't (the price = it)"], ["Does the client wants a discount?", 3, "wants → want (depois de does, verbo sem -s)"], ["We are import from China.", 1, "are → (tire o are: We import)"], ["The company haves an office in Miami.", 2, "haves → has (have fica has com it)"], ["How you ship the goods?", 1, "you → do you (How do you ship the goods?)"]], "E": [["how", "do", "you", "ship", "the", "goods"], ["does", "the", "price", "include", "freight"], ["when", "does", "the", "payment", "arrive"], ["who", "pays", "the", "taxes"]], "Eans": ["how do you ship the goods", "does the price include freight", "when does the payment arrive", "who pays the taxes"], "R": [["The container ___ at the port.", ["is"], "verbo to be"], ["The documents ___ ready.", ["are"], "verbo to be"], ["I ___ (not) the buyer.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ the goods insured?", ["are"], "to be pergunta"], ["The samples ___ (not) here yet.", ["aren't", "are not"], "to be negativa"], ["Our office ___ in Santos.", ["is"], "verbo to be"]], "story": "Conte, em 5 a 8 frases, <strong>como funciona uma importação ou exportação na sua empresa</strong>: quem faz o quê, quando, e o que o cliente costuma pedir.", "ph": "We import... First, the supplier sends... The broker usually..."},
+  atendimento: {"label": "Atendimento e entrevista", "A": [["The store ___ at 10.", ["open", "is open", "opens"], 2], ["Our customers ___ online.", ["buy", "are buy", "buys"], 0], ["___ the product come with a warranty?", ["Do", "Does", "Is"], 1], ["The manager ___ answer the phone.", ["doesn't", "isn't", "don't"], 0], ["She ___ about 80 calls a day.", ["is answer", "answers", "answer"], 1], ["We ___ accept returns after 30 days.", ["doesn't", "don't", "aren't"], 1], ["What ___ you do in your current job?", ["do", "are", "does"], 0], ["I ___ the customer's name.", ["use always", "always uses", "always use"], 2]], "B": [["The manager ___ (solve) the complaints.", ["solves"]], ["I ___ (work) in customer service.", ["work"]], ["The system ___ (finish) the order in seconds.", ["finishes"]], ["The company ___ (reply) in 24 hours.", ["replies"]], ["Our clients ___ (not / pay) for delivery.", ["don't pay", "do not pay"]], ["The store ___ (not / open) on holidays.", ["doesn't open", "does not open"]], ["___ you ___ (speak) English at work?", ["do speak"]], ["How ___ the company ___ (train) new staff?", ["does train"]]], "C": [["The store sells electronics.", "negativa", ["the store doesn't sell electronics", "the store does not sell electronics"]], ["I answer emails.", "negativa", ["i don't answer emails", "i do not answer emails"]], ["The manager speaks English.", "negativa", ["the manager doesn't speak english", "the manager does not speak english"]], ["The product comes with a manual.", "pergunta", ["does the product come with a manual"]], ["You work on Saturdays.", "pergunta", ["do you work on saturdays"]], ["The delivery takes two days.", "pergunta", ["does the delivery take two days"]]], "D": [["The customer want a refund.", 2, "want → wants (the customer = he/she, pede -s)"], ["The store don't open on Sundays.", 2, "don't → doesn't (the store = it)"], ["Does the price includes delivery?", 3, "includes → include (depois de does, verbo sem -s)"], ["I am work at a call center.", 1, "am → (tire o am: I work)"], ["The company haves 300 employees.", 2, "haves → has (have fica has com it)"], ["What you do in your free time?", 1, "you → do you (What do you do in your free time?)"]], "E": [["what", "do", "you", "do"], ["why", "do", "you", "want", "this", "job"], ["how", "does", "the", "delivery", "work"], ["do", "you", "speak", "any", "other", "languages"]], "Eans": ["what do you do", "why do you want this job", "how does the delivery work", "do you speak any other languages"], "R": [["The customer ___ angry.", ["is"], "verbo to be"], ["The products ___ on sale.", ["are"], "verbo to be"], ["I ___ (not) available on Sundays.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ you the manager?", ["are"], "to be pergunta"], ["The orders ___ (not) ready.", ["aren't", "are not"], "to be negativa"], ["My shift ___ from 8 to 5.", ["is"], "verbo to be"]], "story": "Responda, em 5 a 8 frases, <strong>à pergunta de entrevista “What do you do?”</strong>: onde você trabalha, o que faz num dia normal e do que você gosta no trabalho.", "ph": "I work at... Every day I answer... I usually... I like..."},
+  clima: {"label": "Clima e território", "A": [["The river ___ every summer.", ["flood", "floods", "is flood"], 1], ["Trees ___ the city cooler.", ["are make", "make", "makes"], 1], ["___ the city collect recycling here?", ["Do", "Does", "Is"], 1], ["The community ___ have clean water.", ["don't", "doesn't", "isn't"], 1], ["It ___ a lot in March.", ["rain", "rains", "is rain"], 1], ["We ___ use plastic bags.", ["aren't", "don't", "doesn't"], 1], ["How often ___ the truck collect the trash?", ["does", "do", "is"], 0], ["The residents ___ the square on Sundays.", ["usually clean", "usually cleans", "clean usually"], 0]], "B": [["The collective ___ (plant) trees every month.", ["plants"]], ["We ___ (recycle) glass and paper.", ["recycle"]], ["The rain ___ (wash) the soil into the river.", ["washes"]], ["The heat ___ (dry) the crops.", ["dries"]], ["Many cities ___ (not / treat) their sewage.", ["don't treat", "do not treat"]], ["The government ___ (not / invest) enough.", ["doesn't invest", "does not invest"]], ["___ you ___ (separate) your trash?", ["do separate"]], ["Why ___ the street ___ (flood)?", ["does flood"]]], "C": [["The river floods the houses.", "negativa", ["the river doesn't flood the houses", "the river does not flood the houses"]], ["We plant native trees.", "negativa", ["we don't plant native trees", "we do not plant native trees"]], ["The city collects recycling.", "negativa", ["the city doesn't collect recycling", "the city does not collect recycling"]], ["The factory uses river water.", "pergunta", ["does the factory use river water"]], ["They live near the hill.", "pergunta", ["do they live near the hill"]], ["The project protects the mangrove.", "pergunta", ["does the project protect the mangrove"]]], "D": [["The river flood every year.", 2, "flood → floods (the river = it, pede -s)"], ["The city don't treat the sewage.", 2, "don't → doesn't (the city = it)"], ["Does it rains a lot here?", 2, "rains → rain (depois de does, verbo sem -s)"], ["We are plant trees on Saturdays.", 1, "are → (tire o are: We plant)"], ["The community haves a garden.", 2, "haves → has (have fica has com it)"], ["Where you live?", 1, "you → do you (Where do you live?)"]], "E": [["why", "does", "the", "street", "flood"], ["do", "you", "recycle", "at", "home"], ["how", "often", "does", "it", "rain", "here"], ["what", "does", "the", "collective", "do"]], "Eans": ["why does the street flood", "do you recycle at home", "how often does it rain here", "what does the collective do"], "R": [["The air ___ dry today.", ["is"], "verbo to be"], ["The rivers ___ polluted.", ["are"], "verbo to be"], ["I ___ (not) from this neighborhood.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ the water safe?", ["is"], "to be pergunta"], ["The streets ___ (not) clean.", ["aren't", "are not"], "to be negativa"], ["The hill ___ a risk area.", ["is"], "verbo to be"]], "story": "Conte, em 5 a 8 frases, <strong>como é o clima e a vida no seu bairro ou território</strong>: o que acontece quando chove, o que a comunidade faz e o que a prefeitura não faz.", "ph": "In my neighborhood it rains a lot in... When it rains, the street... The community..."},
+  cultura: {"label": "Séries, música e memes", "A": [["My sister ___ K-pop all day.", ["is listen to", "listen to", "listens to"], 2], ["My friends ___ memes all the time.", ["are send", "send", "sends"], 1], ["___ the series have a second season?", ["Do", "Is", "Does"], 2], ["He ___ like horror movies.", ["doesn't", "isn't", "don't"], 0], ["The singer ___ in English and Spanish.", ["is sing", "sings", "sing"], 1], ["We ___ watch TV on weekdays.", ["don't", "doesn't", "aren't"], 0], ["What kind of music ___ you like?", ["do", "does", "are"], 0], ["I ___ the subtitles in English.", ["always turns on", "turn on always", "always turn on"], 2]], "B": [["My brother ___ (watch) anime every night.", ["watches"]], ["I ___ (follow) this podcast.", ["follow"]], ["The band ___ (play) in São Paulo every year.", ["plays"]], ["The main character ___ (try) to save her family.", ["tries"]], ["My parents ___ (not / understand) memes.", ["don't understand", "do not understand"]], ["The movie ___ (not / have) subtitles.", ["doesn't have", "does not have"]], ["___ you ___ (play) any instrument?", ["do play"]], ["What ___ the song ___ (mean)?", ["does mean"]]], "C": [["The series shows a real story.", "negativa", ["the series doesn't show a real story", "the series does not show a real story"]], ["I listen to rock.", "negativa", ["i don't listen to rock", "i do not listen to rock"]], ["She plays the guitar.", "negativa", ["she doesn't play the guitar", "she does not play the guitar"]], ["The podcast comes out on Mondays.", "pergunta", ["does the podcast come out on mondays"]], ["They like reggaeton.", "pergunta", ["do they like reggaeton"]], ["The movie has a happy ending.", "pergunta", ["does the movie have a happy ending"]]], "D": [["My sister love this song.", 2, "love → loves (my sister = she, pede -s)"], ["He don't watch series.", 1, "don't → doesn't (he usa doesn't)"], ["Does she likes the new album?", 2, "likes → like (depois de does, verbo sem -s)"], ["I am listen to music at work.", 1, "am → (tire o am: I listen)"], ["The series haves five seasons.", 2, "haves → has (have fica has com it)"], ["What kind of music you like?", 4, "you → do you (What kind of music do you like?)"]], "E": [["what", "kind", "of", "music", "do", "you", "like"], ["does", "the", "series", "have", "subtitles"], ["who", "sings", "this", "song"], ["how", "often", "do", "you", "watch", "movies"]], "Eans": ["what kind of music do you like", "does the series have subtitles", "who sings this song", "how often do you watch movies"], "R": [["The new season ___ great.", ["is"], "verbo to be"], ["The actors ___ Korean.", ["are"], "verbo to be"], ["I ___ (not) a big fan of pop.", ["am not", "'m not", "'m not", "am not"], "to be negativa"], ["___ this song new?", ["is"], "to be pergunta"], ["The tickets ___ (not) expensive.", ["aren't", "are not"], "to be negativa"], ["My favorite band ___ from Bahia.", ["is"], "verbo to be"]], "story": "Conte, em 5 a 8 frases, <strong>o que você e as pessoas da sua casa costumam assistir e ouvir</strong>. Use always, usually e never, e fale de alguém (my brother watches…, my mother doesn't…).", "ph": "I usually watch series at night. My favorite is... My brother..."},
+};
+let A, B, C, D, E, Eans, R, theme, KEY, results = {}, TOTAL = 0;
+function themeKey() { return "calu-pr-u1-" + theme; }
+
+// ---------- state & scoring
+let saved = {};
+function persist() {
+  try { localStorage.setItem(themeKey(), JSON.stringify({ results, story: document.getElementById("story").value, total: TOTAL, t: Date.now() })); } catch {}
+  try { const d = new Date().toLocaleDateString("sv"); const days = JSON.parse(localStorage.getItem("calu-days") || "[]"); if (!days.includes(d)) { days.push(d); localStorage.setItem("calu-days", JSON.stringify(days.slice(-400))); } } catch {}
+}
+function mark(id, ok) { if (!(id in results)) results[id] = ok; else if (ok) results[id] = results[id] || false; updateScore(); persist(); }
+function updateScore() {
+  const done = Object.keys(results).length;
+  const right = Object.values(results).filter(Boolean).length;
+  document.getElementById("scoreText").textContent = `${right} de ${done} acertos · ${TOTAL - done} faltando`;
+  document.getElementById("scoreFill").style.width = (done / TOTAL * 100) + "%";
+  const pct = done ? Math.round(right / TOTAL * 100) : 0;
+  document.getElementById("finalPct").textContent = pct + "%";
+  document.getElementById("finalMsg").textContent =
+    done < TOTAL ? `Você respondeu ${done} de ${TOTAL}. Termine para ver o resultado completo.` :
+    pct >= 85 ? "Excelente. Você já pode seguir para a próxima unidade (futuro com will e going to)." :
+    pct >= 65 ? "Bom caminho. Refaça os exercícios 1 e 5 amanhã antes de seguir." :
+    "Vale refazer a unidade com calma. Comece pela explicação e pelos 20 verbos com -s.";
+}
+const norm = s => s.toLowerCase().replace(/[’']/g, "'").replace(/[.?!,]+$/g, "").replace(/\s+/g, " ").trim();
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+function blankify(text) { return text.replace("___", "_____"); }
+
+// ---------- explanations for wrong answers: say what the sentence asks and why the answer doesn't fit
+const IRR = {}; `be was/were been;become became become;begin began begun;break broke broken;bring brought brought;build built built;buy bought bought;catch caught caught;choose chose chosen;come came come;cost cost cost;cut cut cut;do did done;drink drank drunk;drive drove driven;eat ate eaten;fall fell fallen;feel felt felt;find found found;fly flew flown;forget forgot forgotten;get got gotten/got;give gave given;go went gone/been;grow grew grown;have had had;hear heard heard;hold held held;keep kept kept;know knew known;leave left left;lose lost lost;make made made;meet met met;pay paid paid;put put put;read read read;ride rode ridden;rise rose risen;run ran run;say said said;see saw seen;sell sold sold;send sent sent;set set set;sing sang sung;sit sat sat;sleep slept slept;speak spoke spoken;spend spent spent;stand stood stood;steal stole stolen;swim swam swum;take took taken;teach taught taught;tell told told;think thought thought;understand understood understood;wake woke woken;wear wore worn;win won won;write wrote written`
+  .split(";").forEach(r => { const [b, p, pp] = r.split(" "); IRR[b] = { past: p.split("/"), pp: pp.split("/") }; });
+const PASTS = {}, PPS = {};
+for (const [b, v] of Object.entries(IRR)) { v.past.forEach(x => (PASTS[x] = PASTS[x] || []).push(b)); v.pp.forEach(x => (PPS[x] = PPS[x] || []).push(b)); }
+function baseOf(w) {
+  if (!w) return null; w = w.toLowerCase();
+  if (IRR[w]) return w; if (PASTS[w]) return PASTS[w][0]; if (PPS[w]) return PPS[w][0];
+  if (/ied$/.test(w)) return w.replace(/ied$/, "y");
+  if (/([^aeiouls])\1ed$/.test(w)) return w.slice(0, -3);
+  if (/ed$/.test(w)) { const b = w.slice(0, -2); return /(v|c|z|[^aeiou]at|ar|ur)$/.test(b) ? b + "e" : b; }
+  return w;
+}
+const pastOf = b => IRR[b] ? IRR[b].past[0] : (b.endsWith("e") ? b + "d" : /[^aeiou]y$/.test(b) ? b.slice(0, -1) + "ied" : b + "ed");
+const ppOf = b => IRR[b] ? IRR[b].pp[0] : pastOf(b);
+const AUX = /^(did|didn't|have|has|haven't|hasn't|had|hadn't|was|were|wasn't|weren't|do|does|don't|doesn't|not|never|already|ever|just|still|yet|you|i|he|she|it|we|they|will|won't|am|is|are|going|to|gonna|'ll|'m)$/;
+function tenseOf(t) {
+  t = " " + t.toLowerCase() + " ";
+  const f = t.trim().split(/\s+/)[0];
+  if (/^ (am|is|are|isn't|aren't|am not|'m not|is not|are not) $/.test(t)) return "be";
+  if (/ (going to|gonna) /.test(t) || /^(going)$/.test(f)) return "going";
+  if (/ (will|won't|'ll|wills) /.test(t)) return "will";
+  if (/^(had|hadn't)$/.test(f)) return "pf"; if (/^(have|has|haven't|hasn't)$/.test(f)) return "pp"; if (/^(did|didn't|was|were|wasn't|weren't)$/.test(f)) return "ps";
+  if (/ (had|hadn't|'d) /.test(t) || /^ had /.test(t)) return "pf";
+  if (/ (have|has|haven't|hasn't|'ve|'s been) /.test(t)) return "pp";
+  if (/ (did|didn't|was|were|wasn't|weren't) /.test(t)) return "ps";
+  const ws = t.trim().split(/\s+/);
+  if (ws.some(w => PASTS[w] || (/ed$/.test(w) && w.length > 3))) return "ps";
+  if (ws.some(w => /^(do|does|don't|doesn't)$/.test(w))) return "pres";
+  return ws.length ? "pres" : null;
+}
+const NAME = { ps: "passado simples", pp: "present perfect (have/has + particípio)", pf: "past perfect (had + particípio)", pres: "presente", will: "futuro com will", going: "futuro com going to", be: "verbo to be" };
+function clue(q, kind) {
+  const s = q.replace(/\s*\([^)]*\)/g, "");
+  const R = {
+    ps: /\b(yesterday|last (night|week|month|year|weekend|sunday|monday|tuesday|wednesday|thursday|friday|saturday|december|time)|[\w-]+ (days|weeks|months|years|hours|minutes) ago|two hours ago|ago|in (19|20)\d\d|in (january|february|march|april|may|june|july|august|september|october|november|december)|on (monday|tuesday|wednesday|thursday|friday|saturday|sunday)|this morning|when (i|we|he|she|they) (was|were)\b[^,.]*)\b/i,
+    pp: /\b(since [\w$,.-]+|for (ten|two|three|four|five|many|a few|six) \w+|for (years|months|weeks|days|hours|a long time)|ever|never|already|yet|just|so far|recently|lately|(two|three|four|five|many) times|today|this (week|year|month))\b/i,
+    pres: /\b(every (day|morning|night|week|month|year|summer|hour|monday|sunday|friday)|usually|always|often|sometimes|on (mondays|tuesdays|wednesdays|thursdays|fridays|saturdays|sundays|weekends)|at night|in the morning|per hour|a day|a week|a month|all day|all the time)\b/i,
+    will: /\b(i think|maybe|probably|i promise|promise|don't worry|relax|please|wait|right now)\b/i,
+    going: /\b(already bought|already|booked|bought|planned|plan|scheduled|decided|approved|confirmed|registered|signed|in the (plan|budget|roadmap)|on my list|look at [^!.]+|announced|it's (planned|decided|booked|scheduled))\b/i,
+    pf: /\b(by the time [^,]+|by (19|20)\d\d|by the end of [^,]+|when [^,]+|because [^.]+|before [^,.]+|after [^,.]+|already|never)\b/i
+  }[kind];
+  const m = R && s.match(R); return m ? m[0].trim() : null;
+}
+function why(kind, q) {
+  const c = clue(q, kind);
+  if (kind === "ps") return c ? `“${c}” marca um tempo que já terminou, então a frase pede o passado simples.` : "É uma ação terminada, num momento definido: a frase pede o passado simples.";
+  if (kind === "pp") return c ? `“${c}” liga o passado ao agora (experiência ou algo que continua), então a frase pede have/has + particípio.` : "A frase fala de experiência ou de algo que vai até agora: pede have/has + particípio.";
+  if (kind === "pres") return c ? `“${c}” mostra rotina ou hábito, então a frase pede o presente simples.` : "A frase fala de rotina, hábito ou de algo que é sempre verdade: pede o presente simples.";
+  if (kind === "will") return c ? `“${c}” mostra decisão na hora, promessa, pedido ou opinião, então a frase pede will + verbo.` : "É decisão na hora, promessa, pedido ou opinião sobre o futuro: a frase pede will + verbo.";
+  if (kind === "going") return c ? `“${c}” mostra que já existe um plano (ou uma evidência), então a frase pede am/is/are going to + verbo.` : "Já existe um plano ou uma evidência: a frase pede am/is/are going to + verbo.";
+  if (kind === "be") return "Aqui o verbo é to be: am com I, is com he, she, it e um nome no singular, are com you, we, they e plurais.";
+  if (kind === "pf") {
+    const parts = q.replace(/\s*\([^)]*\)/g, "").split(/,\s*|\s+(?=because\b|when\b|before\b|after\b|so\b)/i).map(x => x.trim()).filter(Boolean);
+    const other = parts.find(x => !x.includes("___") && !/^(by|already|never)\b/i.test(x) && x.split(" ").length > 1);
+    if (other) return `Aconteceu antes de outra ação passada (${other.replace(/^(when|because|before|after|so)\s+/i, "").replace(/[.?!]$/, "")}), então a frase pede had + particípio.`;
+  }
+  if (kind === "pf") return c ? `A ação aconteceu antes de outra no passado (${c}), então a frase pede had + particípio.` : "A ação aconteceu antes de outra ação passada: a frase pede had + particípio.";
+  return "";
+}
+function lev(a, b) { const m = a.length, n = b.length; const d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j;
+  for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
+// returns one or two short sentences in Portuguese
+function explain(q, given, expected, mode) {
+  const a = norm(given), e = norm(expected), aw = a.split(" "), ew = e.split(" ");
+  const want = tenseOf(e), got = tenseOf(a);
+  const subj = (q.match(/\b(I|you|we|they|he|she|it)\s+___/i) || [])[1];
+  const tips = [];
+  const qb = ((q.match(/\(([^)]*)\)/) || [])[1] || "").split("/").pop().trim().toLowerCase();
+  const bOf = w => { const b = baseOf(w); return qb && (b === qb || qb.startsWith(b) || b.startsWith(qb.slice(0, -1))) ? qb : b; };
+  // specific form errors
+  const iDid = aw.findIndex(w => /^(did|didn't)$/.test(w));
+  if (iDid >= 0) { const v = aw.slice(iDid + 1).find(w => !AUX.test(w)); if (v && (PASTS[v] || PPS[v] && !IRR[v] || /ed$/.test(v)) && bOf(v) !== v) tips.push(`Depois de did/didn't o verbo volta à forma normal: ${aw[iDid]} ${bOf(v)}, não ${aw[iDid]} ${v}.`); }
+  const iHave = aw.findIndex(w => /^(have|has|had|haven't|hasn't|hadn't)$/.test(w));
+  if (iHave >= 0) { const v = aw.slice(iHave + 1).find(w => !AUX.test(w)); const b = v && bOf(v);
+    if (v && b && IRR[b] && !IRR[b].pp.includes(v) && v !== "been") tips.push(`Depois de ${aw[iHave].replace("n't", "")} vem o particípio (3ª coluna): ${v} → ${ppOf(b)}.`); }
+  if (/^(has|hasn't)$/.test(aw[iHave] || "") && subj && /^(i|you|we|they)$/i.test(subj)) tips.push(`Com ${subj} é have; has é só para he, she e it.`);
+  if (/^(have|haven't)$/.test(aw[iHave] || "") && subj && /^(he|she|it)$/i.test(subj)) tips.push(`Com ${subj} é has.`);
+  // present simple and future forms
+  const sForm = w => /(ch|sh|x|ss|z|o)$/.test(w) ? w + "es" : /[^aeiou]y$/.test(w) ? w.slice(0, -1) + "ies" : w === "have" ? "has" : w + "s";
+  // context before the blank (does ___ / will ___ / going to ___)
+  const pre = ((q.split("___")[0] || "").trim().toLowerCase().match(/\b(do|does|did|don't|doesn't|didn't)(\s+[a-z]+){0,2}\s*$/) || [])[1] || "";
+  const pre2 = ((q.split("___")[0] || "").trim().toLowerCase().match(/(going to|will|won't)\s*$/) || [])[1];
+  if (/^(do|does|did|don't|doesn't|didn't)$/.test(pre) && aw.length === 1 && ew.length === 1 && (sForm(e) === a || PASTS[a] || /ed$/.test(a) && !/ed$/.test(e))) tips.push(`Depois de ${pre} o verbo fica na forma normal, sem -s e sem passado: ${pre} ${e}.`);
+  else if (pre2 && aw[0] === "to" && aw.slice(1).join(" ") === e) tips.push(`Depois de ${pre2} vem o verbo direto, sem outro to: ${pre2} ${e}.`);
+  else if (pre2 && aw.length === 1 && ew.length === 1 && a !== e && (sForm(e) === a || PASTS[a] || /ed$/.test(a) || /ing$/.test(a))) tips.push(`Depois de ${pre2} o verbo fica na forma normal: ${pre2} ${e}.`);
+  if (!tips.length && aw.length === ew.length) aw.forEach((w, i) => { const x = ew[i]; if (w === x) return;
+    if (i > 0 && /^(do|does|don't|doesn't)$/.test(aw[i - 1]) && sForm(x) === w) tips.push(`Depois de ${aw[i - 1]} o verbo fica sem -s: ${aw[i - 1]} ${x}, não ${aw[i - 1]} ${w}.`);
+    else if (!AUX.test(w) && sForm(w) === x) tips.push(`Com he, she, it ou um nome no singular (my sister, the ship), o verbo ganha -s: ${w} → ${x}.`);
+    else if (!AUX.test(x) && sForm(x) === w) tips.push(`Aqui o sujeito é I, you, we, they ou um plural: o verbo fica sem -s (${x}).`);
+    else if ((w === "don't" && x === "doesn't") || (w === "do" && x === "does")) tips.push(`Com he, she, it ou um nome no singular, use ${x}.`);
+    else if ((w === "doesn't" && x === "don't") || (w === "does" && x === "do")) tips.push(`Com I, you, we, they ou um plural, use ${x}.`);
+    else if (/^(am|is|are|isn't|aren't)$/.test(w) && /^(am|is|are|isn't|aren't)$/.test(x)) tips.push(`Com I é am; com he, she, it é is; com you, we, they é are. Aqui é ${x}.`);
+  });
+  const iDo = aw.findIndex(w => /^(do|does|don't|doesn't)$/.test(w));
+  if (iDo >= 0 && !tips.length) { const v = aw[iDo + 1]; const b = v && ew.find(x => sForm(x) === v); if (b) tips.push(`Depois de ${aw[iDo]} o verbo fica sem -s: ${aw[iDo]} ${b}, não ${aw[iDo]} ${v}.`); }
+  if (!tips.length && want === "pres" && /^(am|is|are)$/.test(aw[0]) && aw.length > 1 && !/^(going|not)$/.test(aw[1]) && ew[0] !== aw[0]) tips.push(`No presente simples não se usa am/is/are antes do verbo: I work, não I am work.`);
+  const iWill = aw.findIndex(w => /^(will|won't|'ll)$/.test(w));
+  if (iWill >= 0 && aw[iWill + 1] === "to") tips.push("Depois de will vem o verbo direto, sem to: will go, não will to go.");
+  if (aw.includes("wills")) tips.push("Will não muda com a pessoa: he will, nunca he wills.");
+  if (/\b(don't|doesn't) will\b/.test(a)) tips.push("A negativa de will é won't (will not).");
+  const iGo = aw.indexOf("going");
+  if (iGo >= 0 && aw[iGo + 1] !== "to") tips.push("Depois de going vem to: going to + verbo.");
+  if (aw[0] === "going" && /^(am|is|are|'m|isn't|aren't)$/.test(ew[0])) tips.push("Falta o verbo to be antes de going to: am com I, is com he/she/it, are com you/we/they.");
+  let skipReason = false;
+  if (mode !== "mc" && !tips.length && aw.length === ew.length && lev(a, e) <= 2 && (got === want || got === "pres")) return "Está quase: confira a grafia letra por letra.";
+  // tense mismatch
+  const related = aw.some(w => { const b = bOf(w); return b === qb || ew.some(x => bOf(x) === b && !AUX.test(x)); });
+  if (want && got && want !== got && !tips.length && (mode === null || mode === undefined || mode === "mc") && (got !== "pres" || related)) {
+    skipReason = (want === "ps" && got === "pp") || (want === "pp" && got === "ps") || (want === "going" && got === "will") || (want === "will" && got === "going");
+    const cw = clue(q, want);
+    if (want === "going" && got === "will") tips.push(`Você usou will, mas ${cw ? "“" + cw + "”" : "a frase"} mostra um plano já decidido (ou uma evidência). Para isso, use going to.`);
+    else if (want === "will" && got === "going") tips.push(`Você usou going to, mas aqui é decisão na hora, promessa, pedido ou opinião${cw ? " (“" + cw + "”)" : ""}. Para isso, use will.`);
+    else if ((want === "will" || want === "going") && (got === "pres" || got === "be")) tips.push("Sua resposta está no presente, mas a frase fala do futuro.");
+    else if (want === "pres" && (got === "will" || got === "going")) tips.push("Sua resposta está no futuro, mas a frase fala de rotina.");
+    else if (want === "pres" && got === "ps") tips.push("Você usou o passado, mas a frase fala de rotina ou hábito.");
+    else if (want === "be" || got === "be") tips.push(want === "be" ? "Aqui não entra outro verbo: só am, is ou are." : "Aqui não é o verbo to be: a frase pede outro verbo.");
+    else if (want === "ps" && got === "pp") tips.push(`Você usou present perfect, mas ${clue(q, "ps") ? "“" + clue(q, "ps") + "” marca tempo terminado" : "o momento já terminou"}. Com tempo terminado não se usa have/has.`);
+    else if (want === "pp" && got === "ps") tips.push(`Você usou o passado simples, mas ${clue(q, "pp") ? "“" + clue(q, "pp") + "”" : "a frase"} mostra que isso vai até agora.`);
+    else if (want === "pf" && got === "pp") tips.push("Have/has é presente. Como a história já é passado, o auxiliar também vai para o passado: had.");
+    else if (want === "pf" && got === "ps") tips.push("Sua resposta está no passado simples, que não mostra essa ordem.");
+    else if (want === "ps" && got === "pf") tips.push("Aqui não precisa do had: as ações vêm na ordem em que aconteceram, ou é uma ação só.");
+    else if (got === "pres") tips.push("Sua resposta ficou no presente.");
+    else tips.push(`A frase pede ${NAME[want]}, e sua resposta está no ${NAME[got]}.`);
+  }
+  // irregular regularized
+  if (/^(ps|pp|pf)$/.test(want)) aw.forEach(w => { if (/ed$/.test(w) && !e.includes(w)) { const b = w.slice(0, -2).replace(/e$/, ""); for (const k of [w.slice(0, -2), w.slice(0, -1), b]) if (IRR[k]) { tips.push(`${k} é irregular: ${IRR[k].past[0]} no passado, ${IRR[k].pp[0]} no particípio.`); break; } } });
+  if (!tips.length) {
+    if (aw.slice().sort().join(" ") === ew.slice().sort().join(" ")) tips.push("As palavras estão certas, mas a ordem não. " + (mode === "pergunta" ? "Na pergunta, o auxiliar vem antes da pessoa." : ""));
+    else if (lev(a, e) <= 2) tips.push("Está quase: confira a grafia letra por letra.");
+    else if (mode === "pergunta") tips.push("Na pergunta, o auxiliar (do/does, did, will, am/is/are, have/has ou had) vem antes da pessoa, e o resto da frase continua igual.");
+    else if (mode === "negativa") tips.push("Na negativa, use o auxiliar com not (don't/doesn't, didn't, won't, isn't/aren't, haven't/hasn't, hadn't) antes do verbo, e o resto continua igual.");
+  }
+  if (want === "be" && tips.length) skipReason = true;
+  if (tips.length && /^Depois de (do|does|did|don't|doesn't|didn't|going to|will|won't) /.test(tips[0]) && (pre || pre2)) skipReason = true;
+  const reason = mode === "pergunta" || mode === "negativa" || skipReason ? "" : why(want, q);
+  if (!tips.length && !reason) return "Releia a frase e confira cada palavra.";
+  return [reason, ...tips.slice(0, 2)].filter(Boolean).join(" ");
+}
+// ---------- builders
+function buildChoice(container, list, prefix) {
+  list.forEach(([q, opts, ans, ctx], i) => {
+    const id = prefix + i, item = el("div", "item");
+    const p = el("p", "prompt"); if (ctx) p.appendChild(el("span", "ctx", ctx)); p.appendChild(document.createTextNode(blankify(q)));
+    const row = el("div", "opts"), fb = el("span", "fb");
+    opts.forEach((o, k) => {
+      const b = el("button", "opt", o); b.type = "button";
+      b.addEventListener("click", () => {
+        if (k === ans) { b.classList.add("right"); row.querySelectorAll("button").forEach(x => x.disabled = true); fb.className = "fb ok"; fb.textContent = "Isso."; mark(id, !row.dataset.missed); }
+        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = "Ainda não. " + explain(q, o, opts[ans], "mc") + " Tente de novo."; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+      });
+      row.appendChild(b);
+    });
+    item.append(p, row, fb); container.appendChild(item);
+  });
+}
+function buildTyped(container, list, prefix, opts = {}) {
+  list.forEach((row, i) => {
+    const [q, answers, hint] = opts.transform ? [row[0], row[2], null] : row;
+    const id = prefix + i, item = el("div", "item");
+    const p = el("p", "prompt");
+    if (opts.transform) { p.appendChild(el("span", "ctx", /^(negativa|pergunta)$/.test(row[1]) ? "Passe para a " + row[1] : row[1])); p.appendChild(document.createTextNode(q)); }
+    const mk = (cls, sid, label) => { const x = el("input", cls); x.type = "text"; x.id = sid; x.autocomplete = "off"; x.spellcheck = false; x.setAttribute("autocapitalize", "off"); x.setAttribute("aria-label", label); return x; };
+    let slots = [];
+    if (opts.transform) { /* one field for the whole sentence */ }
+    else {
+      if (hint) p.appendChild(el("span", "ctx", hint));
+      const parts = q.split("___"), k = parts.length - 1;
+      if (k > 0) {
+        // one blank line per word of the answer: "I ___ ___ (know)" for "have known"
+        const words = answers[0].trim().split(/\s+/);
+        const counts = Array(k).fill(1); counts[k - 1] = Math.max(1, words.length - (k - 1));
+        p.classList.add("blanks");
+        parts.forEach((t, j) => {
+          if (t) p.appendChild(document.createTextNode(t));
+          if (j < k) for (let m = 0; m < counts[j]; m++) { const n = slots.length; const x = mk("slot", "in-" + id + (n ? "-" + n : ""), "Palavra " + (n + 1)); slots.push(x); p.appendChild(x); }
+        });
+      } else p.appendChild(document.createTextNode(q));
+    }
+    const wrap = el("div", "inline-input");
+    const inp = slots.length ? slots[0] : mk("", "in-" + id, "Resposta");
+    const fields = slots.length ? slots : [inp];
+    const btn = el("button", "btn small", "Conferir"); btn.type = "button";
+    const fb = el("span", "fb");
+    const check = () => {
+      const v = norm(fields.map(f => f.value.trim()).filter(Boolean).join(" ")); if (!v) return;
+      const ok = answers.map(norm).includes(v);
+      fields.forEach(f => { f.classList.toggle("right", ok); f.classList.toggle("wrong", !ok); });
+      if (ok) { fb.className = "fb ok"; fb.textContent = "Isso."; fields.forEach(f => f.readOnly = true); btn.disabled = true; mark(id, !inp.dataset.missed); }
+      else {
+        fb.className = "fb no";
+        const ex = explain(q, fields.map(f => f.value.trim()).filter(Boolean).join(" "), answers[0], opts.transform ? row[1] : null);
+        if (inp.dataset.missed) { fb.textContent = "Resposta: " + answers[0] + ". " + ex; }
+        else { fb.textContent = "Ainda não. " + ex + " Tente mais uma vez."; }
+        inp.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); }
+      }
+    };
+    btn.addEventListener("click", check); fields.forEach(f => f.addEventListener("keydown", e => { if (e.key === "Enter") check(); }));
+    if (slots.length) wrap.append(btn); else wrap.append(inp, btn);
+    item.append(p, wrap, fb); container.appendChild(item);
+  });
+}
+function buildFind(container) {
+  D.forEach(([s, wrongIdx, why], i) => {
+    const id = "D" + i, item = el("div", "item"), row = el("div", "opts"), fb = el("span", "fb");
+    s.split(" ").forEach((w, k) => {
+      const b = el("button", "opt", w); b.type = "button";
+      b.addEventListener("click", () => {
+        if (k === wrongIdx) { b.classList.add("right"); row.querySelectorAll("button").forEach(x => x.disabled = true); fb.className = "fb ok"; fb.textContent = why; mark(id, !row.dataset.missed); }
+        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = `“${w}” está certa aqui. O erro está ${k < wrongIdx ? "depois" : "antes"} dessa palavra. Olhe o auxiliar, a forma do verbo e as palavras de tempo (yesterday, since, by the time…).`; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+      });
+      row.appendChild(b);
+    });
+    item.append(row, fb); container.appendChild(item);
+  });
+}
+function shuffle(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+function buildOrder(container) {
+  E.forEach((words, i) => {
+    const id = "E" + i, item = el("div", "item");
+    const built = el("div", "built"), bank = el("div", "bank"), fb = el("span", "fb");
+    const actions = el("div", "row"); const btn = el("button", "btn small", "Conferir"); btn.type = "button";
+    const refresh = () => { btn.disabled = bank.children.length > 0; };
+    shuffle(words).forEach(w => {
+      const t = el("button", "tile", w); t.type = "button";
+      t.addEventListener("click", () => { if (item.dataset.done) return; (t.parentElement === bank ? built : bank).appendChild(t); refresh(); });
+      bank.appendChild(t);
+    });
+    btn.addEventListener("click", () => {
+      const v = [...built.children].map(t => t.textContent).join(" ");
+      if (v === Eans[i]) { fb.className = "fb ok"; fb.textContent = "Isso: " + v.charAt(0).toUpperCase() + v.slice(1) + "?"; item.dataset.done = "1"; btn.disabled = true; mark(id, !item.dataset.missed); }
+      else { fb.className = "fb no"; fb.textContent = "Ainda não. " + orderHint([...built.children].map(t => t.textContent), Eans[i].split(" ")); item.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+    });
+    refresh(); actions.append(fb, btn);
+    item.append(built, bank, actions); container.appendChild(item);
+  });
+}
+function orderHint(got, ans) {
+  const AUXW = /^(did|do|does|have|has|had|was|were|am|is|are|can|will)$/;
+  let k = 0; while (k < ans.length && got[k] === ans[k]) k++;
+  if (k === 0) return AUXW.test(ans[0]) ? "Sem palavra de pergunta, a frase começa direto pelo auxiliar. Qual dos blocos é o auxiliar?" : "A pergunta começa pela palavra de pergunta (what, why, where, how…).";
+  if (AUXW.test(ans[k])) return `Até “${got.slice(0, k).join(" ")}” está certo. Agora vem o auxiliar, antes da pessoa.`;
+  if (AUXW.test(ans[k - 1])) return `Até “${got.slice(0, k).join(" ")}” está certo. Depois do auxiliar vem a pessoa (quem faz a ação), e só depois o verbo.`;
+  return `Até “${got.slice(0, k).join(" ")}” está certo. Confira a ordem do resto: primeiro o verbo, depois o complemento.`;
+}
+function buildVerbs() {
+  const box = document.getElementById("exF"); box.textContent = ""; document.getElementById("exFfb").textContent = "";
+  F.forEach((v, i) => {
+    const d = el("div", "verb");
+    const lab = el("label"); lab.htmlFor = "verb-" + i; lab.textContent = v.base + " ";
+    lab.appendChild(el("small", null, "→ he/she/it"));
+    const inp = el("input"); inp.type = "text"; inp.id = "verb-" + i; inp.autocomplete = "off"; inp.spellcheck = false; inp.setAttribute("autocapitalize", "off");
+    d.append(lab, inp); box.appendChild(d);
+  });
+}
+function checkVerbs() {
+  {
+    let right = 0, answered = 0; const notes = [];
+    F.forEach((v, i) => {
+      const inp = document.getElementById("verb-" + i), val = norm(inp.value);
+      if (!val) { inp.classList.remove("right","wrong"); return; }
+      answered++;
+      const ok = v.ans.map(norm).includes(val);
+      inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+      if (ok) right++;
+      else {
+        const wantPast = themeKey().startsWith("calu-ps"), irr = /^calu-(ps|pp|pf)/.test(themeKey()) ? IRR[v.base] : null;
+        if (/ed$/.test(val) && irr && !v.ans.map(norm).includes(val)) notes.push(`${v.base} é irregular: não leva -ed.`);
+        else if (wantPast && irr && irr.pp.includes(val) && !irr.past.includes(val)) notes.push(`${v.base}: “${val}” é o particípio (3ª coluna). Aqui é o passado (2ª coluna).`);
+        else if (!wantPast && irr && irr.past.includes(val) && !irr.pp.includes(val)) notes.push(`${v.base}: “${val}” é o passado (2ª coluna). Aqui é o particípio (3ª coluna).`);
+        else if (val === v.base) notes.push(`${v.base}: você repetiu a forma normal.`);
+      }
+      mark("F" + i, ok);
+    });
+    const fb = document.getElementById("exFfb");
+    fb.className = "fb " + (right === F.length ? "ok" : "no");
+    fb.textContent = answered === 0 ? "Preencha alguns verbos primeiro." :
+      right === F.length ? "Os 20 certos. Excelente." :
+      `${right} de ${F.length} certos. Corrija os vermelhos e confira de novo.` + (notes.length ? " " + notes.slice(0, 4).join(" ") : "");
+  }
+}
+document.getElementById("exFcheck").addEventListener("click", checkVerbs);
+
+function applyTheme(name) {
+  theme = THEMES[name] ? name : "geral";
+  const T = THEMES[theme];
+  ({ A, B, C, D, E, Eans, R } = T);
+  TOTAL = A.length + B.length + F.length + C.length + D.length + E.length + R.length;
+  try { saved = JSON.parse(localStorage.getItem(themeKey()) || "{}"); } catch { saved = {}; }
+  results = saved.results || {};
+  ["exA","exB","exC","exD","exE","exR"].forEach(id => document.getElementById(id).textContent = "");
+  buildChoice(document.getElementById("exA"), A, "A");
+  buildTyped(document.getElementById("exB"), B, "B");
+  buildVerbs();
+  buildTyped(document.getElementById("exC"), C, "C", { transform: true });
+  buildFind(document.getElementById("exD"));
+  buildOrder(document.getElementById("exE"));
+  buildTyped(document.getElementById("exR"), R, "R");
+  document.getElementById("storyPrompt").innerHTML = T.story;
+  const st = document.getElementById("story"); st.value = saved.story || ""; st.placeholder = T.ph;
+  document.getElementById("aiOut").hidden = true;
+  document.querySelectorAll("#themes .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.theme === theme)));
+  document.getElementById("themeName").textContent = T.label;
+  updateScore();
+}
+const themeBox = document.getElementById("themes");
+Object.entries(THEMES).forEach(([k, t]) => {
+  const b = el("button", "chip", t.label); b.type = "button"; b.dataset.theme = k;
+  b.addEventListener("click", () => { if (k !== theme) { history.replaceState(null, "", k === "geral" ? location.pathname + location.search : "#" + k); applyTheme(k); } });
+  themeBox.appendChild(b);
+});
+document.getElementById("story").addEventListener("input", persist);
+document.getElementById("resetAll").addEventListener("click", () => {
+  try { localStorage.removeItem(themeKey()); } catch {}
+  applyTheme(theme); window.scrollTo({ top: 0 });
+});
+window.addEventListener("hashchange", () => applyTheme(location.hash.slice(1)));
+applyTheme(location.hash.slice(1));
+
+// ---------- optional AI feedback on the free text
+(async () => {
+  let sample = null;
+  try { sample = await window.claude?.use?.("sample"); } catch { sample = null; }
+  if (!sample) return;
+  const btn = document.getElementById("aiBtn"), out = document.getElementById("aiOut"), note = document.getElementById("aiNote");
+  btn.hidden = false; note.textContent = "Receba uma correção agora, ou mande o texto para Calú.";
+  btn.addEventListener("click", async () => {
+    const text = document.getElementById("story").value.trim();
+    if (text.length < 20) { note.textContent = "Escreva pelo menos duas frases antes de pedir correção."; return; }
+    btn.disabled = true; out.hidden = false; out.textContent = "Lendo seu texto…";
+    const prompt = `Você é professor(a) de inglês de um aluno brasileiro de nível A1 que está estudando o presente simples. Corrija o texto abaixo em português do Brasil, com tom gentil e encorajador, porque o aluno costuma travar por medo de errar.
+Formato:
+1. Uma frase curta elogiando algo específico.
+2. Lista dos erros, um por linha, no formato: "frase original → frase corrigida (motivo curto)". No máximo 6. Priorize erros de presente simples (-s com he/she/it, do/does/don't/doesn't + verbo sem -s, am/is/are antes de verbo, ordem da pergunta).
+3. A versão corrigida completa do texto.
+4. Uma dica para a próxima vez.
+Não invente erros. Se estiver tudo certo, diga isso.
+
+Texto do aluno:
+"""${text.slice(0, 3000)}"""`;
+    try {
+      const r = await sample(prompt, { onText: ({ text }) => { out.textContent = text; }, modelTier: "quick", cache: false });
+      out.textContent = r.text;
+    } catch (e) {
+      out.textContent = e && e.code === "rate_limited" ? "Muitos pedidos agora. Tente de novo em alguns minutos." : "Não deu para corrigir agora. Mande o texto para Calú.";
+    } finally { btn.disabled = false; }
+  });
+})();
+</script>
+
+</body>
+</html>

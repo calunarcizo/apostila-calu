@@ -66,7 +66,7 @@ p { margin: 0; }
 .callout { border-left: 4px solid var(--signal); padding: 8px 14px; background: var(--soft); border-radius: 0 10px 10px 0; }
 .pron { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .pron div { border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; min-width: 0; }
-.pron .sound { font-family: var(--mono); font-size: 1.1rem; color: var(--accent); }
+.pron .sound { display: block; font-family: var(--mono); font-size: 1.1rem; color: var(--accent); margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
 .pron small { display: block; color: var(--muted); font-size: .8rem; }
 /* items */
 .items { display: grid; gap: 12px; counter-reset: it; }
@@ -535,6 +535,145 @@ const norm = s => s.toLowerCase().replace(/[’']/g, "'").replace(/[.?!,]+$/g, "
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 function blankify(text) { return text.replace("___", "_____"); }
 
+// ---------- explanations for wrong answers: say what the sentence asks and why the answer doesn't fit
+const IRR = {}; `be was/were been;become became become;begin began begun;break broke broken;bring brought brought;build built built;buy bought bought;catch caught caught;choose chose chosen;come came come;cost cost cost;cut cut cut;do did done;drink drank drunk;drive drove driven;eat ate eaten;fall fell fallen;feel felt felt;find found found;fly flew flown;forget forgot forgotten;get got gotten/got;give gave given;go went gone/been;grow grew grown;have had had;hear heard heard;hold held held;keep kept kept;know knew known;leave left left;lose lost lost;make made made;meet met met;pay paid paid;put put put;read read read;ride rode ridden;rise rose risen;run ran run;say said said;see saw seen;sell sold sold;send sent sent;set set set;sing sang sung;sit sat sat;sleep slept slept;speak spoke spoken;spend spent spent;stand stood stood;steal stole stolen;swim swam swum;take took taken;teach taught taught;tell told told;think thought thought;understand understood understood;wake woke woken;wear wore worn;win won won;write wrote written`
+  .split(";").forEach(r => { const [b, p, pp] = r.split(" "); IRR[b] = { past: p.split("/"), pp: pp.split("/") }; });
+const PASTS = {}, PPS = {};
+for (const [b, v] of Object.entries(IRR)) { v.past.forEach(x => (PASTS[x] = PASTS[x] || []).push(b)); v.pp.forEach(x => (PPS[x] = PPS[x] || []).push(b)); }
+function baseOf(w) {
+  if (!w) return null; w = w.toLowerCase();
+  if (IRR[w]) return w; if (PASTS[w]) return PASTS[w][0]; if (PPS[w]) return PPS[w][0];
+  if (/ied$/.test(w)) return w.replace(/ied$/, "y");
+  if (/([^aeiouls])\1ed$/.test(w)) return w.slice(0, -3);
+  if (/ed$/.test(w)) { const b = w.slice(0, -2); return /(v|c|z|[^aeiou]at|ar|ur)$/.test(b) ? b + "e" : b; }
+  return w;
+}
+const pastOf = b => IRR[b] ? IRR[b].past[0] : (b.endsWith("e") ? b + "d" : /[^aeiou]y$/.test(b) ? b.slice(0, -1) + "ied" : b + "ed");
+const ppOf = b => IRR[b] ? IRR[b].pp[0] : pastOf(b);
+const AUX = /^(did|didn't|have|has|haven't|hasn't|had|hadn't|was|were|wasn't|weren't|do|does|don't|doesn't|not|never|already|ever|just|still|yet|you|i|he|she|it|we|they|will|won't|am|is|are|going|to|gonna|'ll|'m)$/;
+function tenseOf(t) {
+  t = " " + t.toLowerCase() + " ";
+  const f = t.trim().split(/\s+/)[0];
+  if (/^ (am|is|are|isn't|aren't|am not|'m not|is not|are not) $/.test(t)) return "be";
+  if (/ (going to|gonna) /.test(t) || /^(going)$/.test(f)) return "going";
+  if (/ (will|won't|'ll|wills) /.test(t)) return "will";
+  if (/^(had|hadn't)$/.test(f)) return "pf"; if (/^(have|has|haven't|hasn't)$/.test(f)) return "pp"; if (/^(did|didn't|was|were|wasn't|weren't)$/.test(f)) return "ps";
+  if (/ (had|hadn't|'d) /.test(t) || /^ had /.test(t)) return "pf";
+  if (/ (have|has|haven't|hasn't|'ve|'s been) /.test(t)) return "pp";
+  if (/ (did|didn't|was|were|wasn't|weren't) /.test(t)) return "ps";
+  const ws = t.trim().split(/\s+/);
+  if (ws.some(w => PASTS[w] || (/ed$/.test(w) && w.length > 3))) return "ps";
+  if (ws.some(w => /^(do|does|don't|doesn't)$/.test(w))) return "pres";
+  return ws.length ? "pres" : null;
+}
+const NAME = { ps: "passado simples", pp: "present perfect (have/has + particípio)", pf: "past perfect (had + particípio)", pres: "presente", will: "futuro com will", going: "futuro com going to", be: "verbo to be" };
+function clue(q, kind) {
+  const s = q.replace(/\s*\([^)]*\)/g, "");
+  const R = {
+    ps: /\b(yesterday|last (night|week|month|year|weekend|sunday|monday|tuesday|wednesday|thursday|friday|saturday|december|time)|[\w-]+ (days|weeks|months|years|hours|minutes) ago|two hours ago|ago|in (19|20)\d\d|in (january|february|march|april|may|june|july|august|september|october|november|december)|on (monday|tuesday|wednesday|thursday|friday|saturday|sunday)|this morning|when (i|we|he|she|they) (was|were)\b[^,.]*)\b/i,
+    pp: /\b(since [\w$,.-]+|for (ten|two|three|four|five|many|a few|six) \w+|for (years|months|weeks|days|hours|a long time)|ever|never|already|yet|just|so far|recently|lately|(two|three|four|five|many) times|today|this (week|year|month))\b/i,
+    pres: /\b(every (day|morning|night|week|month|year|summer|hour|monday|sunday|friday)|usually|always|often|sometimes|on (mondays|tuesdays|wednesdays|thursdays|fridays|saturdays|sundays|weekends)|at night|in the morning|per hour|a day|a week|a month|all day|all the time)\b/i,
+    will: /\b(i think|maybe|probably|i promise|promise|don't worry|relax|please|wait|right now)\b/i,
+    going: /\b(already bought|already|booked|bought|planned|plan|scheduled|decided|approved|confirmed|registered|signed|in the (plan|budget|roadmap)|on my list|look at [^!.]+|announced|it's (planned|decided|booked|scheduled))\b/i,
+    pf: /\b(by the time [^,]+|by (19|20)\d\d|by the end of [^,]+|when [^,]+|because [^.]+|before [^,.]+|after [^,.]+|already|never)\b/i
+  }[kind];
+  const m = R && s.match(R); return m ? m[0].trim() : null;
+}
+function why(kind, q) {
+  const c = clue(q, kind);
+  if (kind === "ps") return c ? `“${c}” marca um tempo que já terminou, então a frase pede o passado simples.` : "É uma ação terminada, num momento definido: a frase pede o passado simples.";
+  if (kind === "pp") return c ? `“${c}” liga o passado ao agora (experiência ou algo que continua), então a frase pede have/has + particípio.` : "A frase fala de experiência ou de algo que vai até agora: pede have/has + particípio.";
+  if (kind === "pres") return c ? `“${c}” mostra rotina ou hábito, então a frase pede o presente simples.` : "A frase fala de rotina, hábito ou de algo que é sempre verdade: pede o presente simples.";
+  if (kind === "will") return c ? `“${c}” mostra decisão na hora, promessa, pedido ou opinião, então a frase pede will + verbo.` : "É decisão na hora, promessa, pedido ou opinião sobre o futuro: a frase pede will + verbo.";
+  if (kind === "going") return c ? `“${c}” mostra que já existe um plano (ou uma evidência), então a frase pede am/is/are going to + verbo.` : "Já existe um plano ou uma evidência: a frase pede am/is/are going to + verbo.";
+  if (kind === "be") return "Aqui o verbo é to be: am com I, is com he, she, it e um nome no singular, are com you, we, they e plurais.";
+  if (kind === "pf") {
+    const parts = q.replace(/\s*\([^)]*\)/g, "").split(/,\s*|\s+(?=because\b|when\b|before\b|after\b|so\b)/i).map(x => x.trim()).filter(Boolean);
+    const other = parts.find(x => !x.includes("___") && !/^(by|already|never)\b/i.test(x) && x.split(" ").length > 1);
+    if (other) return `Aconteceu antes de outra ação passada (${other.replace(/^(when|because|before|after|so)\s+/i, "").replace(/[.?!]$/, "")}), então a frase pede had + particípio.`;
+  }
+  if (kind === "pf") return c ? `A ação aconteceu antes de outra no passado (${c}), então a frase pede had + particípio.` : "A ação aconteceu antes de outra ação passada: a frase pede had + particípio.";
+  return "";
+}
+function lev(a, b) { const m = a.length, n = b.length; const d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j;
+  for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
+// returns one or two short sentences in Portuguese
+function explain(q, given, expected, mode) {
+  const a = norm(given), e = norm(expected), aw = a.split(" "), ew = e.split(" ");
+  const want = tenseOf(e), got = tenseOf(a);
+  const subj = (q.match(/\b(I|you|we|they|he|she|it)\s+___/i) || [])[1];
+  const tips = [];
+  const qb = ((q.match(/\(([^)]*)\)/) || [])[1] || "").split("/").pop().trim().toLowerCase();
+  const bOf = w => { const b = baseOf(w); return qb && (b === qb || qb.startsWith(b) || b.startsWith(qb.slice(0, -1))) ? qb : b; };
+  // specific form errors
+  const iDid = aw.findIndex(w => /^(did|didn't)$/.test(w));
+  if (iDid >= 0) { const v = aw.slice(iDid + 1).find(w => !AUX.test(w)); if (v && (PASTS[v] || PPS[v] && !IRR[v] || /ed$/.test(v)) && bOf(v) !== v) tips.push(`Depois de did/didn't o verbo volta à forma normal: ${aw[iDid]} ${bOf(v)}, não ${aw[iDid]} ${v}.`); }
+  const iHave = aw.findIndex(w => /^(have|has|had|haven't|hasn't|hadn't)$/.test(w));
+  if (iHave >= 0) { const v = aw.slice(iHave + 1).find(w => !AUX.test(w)); const b = v && bOf(v);
+    if (v && b && IRR[b] && !IRR[b].pp.includes(v) && v !== "been") tips.push(`Depois de ${aw[iHave].replace("n't", "")} vem o particípio (3ª coluna): ${v} → ${ppOf(b)}.`); }
+  if (/^(has|hasn't)$/.test(aw[iHave] || "") && subj && /^(i|you|we|they)$/i.test(subj)) tips.push(`Com ${subj} é have; has é só para he, she e it.`);
+  if (/^(have|haven't)$/.test(aw[iHave] || "") && subj && /^(he|she|it)$/i.test(subj)) tips.push(`Com ${subj} é has.`);
+  // present simple and future forms
+  const sForm = w => /(ch|sh|x|ss|z|o)$/.test(w) ? w + "es" : /[^aeiou]y$/.test(w) ? w.slice(0, -1) + "ies" : w === "have" ? "has" : w + "s";
+  // context before the blank (does ___ / will ___ / going to ___)
+  const pre = ((q.split("___")[0] || "").trim().toLowerCase().match(/\b(do|does|did|don't|doesn't|didn't)(\s+[a-z]+){0,2}\s*$/) || [])[1] || "";
+  const pre2 = ((q.split("___")[0] || "").trim().toLowerCase().match(/(going to|will|won't)\s*$/) || [])[1];
+  if (/^(do|does|did|don't|doesn't|didn't)$/.test(pre) && aw.length === 1 && ew.length === 1 && (sForm(e) === a || PASTS[a] || /ed$/.test(a) && !/ed$/.test(e))) tips.push(`Depois de ${pre} o verbo fica na forma normal, sem -s e sem passado: ${pre} ${e}.`);
+  else if (pre2 && aw[0] === "to" && aw.slice(1).join(" ") === e) tips.push(`Depois de ${pre2} vem o verbo direto, sem outro to: ${pre2} ${e}.`);
+  else if (pre2 && aw.length === 1 && ew.length === 1 && a !== e && (sForm(e) === a || PASTS[a] || /ed$/.test(a) || /ing$/.test(a))) tips.push(`Depois de ${pre2} o verbo fica na forma normal: ${pre2} ${e}.`);
+  if (!tips.length && aw.length === ew.length) aw.forEach((w, i) => { const x = ew[i]; if (w === x) return;
+    if (i > 0 && /^(do|does|don't|doesn't)$/.test(aw[i - 1]) && sForm(x) === w) tips.push(`Depois de ${aw[i - 1]} o verbo fica sem -s: ${aw[i - 1]} ${x}, não ${aw[i - 1]} ${w}.`);
+    else if (!AUX.test(w) && sForm(w) === x) tips.push(`Com he, she, it ou um nome no singular (my sister, the ship), o verbo ganha -s: ${w} → ${x}.`);
+    else if (!AUX.test(x) && sForm(x) === w) tips.push(`Aqui o sujeito é I, you, we, they ou um plural: o verbo fica sem -s (${x}).`);
+    else if ((w === "don't" && x === "doesn't") || (w === "do" && x === "does")) tips.push(`Com he, she, it ou um nome no singular, use ${x}.`);
+    else if ((w === "doesn't" && x === "don't") || (w === "does" && x === "do")) tips.push(`Com I, you, we, they ou um plural, use ${x}.`);
+    else if (/^(am|is|are|isn't|aren't)$/.test(w) && /^(am|is|are|isn't|aren't)$/.test(x)) tips.push(`Com I é am; com he, she, it é is; com you, we, they é are. Aqui é ${x}.`);
+  });
+  const iDo = aw.findIndex(w => /^(do|does|don't|doesn't)$/.test(w));
+  if (iDo >= 0 && !tips.length) { const v = aw[iDo + 1]; const b = v && ew.find(x => sForm(x) === v); if (b) tips.push(`Depois de ${aw[iDo]} o verbo fica sem -s: ${aw[iDo]} ${b}, não ${aw[iDo]} ${v}.`); }
+  if (!tips.length && want === "pres" && /^(am|is|are)$/.test(aw[0]) && aw.length > 1 && !/^(going|not)$/.test(aw[1]) && ew[0] !== aw[0]) tips.push(`No presente simples não se usa am/is/are antes do verbo: I work, não I am work.`);
+  const iWill = aw.findIndex(w => /^(will|won't|'ll)$/.test(w));
+  if (iWill >= 0 && aw[iWill + 1] === "to") tips.push("Depois de will vem o verbo direto, sem to: will go, não will to go.");
+  if (aw.includes("wills")) tips.push("Will não muda com a pessoa: he will, nunca he wills.");
+  if (/\b(don't|doesn't) will\b/.test(a)) tips.push("A negativa de will é won't (will not).");
+  const iGo = aw.indexOf("going");
+  if (iGo >= 0 && aw[iGo + 1] !== "to") tips.push("Depois de going vem to: going to + verbo.");
+  if (aw[0] === "going" && /^(am|is|are|'m|isn't|aren't)$/.test(ew[0])) tips.push("Falta o verbo to be antes de going to: am com I, is com he/she/it, are com you/we/they.");
+  let skipReason = false;
+  if (mode !== "mc" && !tips.length && aw.length === ew.length && lev(a, e) <= 2 && (got === want || got === "pres")) return "Está quase: confira a grafia letra por letra.";
+  // tense mismatch
+  const related = aw.some(w => { const b = bOf(w); return b === qb || ew.some(x => bOf(x) === b && !AUX.test(x)); });
+  if (want && got && want !== got && !tips.length && (mode === null || mode === undefined || mode === "mc") && (got !== "pres" || related)) {
+    skipReason = (want === "ps" && got === "pp") || (want === "pp" && got === "ps") || (want === "going" && got === "will") || (want === "will" && got === "going");
+    const cw = clue(q, want);
+    if (want === "going" && got === "will") tips.push(`Você usou will, mas ${cw ? "“" + cw + "”" : "a frase"} mostra um plano já decidido (ou uma evidência). Para isso, use going to.`);
+    else if (want === "will" && got === "going") tips.push(`Você usou going to, mas aqui é decisão na hora, promessa, pedido ou opinião${cw ? " (“" + cw + "”)" : ""}. Para isso, use will.`);
+    else if ((want === "will" || want === "going") && (got === "pres" || got === "be")) tips.push("Sua resposta está no presente, mas a frase fala do futuro.");
+    else if (want === "pres" && (got === "will" || got === "going")) tips.push("Sua resposta está no futuro, mas a frase fala de rotina.");
+    else if (want === "pres" && got === "ps") tips.push("Você usou o passado, mas a frase fala de rotina ou hábito.");
+    else if (want === "be" || got === "be") tips.push(want === "be" ? "Aqui não entra outro verbo: só am, is ou are." : "Aqui não é o verbo to be: a frase pede outro verbo.");
+    else if (want === "ps" && got === "pp") tips.push(`Você usou present perfect, mas ${clue(q, "ps") ? "“" + clue(q, "ps") + "” marca tempo terminado" : "o momento já terminou"}. Com tempo terminado não se usa have/has.`);
+    else if (want === "pp" && got === "ps") tips.push(`Você usou o passado simples, mas ${clue(q, "pp") ? "“" + clue(q, "pp") + "”" : "a frase"} mostra que isso vai até agora.`);
+    else if (want === "pf" && got === "pp") tips.push("Have/has é presente. Como a história já é passado, o auxiliar também vai para o passado: had.");
+    else if (want === "pf" && got === "ps") tips.push("Sua resposta está no passado simples, que não mostra essa ordem.");
+    else if (want === "ps" && got === "pf") tips.push("Aqui não precisa do had: as ações vêm na ordem em que aconteceram, ou é uma ação só.");
+    else if (got === "pres") tips.push("Sua resposta ficou no presente.");
+    else tips.push(`A frase pede ${NAME[want]}, e sua resposta está no ${NAME[got]}.`);
+  }
+  // irregular regularized
+  if (/^(ps|pp|pf)$/.test(want)) aw.forEach(w => { if (/ed$/.test(w) && !e.includes(w)) { const b = w.slice(0, -2).replace(/e$/, ""); for (const k of [w.slice(0, -2), w.slice(0, -1), b]) if (IRR[k]) { tips.push(`${k} é irregular: ${IRR[k].past[0]} no passado, ${IRR[k].pp[0]} no particípio.`); break; } } });
+  if (!tips.length) {
+    if (aw.slice().sort().join(" ") === ew.slice().sort().join(" ")) tips.push("As palavras estão certas, mas a ordem não. " + (mode === "pergunta" ? "Na pergunta, o auxiliar vem antes da pessoa." : ""));
+    else if (lev(a, e) <= 2) tips.push("Está quase: confira a grafia letra por letra.");
+    else if (mode === "pergunta") tips.push("Na pergunta, o auxiliar (do/does, did, will, am/is/are, have/has ou had) vem antes da pessoa, e o resto da frase continua igual.");
+    else if (mode === "negativa") tips.push("Na negativa, use o auxiliar com not (don't/doesn't, didn't, won't, isn't/aren't, haven't/hasn't, hadn't) antes do verbo, e o resto continua igual.");
+  }
+  if (want === "be" && tips.length) skipReason = true;
+  if (tips.length && /^Depois de (do|does|did|don't|doesn't|didn't|going to|will|won't) /.test(tips[0]) && (pre || pre2)) skipReason = true;
+  const reason = mode === "pergunta" || mode === "negativa" || skipReason ? "" : why(want, q);
+  if (!tips.length && !reason) return "Releia a frase e confira cada palavra.";
+  return [reason, ...tips.slice(0, 2)].filter(Boolean).join(" ");
+}
 // ---------- builders
 function buildChoice(container, list, prefix) {
   list.forEach(([q, opts, ans, ctx], i) => {
@@ -545,7 +684,7 @@ function buildChoice(container, list, prefix) {
       const b = el("button", "opt", o); b.type = "button";
       b.addEventListener("click", () => {
         if (k === ans) { b.classList.add("right"); row.querySelectorAll("button").forEach(x => x.disabled = true); fb.className = "fb ok"; fb.textContent = "Isso."; mark(id, !row.dataset.missed); }
-        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = "Tente de novo."; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = "Ainda não. " + explain(q, o, opts[ans], "mc") + " Tente de novo."; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
       });
       row.appendChild(b);
     });
@@ -587,8 +726,9 @@ function buildTyped(container, list, prefix, opts = {}) {
       if (ok) { fb.className = "fb ok"; fb.textContent = "Isso."; fields.forEach(f => f.readOnly = true); btn.disabled = true; mark(id, !inp.dataset.missed); }
       else {
         fb.className = "fb no";
-        if (inp.dataset.missed) { fb.textContent = "Resposta: " + answers[0]; }
-        else { fb.textContent = "Quase. Confira a regra e tente mais uma vez."; }
+        const ex = explain(q, fields.map(f => f.value.trim()).filter(Boolean).join(" "), answers[0], opts.transform ? row[1] : null);
+        if (inp.dataset.missed) { fb.textContent = "Resposta: " + answers[0] + ". " + ex; }
+        else { fb.textContent = "Ainda não. " + ex + " Tente mais uma vez."; }
         inp.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); }
       }
     };
@@ -604,7 +744,7 @@ function buildFind(container) {
       const b = el("button", "opt", w); b.type = "button";
       b.addEventListener("click", () => {
         if (k === wrongIdx) { b.classList.add("right"); row.querySelectorAll("button").forEach(x => x.disabled = true); fb.className = "fb ok"; fb.textContent = why; mark(id, !row.dataset.missed); }
-        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = "Essa está certa. Procure outra."; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+        else { b.classList.add("wrong"); b.disabled = true; row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = `“${w}” está certa aqui. O erro está ${k < wrongIdx ? "depois" : "antes"} dessa palavra. Olhe o auxiliar, a forma do verbo e as palavras de tempo (yesterday, since, by the time…).`; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
       });
       row.appendChild(b);
     });
@@ -626,11 +766,19 @@ function buildOrder(container) {
     btn.addEventListener("click", () => {
       const v = [...built.children].map(t => t.textContent).join(" ");
       if (v === Eans[i]) { fb.className = "fb ok"; fb.textContent = "Isso: " + v.charAt(0).toUpperCase() + v.slice(1) + "?"; item.dataset.done = "1"; btn.disabled = true; mark(id, !item.dataset.missed); }
-      else { fb.className = "fb no"; fb.textContent = "Ainda não. Lembre: palavra de pergunta + did + pessoa + verbo."; item.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
+      else { fb.className = "fb no"; fb.textContent = "Ainda não. " + orderHint([...built.children].map(t => t.textContent), Eans[i].split(" ")); item.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
     });
     refresh(); actions.append(fb, btn);
     item.append(built, bank, actions); container.appendChild(item);
   });
+}
+function orderHint(got, ans) {
+  const AUXW = /^(did|do|does|have|has|had|was|were|am|is|are|can|will)$/;
+  let k = 0; while (k < ans.length && got[k] === ans[k]) k++;
+  if (k === 0) return AUXW.test(ans[0]) ? "Sem palavra de pergunta, a frase começa direto pelo auxiliar. Qual dos blocos é o auxiliar?" : "A pergunta começa pela palavra de pergunta (what, why, where, how…).";
+  if (AUXW.test(ans[k])) return `Até “${got.slice(0, k).join(" ")}” está certo. Agora vem o auxiliar, antes da pessoa.`;
+  if (AUXW.test(ans[k - 1])) return `Até “${got.slice(0, k).join(" ")}” está certo. Depois do auxiliar vem a pessoa (quem faz a ação), e só depois o verbo.`;
+  return `Até “${got.slice(0, k).join(" ")}” está certo. Confira a ordem do resto: primeiro o verbo, depois o complemento.`;
 }
 function buildVerbs() {
   const box = document.getElementById("exF"); box.textContent = ""; document.getElementById("exFfb").textContent = "";
@@ -644,7 +792,7 @@ function buildVerbs() {
 }
 function checkVerbs() {
   {
-    let right = 0, answered = 0;
+    let right = 0, answered = 0; const notes = [];
     F.forEach((v, i) => {
       const inp = document.getElementById("verb-" + i), val = norm(inp.value);
       if (!val) { inp.classList.remove("right","wrong"); return; }
@@ -652,13 +800,20 @@ function checkVerbs() {
       const ok = v.ans.map(norm).includes(val) || (v.base === "be" && /^(was|were)$/.test(val));
       inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
       if (ok) right++;
+      else {
+        const wantPast = themeKey().startsWith("calu-ps"), irr = /^calu-(ps|pp|pf)/.test(themeKey()) ? IRR[v.base] : null;
+        if (/ed$/.test(val) && irr && !v.ans.map(norm).includes(val)) notes.push(`${v.base} é irregular: não leva -ed.`);
+        else if (wantPast && irr && irr.pp.includes(val) && !irr.past.includes(val)) notes.push(`${v.base}: “${val}” é o particípio (3ª coluna). Aqui é o passado (2ª coluna).`);
+        else if (!wantPast && irr && irr.past.includes(val) && !irr.pp.includes(val)) notes.push(`${v.base}: “${val}” é o passado (2ª coluna). Aqui é o particípio (3ª coluna).`);
+        else if (val === v.base) notes.push(`${v.base}: você repetiu a forma normal.`);
+      }
       mark("F" + i, ok);
     });
     const fb = document.getElementById("exFfb");
     fb.className = "fb " + (right === F.length ? "ok" : "no");
     fb.textContent = answered === 0 ? "Preencha alguns verbos primeiro." :
       right === F.length ? "Os 20 certos. Excelente." :
-      `${right} de ${F.length} certos. Corrija os vermelhos e confira de novo.`;
+      `${right} de ${F.length} certos. Corrija os vermelhos e confira de novo.` + (notes.length ? " " + notes.slice(0, 4).join(" ") : "");
   }
 }
 document.getElementById("exFcheck").addEventListener("click", checkVerbs);

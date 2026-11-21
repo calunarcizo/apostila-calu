@@ -22,6 +22,8 @@ npm run test:e2e   # teste de fumaça das páginas (precisa do Playwright instal
 | Arquivo | Conteúdo |
 | --- | --- |
 | `index.html` | Trilha e índice remissivo (`#indice`) |
+| `u1.html` | Presente simples (Nível 1) |
+| `u3.html` | Futuro: will × going to (Nível 2) |
 | `u4.html` | Passado simples (Nível 2) |
 | `u5.html` | Present perfect ou passado simples? (Nível 3) |
 | `u6.html` | Past perfect (Nível 4) |
