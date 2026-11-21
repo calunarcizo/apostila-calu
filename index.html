@@ -233,6 +233,14 @@ $("nivel").onchange = () => { ls.set("calu-nivel", +$("nivel").value); render();
 // ---------- índice remissivo
 const U = { u1: ["u1.html", "Presente simples"], u3: ["u3.html", "Futuro"], u4: ["u4.html", "Passado simples"], u5: ["u5.html", "Present perfect"], u6: ["u6.html", "Past perfect"], mes: ["mestrado.html", "Mestrado"] };
 const IDX = [
+  ["variações (Reino Unido × EUA)", "Cada unidade tem um quadro Variações. Nos exercícios, as duas formas contam como certas.", [["u1", "passo 0"], ["u3", "passo 0"], ["u4", "passo 0"], ["u5", "passo 0"], ["u6", "passo 0"]]],
+  ["at / on the weekend", "At the weekend no Reino Unido, on the weekend nos EUA. As duas estão certas.", [["u1", "passo 0"]]],
+  ["have got × have", "Have you got…? (Reino Unido, informal) e Do you have…? (EUA e geral).", [["u1", "passo 0"]]],
+  ["shall", "Shall I…? para oferecer ajuda: mais britânico e formal. Nos EUA, Should I…? ou Do you want me to…?", [["u3", "passo 0"]]],
+  ["learnt × learned", "Reino Unido usa as duas; EUA quase sempre -ed (learned, dreamed, burned).", [["u4", "passo 0"]]],
+  ["travelled × traveled", "Dois l no Reino Unido, um nos EUA (cancelled × canceled).", [["u4", "passo 0"]]],
+  ["gotten × got", "Particípio de get: gotten nos EUA (has gotten better), got no Reino Unido.", [["u5", "passo 0"], ["u6", "passo 0"]]],
+  ["already ate × have already eaten", "Passado com already/yet/just é comum na fala americana. Na escrita e nas provas, present perfect.", [["u5", "passo 0"]]],
   ["furthermore / moreover", "Além disso. Somam um argumento mais forte.", [["mes", "passo 6"]]],
   ["in contrast", "Em contraste, por outro lado. Marca uma diferença direta.", [["mes", "passo 6"]]],
   ["nevertheless", "Não obstante, mesmo assim. Algo acontece apesar do que veio antes.", [["mes", "passo 6"]]],

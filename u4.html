@@ -121,6 +121,9 @@ input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px
 .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { .scorebar .fill { transition: none; } }
 @media (max-width: 420px) { .pron { grid-template-columns: 1fr; } }
+.vars { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.vars li { background: var(--soft); border-radius: 10px; padding: 10px 12px; font-size: .92rem; }
+.vtag { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
 </style>
 
 </head>
@@ -162,6 +165,13 @@ input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px
       <div><span class="sound">/ɪd/</span>wanted, needed, started<small>só depois de t ou d</small></div>
     </div>
     <p class="muted" style="font-size:.9rem">O verbo <span class="ex">to be</span> é diferente: <span class="ex">I/he/she/it was</span>, <span class="ex">you/we/they were</span>. Na negativa e na pergunta ele não usa did: <span class="ex">I wasn't tired. Were you at the port?</span></p>
+      <h3>Variações</h3>
+    <p class="muted" style="font-size:.9rem">O inglês muda de região para região e conforme a formalidade. Nos exercícios, as duas formas contam como certas.</p>
+    <ul class="vars">
+      <li><span class="vtag">Reino Unido × EUA</span><span class="ex">learnt, dreamt, burnt</span> × <span class="ex">learned, dreamed, burned</span>. Nos EUA quase sempre -ed. No Reino Unido as duas formas aparecem.</li>
+      <li><span class="vtag">Reino Unido × EUA</span><span class="ex">travelled, cancelled</span> × <span class="ex">traveled, canceled</span>: dois l no Reino Unido, um nos EUA.</li>
+      <li><span class="vtag">Reino Unido × EUA</span><span class="ex">The jeans fitted me</span> × <span class="ex">The jeans fit me</span> (passado de fit).</li>
+    </ul>
   </section>
 
   <!-- 1 ESCOLHA -->
@@ -532,6 +542,21 @@ function updateScore() {
     "Vale refazer a unidade com calma. Comece pela explicação e pelos 20 irregulares.";
 }
 const norm = s => s.toLowerCase().replace(/[’']/g, "'").replace(/[.?!,]+$/g, "").replace(/\s+/g, " ").trim();
+// British and American variants: both count as right; a note says which is which
+const BR2US = [[/\blearnt\b/g, "learned"], [/\bdreamt\b/g, "dreamed"], [/\bspelt\b/g, "spelled"], [/\bburnt\b/g, "burned"], [/\bsmelt\b/g, "smelled"], [/\bspoilt\b/g, "spoiled"], [/\bleapt\b/g, "leaped"],
+  [/travell/g, "travel"], [/cancell/g, "cancel"], [/labell/g, "label"], [/modell/g, "model"],
+  [/(analy|paraly)s(e|ed|es|ing)\b/g, "$1z$2"], [/\b(organi|reali|recogni|apologi|prioriti|mobili|critici|summari|standardi|utili)s(e|ed|es|ing|ation)\b/g, "$1z$2"],
+  [/\b(have|has|had|'ve|'s|'d|haven't|hasn't|hadn't) gotten\b/g, "$1 got"]];
+const canon = s => BR2US.reduce((t, [re, to]) => t.replace(re, to), norm(s));
+const VARIANTS = [
+  [/\b(learnt|dreamt|spelt|burnt|smelt|spoilt|leapt)\b/, "Forma mais britânica. Nos EUA: learned, dreamed, spelled, burned."],
+  [/(travell|cancell|labell|modell)/, "Grafia britânica, com ll. Nos EUA: traveled, canceled."],
+  [/(analys(e|ed|es|ing)\b|(organi|reali|recogni|apologi|prioriti|mobili|summari|standardi|utili)s(e|ed|es|ing)\b)/, "Grafia britânica, com s. Nos EUA: analyze, organize."],
+  [/\bgotten\b/, "Forma americana. No Reino Unido: have got."],
+  [/\b(have|has|had|'ve|'s|'d) got\b/, "Forma britânica. Nos EUA, no sentido de conseguir: have gotten."],
+  [/\b(gonna|imma|wanna|gotta)\b/, "Informal, da fala. Na escrita formal, use a forma completa (going to, want to)."],
+  [/\bshall\b/, "Mais britânico e formal. Nos EUA, em geral will ou should."]];
+const variantNote = raw => { const v = norm(raw); const hit = VARIANTS.find(([re]) => re.test(v)); return hit ? " " + hit[1] : ""; };
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 function blankify(text) { return text.replace("___", "_____"); }
 
@@ -653,6 +678,7 @@ function explain(q, given, expected, mode) {
     else if (want === "pres" && got === "ps") tips.push("Você usou o passado, mas a frase fala de rotina ou hábito.");
     else if (want === "be" || got === "be") tips.push(want === "be" ? "Aqui não entra outro verbo: só am, is ou are." : "Aqui não é o verbo to be: a frase pede outro verbo.");
     else if (want === "ps" && got === "pp") tips.push(`Você usou present perfect, mas ${clue(q, "ps") ? "“" + clue(q, "ps") + "” marca tempo terminado" : "o momento já terminou"}. Com tempo terminado não se usa have/has.`);
+    else if (want === "pp" && got === "ps" && /\b(already|yet|just)\b/i.test(q + " " + a)) tips.push("No inglês americano falado isso se ouve (I already ate, Did you eat yet?), mas na escrita e nas provas o padrão é o present perfect: have/has + particípio.");
     else if (want === "pp" && got === "ps") tips.push(`Você usou o passado simples, mas ${clue(q, "pp") ? "“" + clue(q, "pp") + "”" : "a frase"} mostra que isso vai até agora.`);
     else if (want === "pf" && got === "pp") tips.push("Have/has é presente. Como a história já é passado, o auxiliar também vai para o passado: had.");
     else if (want === "pf" && got === "ps") tips.push("Sua resposta está no passado simples, que não mostra essa ordem.");
@@ -722,9 +748,9 @@ function buildTyped(container, list, prefix, opts = {}) {
     const fb = el("span", "fb");
     const check = () => {
       const v = norm(fields.map(f => f.value.trim()).filter(Boolean).join(" ")); if (!v) return;
-      const ok = answers.map(norm).includes(v);
+      const ok = answers.map(canon).includes(canon(v));
       fields.forEach(f => { f.classList.toggle("right", ok); f.classList.toggle("wrong", !ok); });
-      if (ok) { fb.className = "fb ok"; fb.textContent = "Isso."; fields.forEach(f => f.readOnly = true); btn.disabled = true; mark(id, !inp.dataset.missed); }
+      if (ok) { fb.className = "fb ok"; fb.textContent = "Isso." + variantNote(v); fields.forEach(f => f.readOnly = true); btn.disabled = true; mark(id, !inp.dataset.missed); }
       else {
         fb.className = "fb no";
         const ex = explain(q, fields.map(f => f.value.trim()).filter(Boolean).join(" "), answers[0], opts.transform ? row[1] : null);
@@ -798,9 +824,9 @@ function checkVerbs() {
       const inp = document.getElementById("verb-" + i), val = norm(inp.value);
       if (!val) { inp.classList.remove("right","wrong"); return; }
       answered++;
-      const ok = v.ans.map(norm).includes(val) || (v.base === "be" && /^(was|were)$/.test(val));
+      const ok = v.ans.map(canon).includes(canon(val)) || (v.base === "be" && /^(was|were)$/.test(val));
       inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
-      if (ok) right++;
+      if (ok) { right++; const vn = variantNote(val); if (vn && !notes.includes(vn.trim())) notes.push(vn.trim()); }
       else {
         const wantPast = themeKey().startsWith("calu-ps"), irr = /^calu-(ps|pp|pf)/.test(themeKey()) ? IRR[v.base] : null;
         if (/ed$/.test(val) && irr && !v.ans.map(norm).includes(val)) notes.push(`${v.base} é irregular: não leva -ed.`);
@@ -813,7 +839,7 @@ function checkVerbs() {
     const fb = document.getElementById("exFfb");
     fb.className = "fb " + (right === F.length ? "ok" : "no");
     fb.textContent = answered === 0 ? "Preencha alguns verbos primeiro." :
-      right === F.length ? "Os 20 certos. Excelente." :
+      right === F.length ? "Os 20 certos. Excelente." + (notes.length ? " " + notes.slice(0, 3).join(" ") : "") :
       `${right} de ${F.length} certos. Corrija os vermelhos e confira de novo.` + (notes.length ? " " + notes.slice(0, 4).join(" ") : "");
   }
 }
