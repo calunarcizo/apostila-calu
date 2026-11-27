@@ -97,6 +97,8 @@ input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 .fb { font-size: .9rem; }
 .fb.ok { color: var(--good); }
+.sayit { font: inherit; font-size: .85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; justify-self: start; border: 1px solid var(--good); background: var(--good-bg); color: var(--good); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.sayit .t { font-weight: 400; color: var(--ink); }
 .fb.no { color: var(--bad); }
 .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
 /* word order */
@@ -479,6 +481,35 @@ function explain(q, given, expected, mode) {
   if (!tips.length && !reason) return "Releia a frase e confira cada palavra.";
   return [reason, ...tips.slice(0, 2)].filter(Boolean).join(" ");
 }
+// ---------- ouvir a frase depois do acerto
+const TTS = "speechSynthesis" in window;
+// voz americana: escolhe a melhor voz en-US do aparelho; nunca usa a voz em português
+const VPREF = [/Samantha/i, /Google US English/i, /(Ava|Aria|Jenny|Emma|Andrew|Brian|Guy|Michelle).*(Natural|Online|Premium|Enhanced)/i, /(Ava|Allison|Susan|Tom|Alex|Nicky|Evan|Zoe)/i, /Microsoft (Zira|David|Mark)/i];
+const isUS = v => /^en[-_]US$/i.test(v.lang) || /United States|US English/i.test(v.name);
+function bestVoice() {
+  if (!("speechSynthesis" in window)) return null;
+  const all = speechSynthesis.getVoices(), us = all.filter(isUS);
+  for (const r of VPREF) { const v = us.find(x => r.test(x.name)); if (v) return v; }
+  return us[0] || all.find(v => /^en[-_]/i.test(v.lang)) || null;
+}
+let VOICE_READY = !("speechSynthesis" in window) || speechSynthesis.getVoices().length > 0;
+if (!VOICE_READY) { speechSynthesis.addEventListener("voiceschanged", () => { VOICE_READY = true; voiceInfo(); }); speechSynthesis.getVoices(); setTimeout(() => { VOICE_READY = true; }, 2000); }
+function voiceInfo() { const box = document.getElementById("voiceInfo"); if (!box) return; const v = bestVoice();
+  box.textContent = !v ? "Não encontrei voz em inglês neste aparelho. Veja abaixo como instalar." : isUS(v) ? `Voz: ${v.name.replace(/\s*\(.*\)/, "")} (inglês americano)` : `Voz: ${v.name} — este aparelho não tem voz americana; instale uma (veja abaixo).`; }
+function speakUS(text, rate, onFail) {
+  if (!("speechSynthesis" in window)) { onFail && onFail(); return; }
+  const go = () => { const v = bestVoice(); if (!v) { onFail && onFail(); return; }
+    speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.voice = v; u.lang = v.lang || "en-US"; u.rate = rate || 0.95; speechSynthesis.speak(u); };
+  if (VOICE_READY || speechSynthesis.getVoices().length) go(); else { let done = false; const once = () => { if (!done) { done = true; go(); } }; speechSynthesis.addEventListener("voiceschanged", once, { once: true }); setTimeout(once, 1200); }
+}
+function speak(text) { speakUS(text, 0.95); }
+const tidy = s => { s = s.replace(/\s*\([^)]*\)/g, "").replace(/\s+/g, " ").replace(/\s+([.,?!])/g, "$1").trim(); return s.charAt(0).toUpperCase() + s.slice(1); };
+function addSay(item, text) {
+  if (!TTS) return; item.querySelector(".sayit")?.remove();
+  const b = el("button", "sayit"); b.type = "button"; b.setAttribute("aria-label", "Ouvir: " + text);
+  b.append(document.createTextNode("▶ Ouvir"), el("span", "t", text)); b.onclick = () => speak(text);
+  item.appendChild(b);
+}
 // ---------- builders
 function buildChoice(container, list, prefix) {
   list.forEach(([q, opts, ans, ctx], i) => {
@@ -489,7 +520,7 @@ function buildChoice(container, list, prefix) {
       const b = el("button", "opt", o); b.type = "button";
       b.addEventListener("click", () => {
         row.querySelectorAll("button").forEach(x => x.classList.remove("right", "wrong"));
-        if (k === ans) { b.classList.add("right"); fb.className = "fb ok"; fb.textContent = "Isso." + (row.dataset.solved ? "" : " Se quiser, toque nas outras opções para ver por que não servem."); row.dataset.solved = "1"; mark(id, !row.dataset.missed); }
+        if (k === ans) { b.classList.add("right"); fb.className = "fb ok"; fb.textContent = "Isso." + (row.dataset.solved ? "" : " Se quiser, toque nas outras opções para ver por que não servem."); row.dataset.solved = "1"; mark(id, !row.dataset.missed); addSay(item, tidy(q.replace("___", opts[ans]))); }
         else { b.classList.add("wrong"); if (!row.dataset.solved) row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = (row.dataset.solved ? "Essa não serve. " : "Ainda não. ") + explain(q, o, opts[ans], "mc") + (row.dataset.solved ? "" : " Tente de novo."); if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
       });
       row.appendChild(b);
@@ -529,7 +560,9 @@ function buildTyped(container, list, prefix, opts = {}) {
       const v = norm(fields.map(f => f.value.trim()).filter(Boolean).join(" ")); if (!v) return;
       const ok = answers.map(canon).includes(canon(v));
       fields.forEach(f => { f.classList.toggle("right", ok); f.classList.toggle("wrong", !ok); });
-      if (ok) { fb.className = "fb ok"; fb.textContent = "Isso." + variantNote(v) + (inp.dataset.solved ? "" : " Se quiser, mude a resposta e confira de novo para ver outras correções."); inp.dataset.solved = "1"; mark(id, !inp.dataset.missed); }
+      if (ok) { fb.className = "fb ok"; fb.textContent = "Isso." + variantNote(v) + (inp.dataset.solved ? "" : " Se quiser, mude a resposta e confira de novo para ver outras correções."); inp.dataset.solved = "1"; mark(id, !inp.dataset.missed);
+        if (opts.transform) addSay(item, tidy(fields[0].value) .replace(/[.?!]*$/, row[1] === "pergunta" ? "?" : "."));
+        else { let s = ""; p.childNodes.forEach(n => { if (n.nodeType === 3) s += n.textContent; else if (n.tagName === "INPUT") s += " " + n.value.trim() + " "; }); if (!slots.length) s = q.replace("___", v); addSay(item, tidy(s)); } }
       else {
         fb.className = "fb no";
         const ex = explain(q, fields.map(f => f.value.trim()).filter(Boolean).join(" "), answers[0], opts.transform ? row[1] : null);
@@ -544,6 +577,32 @@ function buildTyped(container, list, prefix, opts = {}) {
     item.append(p, wrap, fb); container.appendChild(item);
   });
 }
+function fixed(s, wi, why) {
+  const full = why.match(/\(([A-Z][^()…]*[.?!])\)\s*$/); if (full) return full[1];
+  const ws = s.split(" "); const tail = (ws[wi].match(/[.,?!]+$/) || [""])[0]; const low = w => w.toLowerCase().replace(/[.,?!]+$/, "");
+  const keepTail = (w, t) => w.replace(/[.,?!]+$/, "") + t;
+  const to = ((why.split("→")[1] || "").split("(")[0] || "").trim(); const from = low(ws[wi]);
+  const cap = x => x.charAt(0).toUpperCase() + x.slice(1);
+  if (to) {
+    const add = to.split(" ").length - 1; ws[wi] = (wi === 0 ? cap(to) : to) + tail;
+    const nx = wi + 1 + add; // first word after the replaced chunk
+    if (to === "won't" && low(ws[wi + 1] || "") === "will") ws.splice(wi + 1, 1);
+    else if (/^(did|does) /i.test(to) && ws[nx]) { const t2 = (ws[nx].match(/[.,?!]+$/) || [""])[0]; ws[nx] = baseOf(low(ws[nx])) + t2; }
+    else if (/^is /i.test(to)) { const j = ws.findIndex((w, k) => k > nx && low(w) === "is"); if (j > 0) ws.splice(j, 1); }
+    else if (/^(have|has)$/i.test(to) && /^did$/i.test(from)) { const j = wi + 3; if (ws[j]) { const t2 = (ws[j].match(/[.,?!]+$/) || [""])[0]; ws[j] = ppOf(baseOf(low(ws[j]))) + t2; } }
+  } else {
+    const nextW = low(ws[wi + 1] || ""), t2 = ((ws[wi + 1] || "").match(/[.,?!]+$/) || [""])[0];
+    if (/^(have|has)$/.test(from) && nextW) {
+      let past = null;
+      if (nextW === "been" || nextW === "gone") past = "went";
+      else for (const [b, f] of Object.entries(IRR)) if (f.pp.includes(nextW)) { past = f.past[0]; break; }
+      if (!past && /ed$/.test(nextW)) past = nextW;
+      if (past) ws[wi + 1] = past + t2;
+    }
+    ws.splice(wi, 1); if (wi === 0 && ws.length) ws[0] = cap(ws[0]);
+  }
+  return ws.join(" ");
+}
 function buildFind(container) {
   D.forEach(([s, wrongIdx, why], i) => {
     const id = "D" + i, item = el("div", "item"), row = el("div", "opts"), fb = el("span", "fb");
@@ -551,7 +610,7 @@ function buildFind(container) {
       const b = el("button", "opt", w); b.type = "button";
       b.addEventListener("click", () => {
         row.querySelectorAll("button").forEach(x => x.classList.remove("right", "wrong"));
-        if (k === wrongIdx) { b.classList.add("right"); row.dataset.solved = "1"; fb.className = "fb ok"; fb.textContent = why; mark(id, !row.dataset.missed); }
+        if (k === wrongIdx) { b.classList.add("right"); row.dataset.solved = "1"; fb.className = "fb ok"; fb.textContent = why; mark(id, !row.dataset.missed); addSay(item, fixed(s, wrongIdx, why)); }
         else { b.classList.add("wrong"); if (!row.dataset.solved) row.dataset.missed = "1"; fb.className = "fb no"; fb.textContent = `“${w}” está certa aqui. O erro está ${k < wrongIdx ? "depois" : "antes"} dessa palavra. Olhe o auxiliar, a forma do verbo e as palavras de tempo (yesterday, since, by the time…).`; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
       });
       row.appendChild(b);
@@ -573,7 +632,7 @@ function buildOrder(container) {
     });
     btn.addEventListener("click", () => {
       const v = [...built.children].map(t => t.textContent).join(" ");
-      if (v === Eans[i]) { fb.className = "fb ok"; fb.textContent = "Isso: " + v.charAt(0).toUpperCase() + v.slice(1) + "?"; item.dataset.done = "1"; mark(id, !item.dataset.missed); }
+      if (v === Eans[i]) { fb.className = "fb ok"; fb.textContent = "Isso: " + v.charAt(0).toUpperCase() + v.slice(1) + "?"; item.dataset.done = "1"; mark(id, !item.dataset.missed); addSay(item, v.charAt(0).toUpperCase() + v.slice(1) + "?"); }
       else { fb.className = "fb no"; fb.textContent = (item.dataset.done ? "Essa ordem não serve. " : "Ainda não. ") + orderHint([...built.children].map(t => t.textContent), Eans[i].split(" ")); if (!item.dataset.done) item.dataset.missed = "1"; if (!(id in results)) { results[id] = false; updateScore(); persist(); } }
     });
     refresh(); actions.append(fb, btn);

@@ -162,7 +162,7 @@ input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px
     <p class="muted">Primeiro, os padrões de pronúncia que ajudam a reconhecer as palavras. Depois, 7 jogos com áudio: pares de som, números, ditado e uma escuta longa sobre uma ONG. Use fone de ouvido. Leva uns 25 minutos.</p>
   </header>
 
-  <div class="warn" id="noVoice" hidden>Este navegador não tem voz em inglês. Abra o app no Chrome, Edge ou Safari, ou no celular, para ouvir os áudios.</div>
+  <div class="warn" id="noVoice" hidden>Não encontrei voz em inglês americano neste aparelho, então o áudio não vai tocar (para não sair com sotaque de português). Veja em "Voz e velocidade" como instalar.</div>
 
   <div class="scorebar" aria-live="polite">
     <div class="track"><div class="fill" id="scoreFill"></div></div>
@@ -172,17 +172,13 @@ input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px
 
   <section class="card">
     <div class="step-head"><span class="step-num">⚙</span><h2>Voz e velocidade</h2></div>
-    <div class="controls" role="group" aria-label="Sotaque">
-      <span class="small muted" style="font-size:.88rem">Sotaque:</span>
-      <button class="chip" data-acc="en-US" aria-pressed="true">EUA</button>
-      <button class="chip" data-acc="en-GB" aria-pressed="false">Reino Unido</button>
-    </div>
+    <p class="small" id="voiceInfo" style="font-size:.9rem;font-weight:600">Procurando a voz americana…</p>
     <div class="controls" role="group" aria-label="Velocidade">
       <span class="small muted" style="font-size:.88rem">Velocidade:</span>
       <button class="chip" data-rate="0.95" aria-pressed="true">Normal</button>
       <button class="chip" data-rate="0.7" aria-pressed="false">Devagar</button>
     </div>
-    <p class="muted" style="font-size:.85rem">A voz é a do seu aparelho. Alguns celulares não têm a voz britânica: aí ela sai com o sotaque americano. As dicas escritas "à brasileira" seguem o inglês americano.</p>
+    <p class="muted" style="font-size:.85rem">O áudio usa a voz em inglês americano do seu aparelho. Se ela soar como português ou não aparecer, instale a voz: <b>iPhone</b>: Ajustes › Acessibilidade › Conteúdo Falado › Vozes › Inglês (EUA) › Samantha ou Ava. <b>Android</b>: Configurações › Acessibilidade › Saída de texto para fala › Mecanismo do Google › Instalar dados de voz › English (United States). <b>Computador</b>: use o Chrome ou o Edge. Depois, feche e abra o app de novo.</p>
   </section>
 
   <section class="card">
@@ -290,17 +286,29 @@ results = saved.results || {};
 
 // ---------- voz
 const TTS = "speechSynthesis" in window;
-let accent = saved.accent || "en-US", rate = saved.rate || 0.95, voices = [];
-function loadVoices() { if (TTS) voices = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang)); }
-if (TTS) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; } else $("noVoice").hidden = false;
-function pickVoice() { const L = accent.toLowerCase(); return voices.find(v => v.lang.replace("_", "-").toLowerCase() === L && /google|natural|samantha|daniel|serena|karen/i.test(v.name)) || voices.find(v => v.lang.replace("_", "-").toLowerCase() === L) || voices.find(v => /^en/i.test(v.lang)); }
-function say(text, r) {
-  if (!TTS) { $("noVoice").hidden = false; return; }
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text); u.lang = accent; const v = pickVoice(); if (v) u.voice = v; u.rate = r || rate; speechSynthesis.speak(u);
+// voz americana: escolhe a melhor voz en-US do aparelho; nunca usa a voz em português
+const VPREF = [/Samantha/i, /Google US English/i, /(Ava|Aria|Jenny|Emma|Andrew|Brian|Guy|Michelle).*(Natural|Online|Premium|Enhanced)/i, /(Ava|Allison|Susan|Tom|Alex|Nicky|Evan|Zoe)/i, /Microsoft (Zira|David|Mark)/i];
+const isUS = v => /^en[-_]US$/i.test(v.lang) || /United States|US English/i.test(v.name);
+function bestVoice() {
+  if (!("speechSynthesis" in window)) return null;
+  const all = speechSynthesis.getVoices(), us = all.filter(isUS);
+  for (const r of VPREF) { const v = us.find(x => r.test(x.name)); if (v) return v; }
+  return us[0] || all.find(v => /^en[-_]/i.test(v.lang)) || null;
 }
+let VOICE_READY = !("speechSynthesis" in window) || speechSynthesis.getVoices().length > 0;
+if (!VOICE_READY) { speechSynthesis.addEventListener("voiceschanged", () => { VOICE_READY = true; voiceInfo(); }); speechSynthesis.getVoices(); setTimeout(() => { VOICE_READY = true; }, 2000); }
+function voiceInfo() { const box = document.getElementById("voiceInfo"); if (!box) return; const v = bestVoice();
+  box.textContent = !v ? "Não encontrei voz em inglês neste aparelho. Veja abaixo como instalar." : isUS(v) ? `Voz: ${v.name.replace(/\s*\(.*\)/, "")} (inglês americano)` : `Voz: ${v.name} — este aparelho não tem voz americana; instale uma (veja abaixo).`; }
+function speakUS(text, rate, onFail) {
+  if (!("speechSynthesis" in window)) { onFail && onFail(); return; }
+  const go = () => { const v = bestVoice(); if (!v) { onFail && onFail(); return; }
+    speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.voice = v; u.lang = v.lang || "en-US"; u.rate = rate || 0.95; speechSynthesis.speak(u); };
+  if (VOICE_READY || speechSynthesis.getVoices().length) go(); else { let done = false; const once = () => { if (!done) { done = true; go(); } }; speechSynthesis.addEventListener("voiceschanged", once, { once: true }); setTimeout(once, 1200); }
+}
+let accent = "en-US", rate = saved.rate || 0.95;
+if (!TTS) $("noVoice").hidden = false; voiceInfo();
+function say(text, r) { speakUS(text, r || rate, () => { $("noVoice").hidden = false; }); }
 function playBtn(text, label, slow) { const b = el("button", "play" + (slow ? " slow" : ""), label || "Ouvir"); b.type = "button"; b.onclick = () => say(text, slow ? 0.65 : null); return b; }
-document.querySelectorAll("[data-acc]").forEach(b => b.onclick = () => { accent = b.dataset.acc; document.querySelectorAll("[data-acc]").forEach(x => x.setAttribute("aria-pressed", x === b)); persist(); });
 document.querySelectorAll("[data-rate]").forEach(b => b.onclick = () => { rate = +b.dataset.rate; document.querySelectorAll("[data-rate]").forEach(x => x.setAttribute("aria-pressed", x === b)); persist(); });
 
 // ---------- dicas
@@ -381,7 +389,7 @@ function updateScore() {
   $("medal").textContent = done < TOTAL ? "🎧" : pct >= 90 ? "🥇" : pct >= 75 ? "🥈" : pct >= 60 ? "🥉" : "📝";
   $("finalMsg").textContent = done < TOTAL ? `Faltam ${TOTAL - done} desafios para o resultado final.` :
     pct >= 90 ? `Ouvido de ouro: ${pts} pontos. Agora faça o shadowing todos os dias por uma semana.` :
-    pct >= 60 ? `Bom trabalho: ${pts} pontos. Refaça os jogos em que errou, agora no sotaque britânico.` :
+    pct >= 60 ? `Bom trabalho: ${pts} pontos. Refaça os jogos em que errou, agora na velocidade normal.` :
     `Você fez ${pts} pontos. Recomece na velocidade "Devagar" e depois volte para a normal.`;
 }
 function hit(id, ok) {
@@ -444,7 +452,6 @@ function buildAll() {
   SHADOW.forEach(s => { const it = el("div", "item"); const c = el("div", "controls"); c.append(el("span", "prompt", s), playBtn(s), playBtn(s, "Devagar", true)); it.append(c); g8.appendChild(it); });
   $("g7text").textContent = LONG; $("g7text").hidden = true;
   $("myNotes").value = saved.notes || "";
-  document.querySelectorAll("[data-acc]").forEach(x => x.setAttribute("aria-pressed", x.dataset.acc === accent));
   document.querySelectorAll("[data-rate]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.rate === rate));
   updateScore();
 }
