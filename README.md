@@ -29,5 +29,6 @@ npm run test:e2e   # teste de fumaça das páginas (precisa do Playwright instal
 | `u6.html` | Past perfect (Nível 4) |
 | `mestrado.html` | Trilha mestrado (leitura instrumental) |
 | `writing.html` | Writing: cold emails |
+| `listening.html` | Listening (voz do navegador) |
 
 Cada unidade abre direto num tema pelo endereço, por exemplo `u4.html#porto`.

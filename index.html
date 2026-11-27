@@ -186,9 +186,10 @@ const UNITS = [
   { id: "u5", level: 3, short: "PP", name: "Present perfect ou passado?", sub: "Experiências e o que continua até hoje", file: "u5.html", key: "calu-pp-u5-", themes: THEMES },
   { id: "u6", level: 4, short: "PF", name: "Past perfect", sub: "O passado antes do passado", file: "u6.html", key: "calu-pf-u6-", themes: THEMES },
   { id: "wr", level: 5, extra: true, short: "WR", name: "Writing: cold emails", sub: "Escrever para quem ainda não conhece você", file: "writing.html", key: "calu-wr-", themes: { cold: "Cold emails" } },
+  { id: "ls", level: 6, extra: true, short: "LS", name: "Listening", sub: "Pronúncia, ditado e escuta por setor", file: "listening.html", key: "calu-ls-", themes: { terceiro: "Terceiro setor" } },
   { id: "mes", level: 0, extra: true, short: "MS", name: "Trilha mestrado", sub: "Leitura para a prova de proficiência", file: "mestrado.html", key: "calu-mestrado-score-", themes: AREAS }
 ];
-const LEVELS = { 1: "Nível 1 · A1", 2: "Nível 2 · A2", 3: "Nível 3 · B1", 4: "Nível 4 · B2", 0: "Trilha extra · pós-graduação", 5: "Trilha extra · writing" };
+const LEVELS = { 1: "Nível 1 · A1", 2: "Nível 2 · A2", 3: "Nível 3 · B1", 4: "Nível 4 · B2", 0: "Trilha extra · pós-graduação", 5: "Trilha extra · writing", 6: "Trilha extra · listening" };
 const PASS = 0.6;
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -232,7 +233,7 @@ function render() {
     if (u.level !== lastLevel) { html.push(`<div class="level"><span>${LEVELS[u.level]}</span></div>`); lastLevel = u.level; }
     const cls = ["node", u.extra ? "extra" : "", u.soon || !unlocked ? "locked" : "", finished ? "done" : ""].join(" ");
     const sub = u.soon ? "Em breve" : !unlocked ? "Termine a unidade anterior para abrir" :
-      `${st.done} de ${Object.keys(u.themes).length} ${u.id === "wr" ? (Object.keys(u.themes).length > 1 ? "módulos" : "módulo") : u.extra ? "áreas" : "temas"} · melhor ${Math.round(st.best * 100)}%`;
+      `${st.done} de ${Object.keys(u.themes).length} ${u.id === "wr" || u.id === "ls" ? (Object.keys(u.themes).length > 1 ? "módulos" : "módulo") : u.extra ? "áreas" : "temas"} · melhor ${Math.round(st.best * 100)}%`;
     html.push(`<div class="${cls}" data-u="${u.id}" ${current === u.id ? 'aria-current="true"' : ""}>
       <button class="bubble" type="button" ${!unlocked ? "disabled" : ""} aria-expanded="${open === u.id}" aria-label="${esc(u.name)}">${ring(st.best, finished ? "var(--signal)" : "var(--good)")}<span class="core">${!unlocked ? '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>' : u.short}</span></button>
       <span class="name">${esc(u.name)}</span><span class="sub">${esc(u.extra ? u.sub : sub)}${u.extra ? "<br>" + esc(sub) : ""}</span></div>`);
@@ -255,8 +256,12 @@ function sheet(u, st, fav) {
 $("nivel").onchange = () => { ls.set("calu-nivel", +$("nivel").value); render(); };
 
 // ---------- índice remissivo
-const U = { u1: ["u1.html", "Presente simples"], u3: ["u3.html", "Futuro"], u4: ["u4.html", "Passado simples"], u5: ["u5.html", "Present perfect"], u6: ["u6.html", "Past perfect"], mes: ["mestrado.html", "Mestrado"], wr: ["writing.html", "Writing"], verbos: ["#verbos", "Irregulares"] };
+const U = { u1: ["u1.html", "Presente simples"], u3: ["u3.html", "Futuro"], u4: ["u4.html", "Passado simples"], u5: ["u5.html", "Present perfect"], u6: ["u6.html", "Past perfect"], mes: ["mestrado.html", "Mestrado"], wr: ["writing.html", "Writing"], ls: ["listening.html", "Listening"], verbos: ["#verbos", "Irregulares"] };
 const IDX = [
+  ["schwa", "O som fraco \"ã\" das sílabas sem força: about, support, community.", [["ls", "dicas"]]],
+  ["magic -e", "O -e final faz a vogal dizer o próprio nome: plan × plane, not × note.", [["ls", "dicas e jogo 1"]]],
+  ["linking sounds", "Palavras que se encostam na fala: reach out = ri-TCHAUT, a lot of = ã-LÓ-rãv.", [["ls", "dicas e jogo 4"]]],
+  ["-teen × -ty", "thirTEEN (força no fim) × THIRty (força no começo).", [["ls", "jogo 5"]]],
   ["cold email", "Email para quem ainda não conhece você: 7 blocos, até 150 palavras, um pedido pequeno.", [["wr", "jogos 1 a 8"]]],
   ["follow-up", "Retomar o contato 5 a 7 dias depois, no mesmo thread: Just following up on my note below.", [["wr", "jogo 7"]]],
   ["verbos irregulares (lista)", "Base, passado e particípio, com tradução. Lista geral e uma lista por setor, com modo treino.", [["verbos", "aba Irregulares"], ["u4", "passo 0"]]],

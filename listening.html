@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.backlink{display:inline-flex;align-items:center;gap:6px;font:600 .9rem Inter,system-ui,sans-serif;text-decoration:none;color:var(--accent);justify-self:start}
+</style>
+<title>Listening · Terceiro setor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column; a sticky score strip; each exercise is a numbered step (the order is the learning sequence: controlled to free) */
+:root {
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --ink: #142233;
+  --muted: #586779;
+  --line: #d3dbe4;
+  --accent: #1f5fa8;
+  --accent-ink: #ffffff;
+  --signal: #f2b632;
+  --good: #1d7a4c;
+  --good-bg: #e2f3ea;
+  --bad: #b3362b;
+  --bad-bg: #f8e4e1;
+  --soft: #e3ebf5;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 24px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; }
+.eyebrow { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 14px; min-width: 0; }
+.scorebar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.scorebar .track { flex: 1 1 160px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.scorebar .fill { height: 100%; background: var(--good); width: 0; transition: width .3s; }
+.scorebar span { font-size: .85rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.step-head { display: flex; gap: 12px; align-items: baseline; }
+.step-num { font-family: var(--display); font-weight: 700; color: var(--accent); font-size: 1.4rem; min-width: 1.6em; }
+/* explanation */
+.rule { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.rule > div { background: var(--soft); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; min-width: 0; }
+.rule b { font-family: var(--mono); font-weight: 500; font-size: .92rem; }
+.ex { font-family: var(--mono); font-size: .88rem; }
+.callout { border-left: 4px solid var(--signal); padding: 8px 14px; background: var(--soft); border-radius: 0 10px 10px 0; }
+.pron { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pron div { border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; min-width: 0; }
+.pron .sound { display: block; font-family: var(--mono); font-size: 1.1rem; color: var(--accent); margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.pron small { display: block; color: var(--muted); font-size: .8rem; }
+/* items */
+.items { display: grid; gap: 12px; counter-reset: it; }
+.item { display: grid; gap: 8px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+.item:last-child { border-bottom: 0; padding-bottom: 0; }
+.prompt { font-size: 1.02rem; }
+.prompt .ctx { display: block; font-size: .8rem; color: var(--muted); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); text-decoration: line-through; }
+.opt:disabled { cursor: default; }
+.inline-input { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+input[type=text], textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 0; }
+input[type=text] { flex: 1 1 200px; }
+input.right { border-color: var(--good); background: var(--good-bg); }
+.prompt.blanks { line-height: 2.4; }
+input.slot { width: 7.5em; flex: none; display: inline-block; margin: 0 4px; padding: 2px 6px; border: 0; border-bottom: 2px solid var(--muted); border-radius: 4px 4px 0 0; background: var(--soft); text-align: center; vertical-align: baseline; }
+input.slot.right { border-bottom-color: var(--good); background: var(--good-bg); }
+input.slot.wrong { border-bottom-color: var(--bad); background: var(--bad-bg); }
+input.wrong { border-color: var(--bad); background: var(--bad-bg); }
+textarea { width: 100%; min-height: 150px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+.btn { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 9px 16px; cursor: pointer; background: var(--accent); color: var(--accent-ink); }
+.btn.small { padding: 7px 12px; font-size: .9rem; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.fb { font-size: .9rem; }
+.fb.ok { color: var(--good); }
+.fb.no { color: var(--bad); }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+/* word order */
+.bank, .built { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; padding: 6px; border-radius: 10px; }
+.built { border: 1px dashed var(--line); }
+.tile { font: inherit; font-family: var(--mono); font-size: .9rem; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+/* flashcards */
+.verbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.verb { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: grid; gap: 4px; min-width: 0; }
+.verb label { font-family: var(--mono); font-size: .88rem; }
+.verb label small { color: var(--muted); font-family: var(--body); }
+.verb input { width: 100%; padding: 6px 8px; }
+.checklist { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.checklist li { display: flex; gap: 8px; align-items: flex-start; }
+.checklist input { margin-top: 5px; }
+.ai { white-space: pre-wrap; background: var(--soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; }
+.final { text-align: center; }
+.final .big { font-family: var(--display); font-size: 3rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.themes-box { display: grid; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: .9rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .scorebar .fill { transition: none; } }
+@media (max-width: 420px) { .pron { grid-template-columns: 1fr; } }
+.vars { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.vars li { background: var(--soft); border-radius: 10px; padding: 10px 12px; font-size: .92rem; }
+.vtag { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+</style>
+<style>
+.combo { font-family: var(--display); font-weight: 700; color: var(--signal); font-size: .95rem; min-width: 5.5em; }
+.combo.pop { animation: pop .35s ease; }
+@keyframes pop { 50% { transform: scale(1.25); } }
+.play { font: inherit; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--accent); background: var(--soft); color: var(--accent); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.play::before { content: "▶"; font-size: .8em; }
+.play.slow::before { content: "🐢"; }
+.play.on { background: var(--accent); color: var(--accent-ink); }
+.sp { font-family: var(--mono); font-size: .95rem; }
+.say { font-family: var(--mono); color: var(--accent); }
+.tips { display: grid; gap: 10px; }
+.tip { background: var(--soft); border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; min-width: 0; }
+.tip h3 { font-size: 1rem; }
+.tip table { border-collapse: collapse; font-size: .9rem; width: 100%; }
+.tip td { padding: 3px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+.tip td:first-child { font-family: var(--mono); width: 46%; overflow-wrap: anywhere; }
+.tip td { overflow-wrap: anywhere; }
+.tip .rowplay { font: inherit; border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0 4px; }
+.diff { font-size: .95rem; line-height: 1.9; }
+.diff .miss { background: var(--bad-bg); color: var(--bad); border-radius: 4px; padding: 0 4px; }
+.diff .ok { color: var(--good); }
+.transcript { font-size: .95rem; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.warn { background: var(--bad-bg); color: var(--bad); border-radius: 10px; padding: 10px 14px; font-size: .92rem; }
+@media (prefers-reduced-motion: reduce) { .combo.pop { animation: none; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← Voltar à trilha</a>
+  <header style="display:grid;gap:8px">
+    <span class="eyebrow">Inglês com Calú · Listening · Terceiro setor</span>
+    <h1>Ouvir e entender</h1>
+    <p class="muted">Primeiro, os padrões de pronúncia que ajudam a reconhecer as palavras. Depois, 7 jogos com áudio: pares de som, números, ditado e uma escuta longa sobre uma ONG. Use fone de ouvido. Leva uns 25 minutos.</p>
+  </header>
+
+  <div class="warn" id="noVoice" hidden>Este navegador não tem voz em inglês. Abra o app no Chrome, Edge ou Safari, ou no celular, para ouvir os áudios.</div>
+
+  <div class="scorebar" aria-live="polite">
+    <div class="track"><div class="fill" id="scoreFill"></div></div>
+    <span id="scoreText">0 pontos</span><span class="combo" id="combo"></span>
+    <button class="btn ghost small" id="resetAll">Recomeçar</button>
+  </div>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">⚙</span><h2>Voz e velocidade</h2></div>
+    <div class="controls" role="group" aria-label="Sotaque">
+      <span class="small muted" style="font-size:.88rem">Sotaque:</span>
+      <button class="chip" data-acc="en-US" aria-pressed="true">EUA</button>
+      <button class="chip" data-acc="en-GB" aria-pressed="false">Reino Unido</button>
+    </div>
+    <div class="controls" role="group" aria-label="Velocidade">
+      <span class="small muted" style="font-size:.88rem">Velocidade:</span>
+      <button class="chip" data-rate="0.95" aria-pressed="true">Normal</button>
+      <button class="chip" data-rate="0.7" aria-pressed="false">Devagar</button>
+    </div>
+    <p class="muted" style="font-size:.85rem">A voz é a do seu aparelho. Alguns celulares não têm a voz britânica: aí ela sai com o sotaque americano. As dicas escritas "à brasileira" seguem o inglês americano.</p>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">0</span><h2>Dicas de pronúncia</h2></div>
+    <p>Toque em ▶ para ouvir cada exemplo.</p>
+    <div class="tips">
+      <div class="tip">
+        <h3>Escrever como a gente fala</h3>
+        <p>Uma técnica que funciona: escrever a palavra do jeito que ela soa, com letras do português, e marcar em MAIÚSCULAS a sílaba forte. Para o schwa, o som fraco do meio, uso <span class="say">ã</span>.</p>
+        <table id="tipRespell"></table>
+      </div>
+      <div class="tip">
+        <h3>Schwa: o som mais comum do inglês</h3>
+        <p>Toda sílaba fraca tende a virar um "ã" curto e relaxado, qualquer que seja a letra: <b>a</b>bout, supp<b>o</b>rt, probl<b>e</b>m, comm<b>u</b>nity. É por isso que a palavra falada parece "menor" que a escrita.</p>
+        <table id="tipSchwa"></table>
+      </div>
+      <div class="tip">
+        <h3>Magic -e</h3>
+        <p>O -e final não se fala, mas faz a vogal de antes "dizer o próprio nome" (a = ei, i = ai, o = ou, u = iu).</p>
+        <table id="tipMagic"></table>
+      </div>
+      <div class="tip">
+        <h3>Encontros de vogais</h3>
+        <p>Duas vogais juntas costumam ter um som só. Há exceções: elas também aparecem no jogo 2.</p>
+        <table id="tipTeams"></table>
+      </div>
+      <div class="tip">
+        <h3>Linking: as palavras se encostam</h3>
+        <p>Na fala, consoante no fim + vogal no começo da próxima viram uma coisa só. No inglês americano, o t entre vogais soa como o r de "caro". E d + you vira "dju", t + you vira "tchu".</p>
+        <table id="tipLink"></table>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">1</span><h2>Magic -e: qual você ouviu?</h2></div>
+    <p class="muted">Toque em ▶ e escolha a palavra que você ouviu.</p>
+    <div class="items" id="g1"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">2</span><h2>Mesmo som?</h2></div>
+    <p class="muted">Ouça a palavra e escolha a opção com o mesmo som de vogal. Atenção às exceções.</p>
+    <div class="items" id="g2"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">3</span><h2>Como se escreve "à brasileira"?</h2></div>
+    <p class="muted">Ouça a palavra do terceiro setor e escolha a escrita que mais se parece com o som. Maiúscula é a sílaba forte.</p>
+    <div class="items" id="g3"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">4</span><h2>Linking: o que você ouviu?</h2></div>
+    <p class="muted">Ouça a frase colada e escolha o que foi dito.</p>
+    <div class="items" id="g4"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">5</span><h2>Números: -teen ou -ty?</h2></div>
+    <p class="muted">-teen tem a força no fim (thir-TÍN). -ty tem a força no começo (THÂR-ri). Ouça e escolha.</p>
+    <div class="items" id="g5"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">6</span><h2>Ditado</h2></div>
+    <p class="muted">Ouça quantas vezes quiser e escreva a frase. Pontuação e maiúsculas não contam.</p>
+    <div class="items" id="g6"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">7</span><h2>Escuta longa: uma ONG em Recife</h2></div>
+    <p>Primeiro ouça tudo uma vez, sem parar, e responda a pergunta de <b>skimming</b> (ideia geral). Depois ouça de novo para as perguntas de <b>scanning</b> (detalhes).</p>
+    <div class="controls"><button class="play" id="g7play">Ouvir tudo</button><button class="play slow" id="g7slow">Ouvir devagar</button><button class="btn ghost small" id="g7stop">Parar</button></div>
+    <div class="items" id="g7"></div>
+    <button class="btn ghost small" id="g7tr" style="justify-self:start">Mostrar a transcrição</button>
+    <p class="transcript" id="g7text" hidden></p>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">8</span><h2>Shadowing</h2></div>
+    <p>Ouça e repita junto, ao mesmo tempo que a voz, copiando o ritmo e as ligações. Faça três vezes cada frase: devagar, normal e de olhos fechados.</p>
+    <div class="items" id="g8"></div>
+    <p><b>Agora você:</b> escreva "à brasileira" três palavras difíceis do seu trabalho. Depois ouça e compare.</p>
+    <div class="inline-input"><input type="text" id="myWord" placeholder="ex.: accountability" aria-label="Palavra em inglês"><button class="play" id="myPlay">Ouvir</button></div>
+    <textarea id="myNotes" style="min-height:90px" placeholder="accountability = ã-káun-tã-BÍ-lã-ri&#10;…" aria-label="Suas anotações"></textarea>
+  </section>
+
+  <section class="card final">
+    <span class="medal" id="medal" style="font-size:3rem;line-height:1">🎧</span>
+    <p class="big" id="finalPct">0%</p>
+    <p id="finalMsg" class="muted">Faça os jogos para ver o seu resultado.</p>
+  </section>
+  <p class="muted" style="font-size:.85rem">Seu progresso fica salvo neste navegador.</p>
+</div>
+
+<script>
+const KEY = "calu-ls-terceiro";
+const $ = id => document.getElementById(id);
+const el = (t, c, txt) => { const e = document.createElement(t); if (c) e.className = c; if (txt != null) e.textContent = txt; return e; };
+const norm = s => s.toLowerCase().replace(/[’']/g, "'").replace(/[^a-z0-9' ]+/g, " ").replace(/\s+/g, " ").trim();
+let results = {}, combo = 0, saved = {};
+try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
+results = saved.results || {};
+
+// ---------- voz
+const TTS = "speechSynthesis" in window;
+let accent = saved.accent || "en-US", rate = saved.rate || 0.95, voices = [];
+function loadVoices() { if (TTS) voices = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang)); }
+if (TTS) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; } else $("noVoice").hidden = false;
+function pickVoice() { const L = accent.toLowerCase(); return voices.find(v => v.lang.replace("_", "-").toLowerCase() === L && /google|natural|samantha|daniel|serena|karen/i.test(v.name)) || voices.find(v => v.lang.replace("_", "-").toLowerCase() === L) || voices.find(v => /^en/i.test(v.lang)); }
+function say(text, r) {
+  if (!TTS) { $("noVoice").hidden = false; return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang = accent; const v = pickVoice(); if (v) u.voice = v; u.rate = r || rate; speechSynthesis.speak(u);
+}
+function playBtn(text, label, slow) { const b = el("button", "play" + (slow ? " slow" : ""), label || "Ouvir"); b.type = "button"; b.onclick = () => say(text, slow ? 0.65 : null); return b; }
+document.querySelectorAll("[data-acc]").forEach(b => b.onclick = () => { accent = b.dataset.acc; document.querySelectorAll("[data-acc]").forEach(x => x.setAttribute("aria-pressed", x === b)); persist(); });
+document.querySelectorAll("[data-rate]").forEach(b => b.onclick = () => { rate = +b.dataset.rate; document.querySelectorAll("[data-rate]").forEach(x => x.setAttribute("aria-pressed", x === b)); persist(); });
+
+// ---------- dicas
+const TIPS = {
+  tipRespell: [["volunteer", "vó-lãn-TÍR"], ["community", "kã-MIÚ-nã-ri"], ["women", "UÍ-min"], ["stakeholder", "STÊIK-hôul-dãr"], ["fundraising", "FÂND-rei-zin"]],
+  tipSchwa: [["about", "ã-BAUT"], ["support", "sã-PÓRT"], ["problem", "PRÓ-blãm"], ["today", "tã-DÊI"], ["foundation", "faun-DÊI-xãn"]],
+  tipMagic: [["plan → plane", "plén → plêin"], ["not → note", "nót → nôut"], ["fin → fine", "fín → fáin"], ["cut → cute", "kât → kiút"], ["rob → role", "rób → rôul"]],
+  tipTeams: [["ee, ea: need, team", "i longo: níid, tíim (exceções: bread, great)"], ["oa, oe, ow: goal, toe, grow", "ôu: gôul, tôu, grôu (exceções: does, shoe, how)"], ["oo: school, food", "u longo: skúul, fúud (exceção: blood)"], ["ou: out, about", "au: áut, ã-BAUT (exceções: group, touch)"], ["ai, ay: raise, day", "ei: rêiz, dêi (exceção: said)"]],
+  tipLink: [["reach out", "ri-TCHAUT"], ["work on it", "uêr-kã-NIT"], ["a lot of", "ã-LÓ-rãv"], ["find out", "fain-DAUT"], ["did you", "DÍ-dju"], ["don't you", "DÔUN-tchu"]]
+};
+for (const [id, rows] of Object.entries(TIPS)) {
+  const t = $(id);
+  rows.forEach(([w, s]) => { const tr = el("tr"); const a = el("td"); const b = el("button", "rowplay", "▶"); b.type = "button"; b.setAttribute("aria-label", "Ouvir " + w);
+    b.onclick = () => say(w.includes(":") ? w.split(":")[1] : w.replace(" → ", ", "));
+    a.append(b, document.createTextNode(" " + w)); tr.append(a, el("td", "sp", s)); t.appendChild(tr); });
+}
+
+// ---------- dados
+const MAGIC = [["plan", "plane"], ["not", "note"], ["fin", "fine"], ["cut", "cute"], ["hop", "hope"], ["rid", "ride"]];
+const TEAMS = [
+  ["team", ["bread", "reach", "great"], 1, "team e reach: i longo (tíim, rítch). Bread soa bréd e great soa grêit: exceções do ea."],
+  ["goal", ["how", "do", "grow"], 2, "goal e grow: ôu. How soa hau, e do soa du."],
+  ["school", ["food", "blood", "door"], 0, "school e food: u longo. Blood soa blâd: exceção do oo."],
+  ["about", ["group", "found", "touch"], 1, "about e found: au. Group soa grup e touch soa tâtch."],
+  ["paid", ["said", "aisle", "raise"], 2, "paid e raise: ei. Said soa séd: exceção famosa."],
+  ["toe", ["know", "does", "shoe"], 0, "toe e know: ôu. Does soa dâz e shoe soa xu: exceções do oe."]
+];
+const RESPELL = [
+  ["volunteer", ["vo-LÚN-ter", "vó-lãn-TÍR", "vó-lun-TÉR"], 1, "A força cai no fim: vó-lãn-TÍR. O u do meio vira schwa."],
+  ["community", ["kã-MIÚ-nã-ri", "KÓ-mu-ni-ti", "ko-mu-ni-TÍ"], 0, "Força no MIÚ. No inglês americano o t vira r: kã-MIÚ-nã-ri."],
+  ["organization", ["or-ga-ni-za-ÇÃO", "ÓR-ga-nai-zei-xon", "ór-gã-nã-ZÊI-xãn"], 2, "Força no ZÊI, e o final -tion soa xãn."],
+  ["women", ["UÔ-men", "UÍ-min", "UÚ-men"], 1, "Women soa UÍ-min. O singular, woman, soa UÚ-mãn."],
+  ["budget", ["BÂ-djit", "BÂD-guet", "bud-JÉT"], 0, "BÂ-djit: o dg soa dj, e a força fica no começo."],
+  ["vulnerable", ["vul-ne-RÁ-vel", "VÂL-nã-rã-bãl", "vul-NÉ-ra-bol"], 1, "Força no começo, e o resto vira schwa: VÂL-nã-rã-bãl."],
+  ["fundraising", ["fan-DRAI-zing", "FÂND-rei-zin", "fun-drai-SING"], 1, "FÂND-rei-zin: força no fund, e o ai soa ei."],
+  ["donor", ["DÔU-nãr", "do-NÔR", "DÓ-nor"], 0, "DÔU-nãr: o o com som de ôu, e o or final fraco."]
+];
+const LINK = [
+  ["We need to reach out to them.", ["We need to reach out to them.", "We need to reach them out.", "We need a reach out to them."], 0, "reach out soa ri-TCHAUT: o ch encosta no out."],
+  ["We have a lot of volunteers.", ["We have a lot volunteers.", "We have a lot of volunteers.", "We have lots volunteers."], 1, "a lot of soa ã-LÓ-rãv: o t entre vogais vira r, e o of fica só \"v\"."],
+  ["Did you send the report?", ["Do you send the report?", "Did you send the report?", "Did he send the report?"], 1, "did you soa DÍ-dju: o d + you vira dj."],
+  ["Let's work on it together.", ["Let's work on it together.", "Let's work it together.", "Let's walk on it together."], 0, "work on it soa uêr-kã-NIT: três palavras coladas."],
+  ["We want to find out more.", ["We want find more.", "We went to find out more.", "We want to find out more."], 2, "want to soa UÓ-nã, e find out soa fain-DAUT."]
+];
+const NUMS = [["thirteen", ["13", "30"], 0], ["fifty", ["15", "50"], 1], ["eighteen families", ["18 families", "80 families"], 0], ["seventy volunteers", ["17 volunteers", "70 volunteers"], 1], ["two thousand five hundred reais", ["R$ 2,500", "R$ 2,050"], 0], ["in nineteen ninety", ["in 1990", "in 1919"], 0]];
+const DICT = [
+  "We are looking for volunteers.",
+  "Our NGO works with women and children.",
+  "The grant covers two years of work.",
+  "Can you send the report by Friday?",
+  "We need to raise more money this year.",
+  "The community helped us a lot."
+];
+const LONG = "Hi, my name is Ana, and I coordinate volunteers at Casa Viva, a small NGO in Recife. We work with women who take care of children and elderly relatives at home. Every Saturday, about forty volunteers help us in the community kitchen and in our reading classes. Last year, we received our first international grant, and that changed a lot for us. Now we need people who speak English to help us write reports for our funders. If you want to join us, send an email to our team. Thank you!";
+const LONGQ = [
+  ["Skimming: qual é a ideia geral?", ["Uma ONG apresenta o trabalho e procura voluntários que falem inglês.", "Uma fundação explica como pedir financiamento.", "Uma voluntária reclama do excesso de trabalho."], 0, "Ana apresenta a Casa Viva e termina com um convite: precisam de quem fale inglês."],
+  ["Scanning: quantos voluntários ajudam aos sábados?", ["14", "40", "400"], 1, "about forty volunteers: forTY, com força no começo."],
+  ["Scanning: com quem a Casa Viva trabalha?", ["Com mulheres que cuidam de crianças e de parentes idosos.", "Com jovens que procuram emprego.", "Com professoras de escolas públicas."], 0, "women who take care of children and elderly relatives at home."],
+  ["Scanning: o que mudou no ano passado?", ["Elas abriram uma cozinha.", "Receberam o primeiro financiamento internacional.", "Mudaram de cidade."], 1, "Last year, we received our first international grant."]
+];
+const SHADOW = ["We work with women in the community.", "Would you be open to a call next week?", "Last year, we reached thirty thousand people.", "Thank you for your support."];
+const TOTAL = MAGIC.length + TEAMS.length + RESPELL.length + LINK.length + NUMS.length + DICT.length + LONGQ.length;
+
+// ---------- placar
+function persist() {
+  const right = Object.values(results).filter(v => v > 0).length;
+  const pts = Object.values(results).reduce((a, v) => a + (v === 2 ? 10 : v === 1 ? 5 : 0), 0);
+  try { localStorage.setItem(KEY, JSON.stringify({ results, right, total: TOTAL, answered: Object.keys(results).length, pts, accent, rate, notes: $("myNotes").value, t: Date.now() })); } catch {}
+  try { const d = new Date().toLocaleDateString("sv"); const days = JSON.parse(localStorage.getItem("calu-days") || "[]"); if (!days.includes(d)) { days.push(d); localStorage.setItem("calu-days", JSON.stringify(days.slice(-400))); } } catch {}
+  updateScore();
+}
+function updateScore() {
+  const done = Object.keys(results).length, right = Object.values(results).filter(v => v > 0).length;
+  const pts = Object.values(results).reduce((a, v) => a + (v === 2 ? 10 : v === 1 ? 5 : 0), 0);
+  $("scoreText").textContent = `${pts} pontos · ${done} de ${TOTAL}`;
+  $("scoreFill").style.width = (done / TOTAL * 100) + "%";
+  const pct = Math.round(right / TOTAL * 100); $("finalPct").textContent = pct + "%";
+  $("medal").textContent = done < TOTAL ? "🎧" : pct >= 90 ? "🥇" : pct >= 75 ? "🥈" : pct >= 60 ? "🥉" : "📝";
+  $("finalMsg").textContent = done < TOTAL ? `Faltam ${TOTAL - done} desafios para o resultado final.` :
+    pct >= 90 ? `Ouvido de ouro: ${pts} pontos. Agora faça o shadowing todos os dias por uma semana.` :
+    pct >= 60 ? `Bom trabalho: ${pts} pontos. Refaça os jogos em que errou, agora no sotaque britânico.` :
+    `Você fez ${pts} pontos. Recomece na velocidade "Devagar" e depois volte para a normal.`;
+}
+function hit(id, ok) {
+  if (!(id in results)) { if (ok) { results[id] = 2; combo++; } else { results[id] = 0; combo = 0; } }
+  else if (results[id] === 0 && ok) results[id] = 1; else if (!ok) combo = 0;
+  const c = $("combo"); c.textContent = combo >= 3 ? `🔥 ${combo} seguidos` : ""; c.classList.remove("pop"); void c.offsetWidth; if (combo >= 3) c.classList.add("pop");
+  persist();
+}
+let seed = Date.now() % 9973; const rnd = n => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed % n; };
+
+// ---------- escolha com áudio
+function mc(box, prefix, list, toItem) {
+  box.textContent = "";
+  list.forEach((it, i) => {
+    const { audio, head, opts, ans, why, extraPlay } = toItem(it, i); const id = prefix + i;
+    const item = el("div", "item"); const top = el("div", "controls");
+    if (head) top.appendChild(el("span", "prompt", head));
+    if (audio) { top.appendChild(playBtn(audio)); top.appendChild(playBtn(audio, "Devagar", true)); }
+    if (extraPlay) top.appendChild(extraPlay);
+    const row = el("div", "opts"), fb = el("span", "fb");
+    opts.forEach((o, k) => { const b = el("button", "opt", o); b.type = "button";
+      b.onclick = () => { row.querySelectorAll("button").forEach(x => x.classList.remove("right", "wrong"));
+        if (k === ans) { b.classList.add("right"); fb.className = "fb ok"; fb.textContent = "Isso. " + why; row.dataset.solved = "1"; hit(id, true); }
+        else { b.classList.add("wrong"); fb.className = "fb no"; fb.textContent = (row.dataset.solved ? "Essa não. " : "Ainda não. ") + (row.dataset.solved ? why : "Ouça de novo, devagar, e tente outra."); if (!row.dataset.solved) hit(id, false); } };
+      row.appendChild(b); });
+    item.append(top, row, fb); box.appendChild(item);
+  });
+}
+// ---------- ditado
+function dict() {
+  const box = $("g6"); box.textContent = "";
+  DICT.forEach((s, i) => {
+    const item = el("div", "item"), top = el("div", "controls"); top.append(playBtn(s), playBtn(s, "Devagar", true));
+    const wrap = el("div", "inline-input"); const inp = el("input"); inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false; inp.setAttribute("autocapitalize", "off"); inp.setAttribute("aria-label", "Frase " + (i + 1));
+    const btn = el("button", "btn small", "Conferir"); btn.type = "button"; const fb = el("div", "fb diff"); let miss = 0, solved = false;
+    const check = () => { const got = norm(inp.value).split(" ").filter(Boolean), want = norm(s).split(" "); if (!got.length) return;
+      const ok = got.join(" ") === want.join(" ");
+      inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+      if (ok) { fb.className = "fb ok diff"; fb.textContent = "Isso: " + s; solved = true; hit("d" + i, true); return; }
+      miss++; if (!solved) hit("d" + i, false);
+      const left = got.slice(); const marks = want.map(w => { const j = left.indexOf(w); if (j >= 0) { left.splice(j, 1); return `<span class="ok">${w}</span>`; } return `<span class="miss">${miss > 1 ? w : "_".repeat(w.length)}</span>`; });
+      fb.className = "fb no diff";
+      fb.innerHTML = (miss > 1 ? "Compare: " : "Quase. As lacunas vermelhas são as palavras que faltam ou estão diferentes: ") + marks.join(" ") + (left.length ? ` <span class="muted">(sobrou: ${left.join(", ")})</span>` : "") + (miss > 1 ? "" : " Ouça de novo, devagar.");
+    };
+    btn.onclick = check; inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    wrap.append(inp, btn); item.append(top, wrap, fb); box.appendChild(item);
+  });
+}
+
+function buildAll() {
+  seed = Date.now() % 9973;
+  mc($("g1"), "m", MAGIC, (pair) => { const k = rnd(2); return { audio: pair[k], opts: pair, ans: k, why: `Você ouviu ${pair[k]}. ${k ? "Com -e, a vogal diz o próprio nome." : "Sem -e, a vogal é curta."}` }; });
+  mc($("g2"), "t", TEAMS, ([w, opts, ans, why]) => { const ex = el("button", "play", "Ouvir as opções"); ex.type = "button"; ex.onclick = () => say(opts.join(". ")); return { audio: w, opts, ans, why, extraPlay: ex }; });
+  mc($("g3"), "r", RESPELL, ([w, opts, ans, why]) => ({ head: w, audio: w, opts, ans, why }));
+  mc($("g4"), "l", LINK, ([s, opts, ans, why]) => ({ audio: s, opts, ans, why }));
+  mc($("g5"), "n", NUMS, ([s, opts, ans]) => ({ audio: s, opts, ans, why: /teen/.test(s) ? "-teen: força no fim, e o t soa claro." : "-ty: força no começo (FÍF-ti, SÉ-vãn-ri). No inglês americano, o t de seventy, eighty e ninety pode soar como r." }));
+  dict();
+  mc($("g7"), "q", LONGQ, ([q, opts, ans, why]) => ({ head: q, opts, ans, why }));
+  const g8 = $("g8"); g8.textContent = "";
+  SHADOW.forEach(s => { const it = el("div", "item"); const c = el("div", "controls"); c.append(el("span", "prompt", s), playBtn(s), playBtn(s, "Devagar", true)); it.append(c); g8.appendChild(it); });
+  $("g7text").textContent = LONG; $("g7text").hidden = true;
+  $("myNotes").value = saved.notes || "";
+  document.querySelectorAll("[data-acc]").forEach(x => x.setAttribute("aria-pressed", x.dataset.acc === accent));
+  document.querySelectorAll("[data-rate]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.rate === rate));
+  updateScore();
+}
+$("g7play").onclick = () => say(LONG); $("g7slow").onclick = () => say(LONG, 0.7); $("g7stop").onclick = () => TTS && speechSynthesis.cancel();
+$("g7tr").onclick = () => { $("g7text").hidden = !$("g7text").hidden; $("g7tr").textContent = $("g7text").hidden ? "Mostrar a transcrição" : "Esconder a transcrição"; };
+$("myPlay").onclick = () => { const w = $("myWord").value.trim(); if (w) say(w); };
+$("myWord").addEventListener("keydown", e => { if (e.key === "Enter") $("myPlay").click(); });
+$("myNotes").addEventListener("input", persist);
+$("resetAll").onclick = () => { results = {}; combo = 0; $("combo").textContent = ""; persist(); buildAll(); window.scrollTo({ top: 0 }); };
+buildAll();
+</script>
+
+</body>
+</html>
