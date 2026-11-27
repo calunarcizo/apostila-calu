@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.backlink{display:inline-flex;align-items:center;gap:6px;font:600 .9rem Inter,system-ui,sans-serif;text-decoration:none;color:var(--accent);justify-self:start}
+</style>
+<title>Cold Emails · Writing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column; a sticky score strip; each exercise is a numbered step (the order is the learning sequence: controlled to free) */
+:root {
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --ink: #142233;
+  --muted: #586779;
+  --line: #d3dbe4;
+  --accent: #1f5fa8;
+  --accent-ink: #ffffff;
+  --signal: #f2b632;
+  --good: #1d7a4c;
+  --good-bg: #e2f3ea;
+  --bad: #b3362b;
+  --bad-bg: #f8e4e1;
+  --soft: #e3ebf5;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1722; --surface: #172231; --ink: #e8eef5; --muted: #9aabbf; --line: #2a3a4e;
+  --accent: #6aa5ec; --accent-ink: #0b1420; --signal: #f2c051; --good: #5fcf94; --good-bg: #173527; --bad: #f08075; --bad-bg: #3a1f1d; --soft: #1e2d40;
+  color-scheme: dark }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 24px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; }
+.eyebrow { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 14px; min-width: 0; }
+.scorebar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.scorebar .track { flex: 1 1 160px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.scorebar .fill { height: 100%; background: var(--good); width: 0; transition: width .3s; }
+.scorebar span { font-size: .85rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.step-head { display: flex; gap: 12px; align-items: baseline; }
+.step-num { font-family: var(--display); font-weight: 700; color: var(--accent); font-size: 1.4rem; min-width: 1.6em; }
+/* explanation */
+.rule { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.rule > div { background: var(--soft); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; min-width: 0; }
+.rule b { font-family: var(--mono); font-weight: 500; font-size: .92rem; }
+.ex { font-family: var(--mono); font-size: .88rem; }
+.callout { border-left: 4px solid var(--signal); padding: 8px 14px; background: var(--soft); border-radius: 0 10px 10px 0; }
+.pron { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pron div { border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; min-width: 0; }
+.pron .sound { display: block; font-family: var(--mono); font-size: 1.1rem; color: var(--accent); margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.pron small { display: block; color: var(--muted); font-size: .8rem; }
+/* items */
+.items { display: grid; gap: 12px; counter-reset: it; }
+.item { display: grid; gap: 8px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+.item:last-child { border-bottom: 0; padding-bottom: 0; }
+.prompt { font-size: 1.02rem; }
+.prompt .ctx { display: block; font-size: .8rem; color: var(--muted); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); text-decoration: line-through; }
+.opt:disabled { cursor: default; }
+.inline-input { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+input[type=text], textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 0; }
+input[type=text] { flex: 1 1 200px; }
+input.right { border-color: var(--good); background: var(--good-bg); }
+.prompt.blanks { line-height: 2.4; }
+input.slot { width: 7.5em; flex: none; display: inline-block; margin: 0 4px; padding: 2px 6px; border: 0; border-bottom: 2px solid var(--muted); border-radius: 4px 4px 0 0; background: var(--soft); text-align: center; vertical-align: baseline; }
+input.slot.right { border-bottom-color: var(--good); background: var(--good-bg); }
+input.slot.wrong { border-bottom-color: var(--bad); background: var(--bad-bg); }
+input.wrong { border-color: var(--bad); background: var(--bad-bg); }
+textarea { width: 100%; min-height: 150px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+.btn { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 9px 16px; cursor: pointer; background: var(--accent); color: var(--accent-ink); }
+.btn.small { padding: 7px 12px; font-size: .9rem; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.fb { font-size: .9rem; }
+.fb.ok { color: var(--good); }
+.fb.no { color: var(--bad); }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+/* word order */
+.bank, .built { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; padding: 6px; border-radius: 10px; }
+.built { border: 1px dashed var(--line); }
+.tile { font: inherit; font-family: var(--mono); font-size: .9rem; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+/* flashcards */
+.verbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.verb { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: grid; gap: 4px; min-width: 0; }
+.verb label { font-family: var(--mono); font-size: .88rem; }
+.verb label small { color: var(--muted); font-family: var(--body); }
+.verb input { width: 100%; padding: 6px 8px; }
+.checklist { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.checklist li { display: flex; gap: 8px; align-items: flex-start; }
+.checklist input { margin-top: 5px; }
+.ai { white-space: pre-wrap; background: var(--soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; }
+.final { text-align: center; }
+.final .big { font-family: var(--display); font-size: 3rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.themes-box { display: grid; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: .9rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .scorebar .fill { transition: none; } }
+@media (max-width: 420px) { .pron { grid-template-columns: 1fr; } }
+.vars { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.vars li { background: var(--soft); border-radius: 10px; padding: 10px 12px; font-size: .92rem; }
+.vtag { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+</style>
+<style>
+.combo { font-family: var(--display); font-weight: 700; color: var(--signal); font-size: .95rem; min-width: 5.5em; }
+.combo.pop { animation: pop .35s ease; }
+@keyframes pop { 50% { transform: scale(1.25); } }
+.blocks { display: grid; gap: 6px; }
+.blk { font: inherit; text-align: left; font-size: .92rem; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; cursor: pointer; }
+.blk b { display: block; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.built.blocks { min-height: 60px; }
+.mail { white-space: pre-line; font-size: .92rem; background: var(--bg); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 10px 10px 0; padding: 10px 14px; }
+.match { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.match .col { display: grid; gap: 6px; align-content: start; }
+.mt { font: inherit; font-size: .9rem; text-align: left; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; cursor: pointer; min-width: 0; overflow-wrap: anywhere; }
+.mt[aria-pressed="true"] { border-color: var(--accent); background: var(--soft); }
+.mt.done { background: var(--good-bg); border-color: var(--good); color: var(--good); cursor: default; }
+.mt.shake { animation: shake .3s; border-color: var(--bad); }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.words { display: flex; flex-wrap: wrap; gap: 6px; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.checks li { display: flex; gap: 8px; align-items: baseline; font-size: .92rem; }
+.checks li::before { content: "○"; color: var(--muted); font-weight: 700; }
+.checks li.ok::before { content: "✓"; color: var(--good); }
+.checks li.ok { color: var(--good); }
+.wc { font-family: var(--mono); font-size: .85rem; }
+.medal { font-size: 3rem; line-height: 1; }
+@media (prefers-reduced-motion: reduce) { .combo.pop, .mt.shake { animation: none; } }
+@media (max-width: 420px) { .match { grid-template-columns: 1fr 1fr; gap: 6px; } .mt { font-size: .84rem; padding: 7px 8px; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← Voltar à trilha</a>
+  <header style="display:grid;gap:8px">
+    <span class="eyebrow">Inglês com Calú · Writing · Módulo 1</span>
+    <h1>Cold emails</h1>
+    <p class="muted">Como escrever para alguém que ainda não conhece você, como uma fundação, uma rede ou uma parceira internacional, e conseguir uma resposta. São 7 jogos e, no fim, o seu email. Leva uns 25 minutos.</p>
+  </header>
+
+  <div class="scorebar" aria-live="polite">
+    <div class="track"><div class="fill" id="scoreFill"></div></div>
+    <span id="scoreText">0 pontos</span><span class="combo" id="combo"></span>
+    <button class="btn ghost small" id="resetAll">Recomeçar</button>
+  </div>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">0</span><h2>Os 7 blocos</h2></div>
+    <p>Um bom cold email tem <strong>120 a 150 palavras</strong> e termina com <strong>um pedido pequeno</strong>. A ordem segue as perguntas de quem lê:</p>
+    <div class="rule">
+      <div><span class="eyebrow">1. Subject line</span><span>Vale a pena abrir?</span></div>
+      <div><span class="eyebrow">2. Hook</span><span>Por que eu?</span><b>I'm reaching out because…</b></div>
+      <div><span class="eyebrow">3. Who we are</span><span>Quem é você? Duas frases.</span></div>
+      <div><span class="eyebrow">4. Our impact</span><span>Por que acreditar? Um número.</span><b>Since 2023, we have…</b></div>
+      <div><span class="eyebrow">5. Why now</span><span>Por que agora? Uma frase.</span></div>
+      <div><span class="eyebrow">6. The ask</span><span>O que você quer de mim?</span><b>Would you be open to…?</b></div>
+      <div><span class="eyebrow">7. Closing</span><span>Quem assina e como respondo?</span></div>
+    </div>
+    <p class="callout"><strong>Pontos:</strong> acerto de primeira vale 10, de segunda vale 5. Acertos seguidos viram combo. Depois de acertar, você pode tocar nas outras opções para ver por que elas não servem.</p>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">1</span><h2>Monte o email</h2></div>
+    <p class="muted">Toque nos blocos na ordem certa, do subject line até a assinatura. Para tirar um bloco, toque nele de novo.</p>
+    <div class="built blocks" id="g1built" aria-label="Seu email"></div>
+    <div class="blocks" id="g1bank"></div>
+    <div class="row"><span class="fb" id="g1fb"></span><button class="btn small" id="g1btn">Conferir</button></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">2</span><h2>O que deu errado?</h2></div>
+    <p class="muted">Leia cada email e escolha o maior problema.</p>
+    <div class="items" id="g2"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">3</span><h2>Ligue as palavras</h2></div>
+    <p class="muted">Toque numa expressão em inglês e depois no significado.</p>
+    <div class="match"><div class="col" id="g3en"></div><div class="col" id="g3pt"></div></div>
+    <span class="fb" id="g3fb"></span>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">4</span><h2>Caça ao erro</h2></div>
+    <p class="muted">Frases de rascunhos reais. Toque na palavra que está errada.</p>
+    <div class="items" id="g4"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">5</span><h2>A frase de impacto</h2></div>
+    <p class="muted">Present perfect para a trajetória até agora (since, so far, never). Passado simples para fato com data (last year, in 2024). Uma palavra por linha.</p>
+    <div class="items" id="g5"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">6</span><h2>O pedido certo</h2></div>
+    <p class="muted">Classifique cada pedido de um primeiro contato.</p>
+    <div class="items" id="g6"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">7</span><h2>Qual subject line?</h2></div>
+    <p class="muted">Escolha o subject line que faz a pessoa abrir o email.</p>
+    <div class="items" id="g7"></div>
+  </section>
+
+  <section class="card">
+    <div class="step-head"><span class="step-num">8</span><h2>Agora é o seu email</h2></div>
+    <p>Escreva para uma pessoa real. A lista abaixo vai se marcando enquanto você escreve.</p>
+    <p class="small muted" style="font-size:.88rem"><i>Frases de apoio: I'm reaching out because… · I am…, [role] at…, a Brazilian nonprofit that… · Since 2023, we have… · This is a critical moment:… · Would you be open to a 20-minute call in the coming weeks? · Thank you for your time. Best regards,</i></p>
+    <textarea id="mail" placeholder="Subject: …&#10;&#10;Dear Ms. …,&#10;I'm reaching out because…" aria-label="Seu cold email"></textarea>
+    <div class="row"><span class="wc" id="wc">0 palavras</span><button class="btn ghost small" id="copy">Copiar o email</button></div>
+    <ul class="checks" id="checks"></ul>
+    <p class="small muted" style="font-size:.85rem">A lista confere a estrutura, não o sentido. Antes de enviar, mostre o email para Calú.</p>
+  </section>
+
+  <section class="card final" id="final">
+    <span class="medal" id="medal">✉️</span>
+    <p class="big" id="finalPct">0%</p>
+    <p id="finalMsg" class="muted">Faça os jogos para ver o seu resultado.</p>
+  </section>
+  <p class="muted" style="font-size:.85rem">Seu progresso e o rascunho ficam salvos neste navegador.</p>
+</div>
+
+<script>
+const KEY = "calu-wr-cold";
+const $ = id => document.getElementById(id);
+const el = (t, c, txt) => { const e = document.createElement(t); if (c) e.className = c; if (txt != null) e.textContent = txt; return e; };
+const norm = s => s.toLowerCase().replace(/[’']/g, "'").replace(/[.?!,]+$/g, "").replace(/\s+/g, " ").trim();
+let results = {}, combo = 0, saved = {};
+try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
+results = saved.results || {};
+
+// ---------- data
+const BLOCKS = [
+  ["Subject line", "Subject: Care policies in Brazil: a possible collaboration", "Vale a pena abrir?"],
+  ["Hook", "Dear Ms. Lopez, I'm reaching out because your foundation's work on care in Latin America closely aligns with ours.", "Por que eu?"],
+  ["Who we are", "I am Maiana, Program Coordinator at Instituto Foz, a Brazilian nonprofit that strengthens public policies for women.", "Quem é você?"],
+  ["Our impact", "Since 2023, we have worked with 8 municipalities, and our projects have reached 30,000 women and public agents.", "Por que acreditar?"],
+  ["Why now", "This is a critical moment: Brazil approved its National Care Policy in 2024, and local governments need support to put it into practice.", "Por que agora?"],
+  ["The ask", "Would you be open to a 20-minute call in the coming weeks?", "O que você quer de mim?"],
+  ["Closing", "Thank you for your time. Best regards, Maiana Silva, Instituto Foz", "Quem assina?"]
+];
+const DIAG = [
+  ["Subject: Partnership opportunity!!!\nDear Sir or Madam,\nWe are a Brazilian nonprofit working with women. Can your foundation fund our projects in 2027? Please send us your guidelines.\nRegards, Instituto Foz",
+   ["O email é longo demais", "O pedido: dinheiro logo no primeiro contato", "Falta a assinatura"], 1,
+   "Pedir dinheiro num primeiro contato assusta. O pedido certo é pequeno: uma call de 20 minutos. E Sir or Madam mostra que é email em massa."],
+  ["Subject: Hello\nDear Ms. Lopez,\nInstituto Foz was founded by a group of women who believed that public policies in Brazil should reflect the realities of women, and since then we have developed many projects, trainings, guides and partnerships with different levels of government… [mais três parágrafos]",
+   ["O pedido é grande demais", "Falta o nome da pessoa", "O \"quem somos\" virou apresentação institucional"], 2,
+   "Quem somos são duas frases. O resto (história, lista de projetos) cabe num anexo ou na call."],
+  ["Subject: Women in public leadership\nDear Ms. Lopez,\nI am Esther, Executive Director of Instituto Foz. Since 2023, we have worked with 8 municipalities. Would you be open to a 20-minute call?\nBest regards, Esther",
+   ["Falta o gancho: por que essa pessoa?", "Falta o pedido", "O subject line é longo demais"], 0,
+   "A primeira pergunta de quem lê é \"por que eu?\". Comece com a conexão: I'm reaching out because your work on… aligns with ours."],
+  ["Subject: Care policies in Brazil\nDear Mr. Brown,\nI'm reaching out because your fund supports care work in Latin America. We are a Brazilian nonprofit, and we do very important work for women in Brazil. Would you be open to a short call next week?\nBest, Esther",
+   ["Tem dois pedidos", "Falta um número de impacto", "Falta o nome da pessoa"], 1,
+   "\"Very important work\" não prova nada. Um número concreto, como Since 2023, we have reached 30,000 women, dá credibilidade."],
+  ["Subject: Introduction via Ana Souza\nDear Ms. Lopez,\nAna Souza suggested I contact you. … Would you be open to a call? Could you also introduce us to your board and send your grant calendar?\nBest regards, Esther",
+   ["Falta o gancho", "O tom é informal demais", "Tem pedidos demais: fique com um"], 2,
+   "Três pedidos num primeiro email dão trabalho a quem lê. Fique com o menor e mais fácil de aceitar: a call."]
+];
+const VOCAB = [["to reach out", "entrar em contato"], ["to align with", "estar alinhado com"], ["technical support", "apoio técnico"], ["to scale up", "ampliar, levar para mais lugares"], ["public servants", "servidores públicos"], ["care work", "trabalho de cuidado"], ["to follow up", "retomar o contato"], ["possible synergies", "possíveis sinergias"]];
+const FIND = [
+  ["I'm reaching out because i saw your work.", 4, "i → I. Em inglês, I é sempre maiúsculo."],
+  ["We are do the same here in Brazil.", 1, "are → tire o are: We do the same. To be não se mistura com verbo de ação no presente simples."],
+  ["Instituto Foz is a brazilian nonprofit.", 4, "brazilian → Brazilian. Nacionalidade é com maiúscula."],
+  ["We have impacted the life of 30,000 women.", 4, "life → lives. São 30 mil mulheres: plural. (Ou melhor: We have reached 30,000 women.)"],
+  ["He participated on a program of Colmena Fund.", 2, "on → in. Participate in (a program, a meeting)."],
+  ["Since 2023, we worked with 8 municipalities.", 3, "worked → have worked. Since mostra trajetória até agora: present perfect."],
+  ["I'm looking forward to hear from you.", 4, "hear → hearing. Depois de look forward to vem verbo com -ing."],
+  ["Our projects has reached 30,000 women.", 2, "has → have. Our projects é plural (they): have."]
+];
+const IMPACT = [
+  ["Since 2023, we ___ (work) with 8 municipalities.", ["have worked"], "Since mostra trajetória até agora: have + particípio (have worked)."],
+  ["So far, our projects ___ (reach) 30,000 women.", ["have reached"], "So far = até agora: have + particípio. Projects é plural, então have."],
+  ["Last year, we ___ (publish) a guide for public managers.", ["published"], "Last year é um tempo que já terminou: passado simples (published), sem have."],
+  ["Our network ___ (grow) every year since it started.", ["has grown"], "Network = it: has. E grow é irregular: grew, grown."],
+  ["Last month, we ___ (meet) the team in Brasília.", ["met"], "Last month: passado simples. Meet é irregular: met."],
+  ["We ___ (never / receive) funding from a European foundation.", ["have never received"], "Never com experiência até agora: have never + particípio."]
+];
+const ASKS = ["bom", "grande demais", "vago", "tom errado"];
+const ASK = [
+  ["Could you fund our project in 2027?", 1, "Dinheiro no primeiro contato é pedido grande demais. Comece por uma conversa."],
+  ["Let me know your thoughts.", 2, "Vago: a pessoa não sabe o que fazer. Diga o que você quer, com prazo: a 20-minute call in the coming weeks."],
+  ["Would you be open to a 20-minute call next week or the week after?", 0, "Bom: pequeno, claro, com duração e prazo flexível."],
+  ["Please send us your grant guidelines ASAP.", 3, "ASAP e um pedido seco soam como ordem. Prefira: Would it be possible to share your grant guidelines?"],
+  ["If helpful, I'd be glad to send a one-page summary of our work.", 0, "Bom: oferece algo fácil, sem pressionar."]
+];
+const SUBJ = [
+  ["Primeiro contato com uma fundação que financia políticas de cuidado.", ["Hello from Brazil", "Care policies in Brazil: a possible collaboration", "URGENT: Partnership opportunity!!!"], 1, "Diz o tema e o que você propõe. Hello não diz nada; URGENT e !!! parecem spam."],
+  ["Uma amiga em comum, Ana Souza, indicou o contato.", ["Introduction via Ana Souza: Instituto Foz", "Quick question", "We need your help"], 0, "O nome de quem indicou faz a pessoa abrir: é a melhor conexão possível."],
+  ["Follow-up: a pessoa não respondeu há uma semana.", ["Did you read my email?", "Second try!!!", "Following up: women in public leadership"], 2, "Follow-up educado repete o tema. Did you read my email? soa como cobrança."],
+  ["Convite para falar num painel.", ["Panel invitation", "Are you free?", "Invitation: panel on care policies, March 12, São Paulo"], 2, "O melhor subject já responde: o quê, sobre o quê, quando e onde."]
+];
+const TOTAL = 1 + DIAG.length + VOCAB.length + FIND.length + IMPACT.length + ASK.length + SUBJ.length;
+
+// ---------- score
+function persist() {
+  const right = Object.values(results).filter(v => v > 0).length;
+  const pts = Object.values(results).reduce((a, v) => a + (v === 2 ? 10 : v === 1 ? 5 : 0), 0);
+  try { localStorage.setItem(KEY, JSON.stringify({ results, right, total: TOTAL, answered: Object.keys(results).length, pts, mail: $("mail").value, t: Date.now() })); } catch {}
+  try { const d = new Date().toLocaleDateString("sv"); const days = JSON.parse(localStorage.getItem("calu-days") || "[]"); if (!days.includes(d)) { days.push(d); localStorage.setItem("calu-days", JSON.stringify(days.slice(-400))); } } catch {}
+  updateScore();
+}
+function updateScore() {
+  const done = Object.keys(results).length, right = Object.values(results).filter(v => v > 0).length;
+  const pts = Object.values(results).reduce((a, v) => a + (v === 2 ? 10 : v === 1 ? 5 : 0), 0);
+  $("scoreText").textContent = `${pts} pontos · ${done} de ${TOTAL}`;
+  $("scoreFill").style.width = (done / TOTAL * 100) + "%";
+  const pct = Math.round(right / TOTAL * 100);
+  $("finalPct").textContent = pct + "%";
+  $("medal").textContent = done < TOTAL ? "✉️" : pct >= 90 ? "🥇" : pct >= 75 ? "🥈" : pct >= 60 ? "🥉" : "📝";
+  $("finalMsg").textContent = done < TOTAL ? `Faltam ${TOTAL - done} desafios para o resultado final.` :
+    pct >= 90 ? `Email de ouro: ${pts} pontos. Agora escreva o seu no passo 8 e envie.` :
+    pct >= 60 ? `Bom trabalho: ${pts} pontos. Volte aos jogos em que errou e tente bater o seu recorde.` :
+    `Você terminou com ${pts} pontos. Toque em Recomeçar e jogue de novo: na segunda vez fica bem mais fácil.`;
+}
+// first try = 2, after a miss = 1, wrong only = 0
+function hit(id, ok) {
+  if (!(id in results)) {
+    if (ok) { results[id] = 2; combo++; } else { results[id] = 0; combo = 0; }
+  } else if (results[id] === 0 && ok) { results[id] = 1; }
+  else if (!ok) combo = 0;
+  const c = $("combo"); c.textContent = combo >= 3 ? `🔥 ${combo} seguidos` : ""; c.classList.remove("pop"); void c.offsetWidth; if (combo >= 3) c.classList.add("pop");
+  persist();
+}
+const shuffle = (a, seed) => { const b = a.slice(); let h = seed || 7; for (let i = b.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) % 2147483648; const j = h % (i + 1); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+
+// ---------- 1 monte o email
+function g1() {
+  const bank = $("g1bank"), built = $("g1built"); bank.textContent = ""; built.textContent = ""; $("g1fb").textContent = "";
+  shuffle(BLOCKS.map((b, i) => i), 11).forEach(i => {
+    const t = el("button", "blk"); t.type = "button"; t.dataset.i = i; t.textContent = BLOCKS[i][1];
+    t.onclick = () => { (t.parentElement === bank ? built : bank).appendChild(t); $("g1btn").disabled = bank.children.length > 0; };
+    bank.appendChild(t);
+  });
+  $("g1btn").disabled = true;
+  $("g1btn").onclick = () => {
+    const order = [...built.children].map(t => +t.dataset.i); const k = order.findIndex((v, i) => v !== i); const fb = $("g1fb");
+    if (k < 0) { fb.className = "fb ok"; fb.textContent = "Isso! Essa é a ordem: cada bloco responde a próxima pergunta de quem lê."; [...built.children].forEach((t, i) => { if (!t.querySelector("b")) t.prepend(el("b", null, (i + 1) + ". " + BLOCKS[i][0])); }); hit("g1", true); }
+    else { fb.className = "fb no"; fb.textContent = `${k ? "Até o bloco " + k + " está certo. " : ""}Na posição ${k + 1} vem o bloco ${BLOCKS[k][0]}, que responde: "${BLOCKS[k][2]}" Toque nos blocos para trocar e confira de novo.`; hit("g1", false); }
+  };
+}
+// ---------- multiple choice builder (games 2, 6, 7)
+function mc(container, prefix, list, render) {
+  container.textContent = "";
+  list.forEach((it, i) => {
+    const { head, opts, ans, why } = render(it); const id = prefix + i;
+    const item = el("div", "item"); item.appendChild(head);
+    const row = el("div", "opts"), fb = el("span", "fb");
+    opts.forEach((o, k) => {
+      const b = el("button", "opt", o); b.type = "button";
+      b.onclick = () => {
+        row.querySelectorAll("button").forEach(x => x.classList.remove("right", "wrong"));
+        if (k === ans) { b.classList.add("right"); fb.className = "fb ok"; fb.textContent = "Isso. " + why + (row.dataset.solved ? "" : " Quer comparar? Toque nas outras opções."); row.dataset.solved = "1"; hit(id, true); }
+        else { b.classList.add("wrong"); fb.className = "fb no"; fb.textContent = (row.dataset.solved ? "Essa não é a melhor. " : "Ainda não. ") + (it.wrongWhy ? it.wrongWhy(k) : "Releia pensando na pergunta de quem recebe o email.") + (row.dataset.solved ? "" : " Tente de novo."); if (!row.dataset.solved) hit(id, false); }
+      };
+      row.appendChild(b);
+    });
+    item.append(row, fb); container.appendChild(item);
+  });
+}
+// ---------- 3 ligar
+function g3() {
+  const en = $("g3en"), pt = $("g3pt"); en.textContent = ""; pt.textContent = ""; let sel = null; let missed = {};
+  const fb = $("g3fb"); fb.textContent = "";
+  VOCAB.forEach(([e], i) => { const b = el("button", "mt", e); b.type = "button"; b.dataset.i = i; b.setAttribute("aria-pressed", "false"); en.appendChild(b);
+    b.onclick = () => { if (b.classList.contains("done")) return; en.querySelectorAll(".mt").forEach(x => x.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true"); sel = i; }; });
+  shuffle(VOCAB.map((v, i) => i), 5).forEach(i => { const b = el("button", "mt", VOCAB[i][1]); b.type = "button"; pt.appendChild(b);
+    b.onclick = () => {
+      if (b.classList.contains("done")) return;
+      if (sel == null) { fb.className = "fb"; fb.textContent = "Primeiro toque numa expressão em inglês, à esquerda."; return; }
+      const e = en.querySelector(`[data-i="${sel}"]`);
+      if (sel === i) { b.classList.add("done"); e.classList.add("done"); e.setAttribute("aria-pressed", "false"); fb.className = "fb ok"; fb.textContent = `Isso: ${VOCAB[i][0]} = ${VOCAB[i][1]}.`; hit("g3-" + i, true); sel = null;
+        if (!en.querySelector(".mt:not(.done)")) fb.textContent = "Todas ligadas! Use essas expressões no seu email."; }
+      else { b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake"); fb.className = "fb no"; fb.textContent = `${VOCAB[sel][0]} não é "${VOCAB[i][1]}". Tente outra.`; if (!missed[sel]) { missed[sel] = 1; hit("g3-" + sel, false); } }
+    }; });
+}
+// ---------- 4 caça ao erro
+function g4() {
+  const box = $("g4"); box.textContent = "";
+  FIND.forEach(([s, wi, why], i) => {
+    const item = el("div", "item"), row = el("div", "words"), fb = el("span", "fb");
+    s.split(" ").forEach((w, k) => { const b = el("button", "opt", w); b.type = "button";
+      b.onclick = () => { row.querySelectorAll("button").forEach(x => x.classList.remove("right", "wrong"));
+        if (k === wi) { b.classList.add("right"); fb.className = "fb ok"; fb.textContent = why; row.dataset.solved = "1"; hit("g4-" + i, true); }
+        else { b.classList.add("wrong"); fb.className = "fb no"; fb.textContent = `“${w.replace(/[.,]$/, "")}” está certa. O erro está ${k < wi ? "depois" : "antes"} dela.`; if (!row.dataset.solved) hit("g4-" + i, false); } };
+      row.appendChild(b); });
+    item.append(row, fb); box.appendChild(item);
+  });
+}
+// ---------- 5 frase de impacto (uma linha por palavra)
+function g5() {
+  const box = $("g5"); box.textContent = "";
+  IMPACT.forEach(([q, ans, why], i) => {
+    const item = el("div", "item"), p = el("p", "prompt blanks"), fb = el("span", "fb");
+    const n = ans[0].split(" ").length, [a, b] = q.split("___"); const slots = [];
+    p.append(document.createTextNode(a));
+    for (let k = 0; k < n; k++) { const x = el("input", "slot"); x.type = "text"; x.autocomplete = "off"; x.spellcheck = false; x.setAttribute("autocapitalize", "off"); x.setAttribute("aria-label", "Palavra " + (k + 1)); slots.push(x); p.append(x); }
+    p.append(document.createTextNode(b));
+    const btn = el("button", "btn small", "Conferir"); btn.type = "button";
+    let miss = 0, solved = false;
+    const check = () => { const v = norm(slots.map(s => s.value.trim()).filter(Boolean).join(" ")); if (!v) return;
+      const ok = ans.includes(v); slots.forEach(s => { s.classList.toggle("right", ok); s.classList.toggle("wrong", !ok); });
+      if (ok) { fb.className = "fb ok"; fb.textContent = "Isso. " + why; solved = true; hit("g5-" + i, true); }
+      else { miss++; fb.className = "fb no"; fb.textContent = (solved ? "Essa não serve. " : miss > 1 ? "Resposta: " + ans[0] + ". " : "Ainda não. ") + why; if (!solved) hit("g5-" + i, false); } };
+    btn.onclick = check; slots.forEach(s => s.addEventListener("keydown", e => { if (e.key === "Enter") check(); }));
+    const wrap = el("div", "inline-input"); wrap.append(btn);
+    item.append(p, wrap, fb); box.appendChild(item);
+  });
+}
+// ---------- 8 seu email
+const CHECKS = [
+  ["Para uma pessoa com nome (Dear Ms. …)", t => /\b([Dd]ear|[Hh]i|[Hh]ello)\s+((Ms|Mr|Mx|Dr|Prof|Mrs)\.?\s+)?[A-Z][a-z]+/.test(t) && !/sir or madam|to whom it may concern/i.test(t)],
+  ["Gancho: por que essa pessoa", t => /(reaching out because|suggested (that )?i (contact|reach out|write)|came across|aligns? with|resonates with|following your work)/i.test(t)],
+  ["Um número de impacto com have/has", t => /\d/.test(t) && /\b(have|has)\s+(\w+\s+)?\w+(ed|en|wn|ght|ne|un|met|led|built|held)\b/i.test(t)],
+  ["Um pedido pequeno (Would you be open to…?)", t => (t.match(/would you be (open|available|interested)|would it be possible|could we (schedule|set up|have)|would you have/gi) || []).length === 1],
+  ["Fechamento e assinatura", t => /(best regards|kind regards|best wishes|warm regards|sincerely|thank you for your time)/i.test(t)],
+  ["Até 150 palavras", t => { const n = t.trim().split(/\s+/).filter(Boolean).length; return n >= 60 && n <= 150; }],
+  ["Sem to be + verbo de ação (we are do)", t => t.trim().length > 40 && !/\b(am|is|are|'m|'re)\s+(do|work|help|support|need|want|have|believe|think|focus|promote|develop|build)\b/i.test(t)],
+  ["Maiúsculas: I e Brazilian", t => t.trim().length > 40 && !/(^|[\s,.])i([\s,.']|$)/.test(t) && !/\bbrazilian\b/.test(t)]
+];
+function g8() {
+  const t = $("mail").value; const n = t.trim().split(/\s+/).filter(Boolean).length;
+  $("wc").textContent = `${n} palavra${n === 1 ? "" : "s"}${n > 150 ? " · corte um pouco" : n >= 120 ? " · tamanho ideal" : ""}`;
+  $("checks").innerHTML = CHECKS.map(([lab, f]) => `<li class="${f(t) ? "ok" : ""}">${lab}</li>`).join("");
+}
+$("mail").addEventListener("input", () => { g8(); persist(); });
+$("copy").onclick = async () => { try { await navigator.clipboard.writeText($("mail").value); $("copy").textContent = "Copiado"; setTimeout(() => $("copy").textContent = "Copiar o email", 1500); } catch { $("mail").select(); } };
+
+function buildAll() {
+  g1();
+  mc($("g2"), "g2-", DIAG, ([mail, opts, ans, why]) => ({ head: el("div", "mail", mail), opts, ans, why }));
+  g3(); g4(); g5();
+  mc($("g6"), "g6-", ASK, ([s, ans, why]) => ({ head: el("p", "prompt", "“" + s + "”"), opts: ASKS, ans, why }));
+  mc($("g7"), "g7-", SUBJ, ([ctx, opts, ans, why]) => ({ head: el("p", "prompt", ctx), opts, ans, why }));
+  $("mail").value = saved.mail || ""; g8(); updateScore();
+}
+$("resetAll").onclick = () => { results = {}; combo = 0; $("combo").textContent = ""; saved = { mail: $("mail").value }; persist(); buildAll(); window.scrollTo({ top: 0 }); };
+buildAll();
+</script>
+
+</body>
+</html>

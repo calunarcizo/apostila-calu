@@ -10,7 +10,7 @@ const server = spawn("npx", ["vite", "preview", "--port", String(PORT), "--stric
 await new Promise((r) => setTimeout(r, 2500));
 
 const checks = [
-  ["/", "#path .node", 7],
+  ["/", "#path .node", 8],
   ["/#indice", "#idx dt", 30],
   ["/#verbos", "#view-verbos *", 20],
   ["/u1.html#porto", "input, button", 20],
@@ -19,6 +19,8 @@ const checks = [
   ["/u5.html#saude", "input, button", 20],
   ["/u6.html#geral", "input, button", 20],
   ["/mestrado.html#ri", "button", 5],
+  ["/writing.html", "button, textarea", 3],
+  ["/u4.html#politicas", "input, button", 20],
 ];
 
 let failed = 0;

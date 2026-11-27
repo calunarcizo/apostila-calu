@@ -176,7 +176,7 @@ nav.tabs a { white-space: nowrap; }
 </div>
 
 <script>
-const THEMES = { geral: "Geral", porto: "Porto e logística", saude: "Saúde", terceiro: "Terceiro setor", viagem: "Viagem e hotelaria", tecnologia: "Tecnologia", academico: "Vida acadêmica", comex: "Comércio exterior", atendimento: "Atendimento e entrevista", clima: "Clima e território", cultura: "Séries, música e memes" };
+const THEMES = { geral: "Geral", porto: "Porto e logística", saude: "Saúde", terceiro: "Terceiro setor", viagem: "Viagem e hotelaria", tecnologia: "Tecnologia", academico: "Vida acadêmica", comex: "Comércio exterior", atendimento: "Atendimento e entrevista", clima: "Clima e território", cultura: "Séries, música e memes", politicas: "Políticas públicas" };
 const AREAS = { ri: "Relações internacionais", saude: "Saúde e odontologia", clima: "Clima e meio ambiente", territorio: "Território e sociedade", gestao: "Administração e economia" };
 const UNITS = [
   { id: "u1", level: 1, short: "PR", name: "Presente simples", sub: "Rotina, hábitos e o que é sempre verdade", file: "u1.html", key: "calu-pr-u1-", themes: THEMES },
@@ -185,9 +185,10 @@ const UNITS = [
   { id: "soon1", level: 2, short: "PC", name: "Passado contínuo", sub: "Em breve", soon: true },
   { id: "u5", level: 3, short: "PP", name: "Present perfect ou passado?", sub: "Experiências e o que continua até hoje", file: "u5.html", key: "calu-pp-u5-", themes: THEMES },
   { id: "u6", level: 4, short: "PF", name: "Past perfect", sub: "O passado antes do passado", file: "u6.html", key: "calu-pf-u6-", themes: THEMES },
+  { id: "wr", level: 5, extra: true, short: "WR", name: "Writing: cold emails", sub: "Escrever para quem ainda não conhece você", file: "writing.html", key: "calu-wr-", themes: { cold: "Cold emails" } },
   { id: "mes", level: 0, extra: true, short: "MS", name: "Trilha mestrado", sub: "Leitura para a prova de proficiência", file: "mestrado.html", key: "calu-mestrado-score-", themes: AREAS }
 ];
-const LEVELS = { 1: "Nível 1 · A1", 2: "Nível 2 · A2", 3: "Nível 3 · B1", 4: "Nível 4 · B2", 0: "Trilha extra · pós-graduação" };
+const LEVELS = { 1: "Nível 1 · A1", 2: "Nível 2 · A2", 3: "Nível 3 · B1", 4: "Nível 4 · B2", 0: "Trilha extra · pós-graduação", 5: "Trilha extra · writing" };
 const PASS = 0.6;
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -231,7 +232,7 @@ function render() {
     if (u.level !== lastLevel) { html.push(`<div class="level"><span>${LEVELS[u.level]}</span></div>`); lastLevel = u.level; }
     const cls = ["node", u.extra ? "extra" : "", u.soon || !unlocked ? "locked" : "", finished ? "done" : ""].join(" ");
     const sub = u.soon ? "Em breve" : !unlocked ? "Termine a unidade anterior para abrir" :
-      `${st.done} de ${Object.keys(u.themes).length} ${u.extra ? "áreas" : "temas"} · melhor ${Math.round(st.best * 100)}%`;
+      `${st.done} de ${Object.keys(u.themes).length} ${u.id === "wr" ? (Object.keys(u.themes).length > 1 ? "módulos" : "módulo") : u.extra ? "áreas" : "temas"} · melhor ${Math.round(st.best * 100)}%`;
     html.push(`<div class="${cls}" data-u="${u.id}" ${current === u.id ? 'aria-current="true"' : ""}>
       <button class="bubble" type="button" ${!unlocked ? "disabled" : ""} aria-expanded="${open === u.id}" aria-label="${esc(u.name)}">${ring(st.best, finished ? "var(--signal)" : "var(--good)")}<span class="core">${!unlocked ? '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>' : u.short}</span></button>
       <span class="name">${esc(u.name)}</span><span class="sub">${esc(u.extra ? u.sub : sub)}${u.extra ? "<br>" + esc(sub) : ""}</span></div>`);
@@ -247,15 +248,17 @@ function sheet(u, st, fav) {
   const keys = Object.keys(u.themes);
   const start = u.extra ? keys[0] : fav;
   return `<div class="card sheet"><div class="row" style="justify-content:space-between"><h3>${esc(u.name)}</h3><a class="btn" href="${u.file}#${start}">${st.list[start] ? "Continuar" : "Começar"} ${u.extra ? "" : "em " + esc(u.themes[start])}</a></div>
-    <p class="small muted">A mesma aula em cada ${u.extra ? "área" : "tema"}. Faça no seu e, para revisar, repita em outro.</p>
+    ${keys.length > 1 ? `<p class="small muted">A mesma aula em cada ${u.extra ? "área" : "tema"}. Faça no seu e, para revisar, repita em outro.</p>` : ""}
     <div class="themes">${keys.map(t => { const s = st.list[t]; const pct = s ? Math.round(s.pct * 100) : 0;
       return `<a class="theme ${t === fav && !u.extra ? "mine" : ""}" href="${u.file}#${t}"><span>${esc(u.themes[t])}</span><span class="bar"><i style="width:${pct}%"></i></span><small>${s ? pct + "% · " + s.right + " de " + s.total : "não começado"}</small></a>`; }).join("")}</div></div>`;
 }
 $("nivel").onchange = () => { ls.set("calu-nivel", +$("nivel").value); render(); };
 
 // ---------- índice remissivo
-const U = { u1: ["u1.html", "Presente simples"], u3: ["u3.html", "Futuro"], u4: ["u4.html", "Passado simples"], u5: ["u5.html", "Present perfect"], u6: ["u6.html", "Past perfect"], mes: ["mestrado.html", "Mestrado"], verbos: ["#verbos", "Irregulares"] };
+const U = { u1: ["u1.html", "Presente simples"], u3: ["u3.html", "Futuro"], u4: ["u4.html", "Passado simples"], u5: ["u5.html", "Present perfect"], u6: ["u6.html", "Past perfect"], mes: ["mestrado.html", "Mestrado"], wr: ["writing.html", "Writing"], verbos: ["#verbos", "Irregulares"] };
 const IDX = [
+  ["cold email", "Email para quem ainda não conhece você: 7 blocos, até 150 palavras, um pedido pequeno.", [["wr", "jogos 1 a 8"]]],
+  ["follow-up", "Retomar o contato 5 a 7 dias depois, no mesmo thread: Just following up on my note below.", [["wr", "jogo 7"]]],
   ["verbos irregulares (lista)", "Base, passado e particípio, com tradução. Lista geral e uma lista por setor, com modo treino.", [["verbos", "aba Irregulares"], ["u4", "passo 0"]]],
   ["variações (Reino Unido × EUA)", "Cada unidade tem um quadro Variações. Nos exercícios, as duas formas contam como certas.", [["u1", "passo 0"], ["u3", "passo 0"], ["u4", "passo 0"], ["u5", "passo 0"], ["u6", "passo 0"]]],
   ["at / on the weekend", "At the weekend no Reino Unido, on the weekend nos EUA. As duas estão certas.", [["u1", "passo 0"]]],
@@ -458,7 +461,8 @@ academico: [["read","I *read* three articles for the seminar."],["write","She *w
 comex: [["buy","The company *bought* raw materials from China."],["sell","We *sold* 500 tons of coffee."],["pay","The importer *paid* by letter of credit."],["send","The supplier *sent* the pro forma invoice."],["deal","Our broker *dealt* with customs."],["rise","Freight prices *rose* in the second quarter."],["fall","The dollar *fell* against the real."],["lose","We *lost* the contract to a competitor."],["cost","Shipping *cost* more than expected."],["withdraw","The buyer *withdrew* the order."],["set","They *set* the price in euros."]],
 atendimento: [["tell","I *told* the customer about the delay."],["say","She *said* she was unhappy with the service."],["give","We *gave* him a refund."],["forget","I *forgot* to call him back."],["understand","I *understood* the problem right away."],["speak","I *spoke* to the manager."],["take","The waiter *took* our order."],["bring","He *brought* the wrong dish."],["hear","I *heard* the complaint calmly."],["keep","Sorry we *kept* you waiting."],["deal","I *dealt* with a difficult complaint."],["make","We *made* a mistake with your booking."]],
 clima: [["rise","The river *rose* two meters overnight."],["fall","Heavy rain *fell* all week."],["blow","A strong wind *blew* the roofs off."],["freeze","The lake *froze* in July."],["grow","The city *grew* without planning."],["burn","The fire *burned* for three days."],["spread","The flames *spread* across the forest."],["strike","Lightning *struck* a tree in the park."],["build","They *built* houses on the riverbank."],["lose","Many families *lost* their homes."],["bring","The storm *brought* floods to the south."]],
-cultura: [["sing","She *sang* the national anthem."],["see","I *saw* the whole series in one weekend."],["become","That video *became* a meme overnight."],["win","The film *won* an Oscar."],["shoot","They *shot* the film in Bahia."],["break","The song *broke* a streaming record."],["wear","She *wore* a vintage dress on stage."],["hear","I *heard* the new album yesterday."],["draw","A fan *drew* amazing fan art."],["fall","The two characters *fell* in love."],["forget","The singer *forgot* the lyrics."],["read","I *read* the book before the series."]]
+cultura: [["sing","She *sang* the national anthem."],["see","I *saw* the whole series in one weekend."],["become","That video *became* a meme overnight."],["win","The film *won* an Oscar."],["shoot","They *shot* the film in Bahia."],["break","The song *broke* a streaming record."],["wear","She *wore* a vintage dress on stage."],["hear","I *heard* the new album yesterday."],["draw","A fan *drew* amazing fan art."],["fall","The two characters *fell* in love."],["forget","The singer *forgot* the lyrics."],["read","I *read* the book before the series."]],
+politicas: [["lead","The secretary *led* the health reform."],["make","The council *made* a difficult decision."],["spend","The city *spent* 30% of its budget on education."],["cut","The government *cut* taxes on food."],["set","The ministry *set* new targets for vaccination."],["hold","The country *held* elections in October."],["win","She *won* the election with 52% of the votes."],["lose","The mayor *lost* support after the scandal."],["rise","Unemployment *rose* in the first quarter."],["fall","Inflation *fell* to 4% last year."],["withdraw","The president *withdrew* the bill."],["meet","The program *met* its targets in 2024."]]
 };
 const VMAP = Object.fromEntries(VERBS.map(v => [v[0], v]));
 function renderVerbs() {
@@ -478,7 +482,9 @@ $("vq").addEventListener("input", renderVerbs);
 $("vquiz").onclick = () => { const b = $("vquiz"); b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); renderVerbs(); };
 
 function route() {
-  const hv = location.hash.slice(1); const v = ["indice", "verbos"].includes(hv) ? hv : "trilha";
+  let hv = location.hash.slice(1);
+  if (THEMES[hv]) { ls.set("calu-tema", hv); history.replaceState(null, "", "#trilha"); hv = "trilha"; }
+  const v = ["indice", "verbos"].includes(hv) ? hv : "trilha";
   ["trilha", "verbos", "indice"].forEach(k => { $("view-" + k).hidden = v !== k; $("tab-" + k).setAttribute("aria-current", v === k ? "page" : "false"); });
   if (v === "indice") renderIdx(); else if (v === "verbos") renderVerbs(); else render();
 }

@@ -582,11 +582,11 @@ function buildMC(box, items, prefix) {
     const fb = document.createElement("p"); fb.className = "fb";
     order(opts.length, q).forEach(oi => {
       const b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.textContent = opts[oi];
-      b.onclick = () => { div.querySelectorAll(".opt").forEach(x => x.disabled = true);
+      b.onclick = () => { div.querySelectorAll(".opt").forEach(x => x.classList.remove("ok", "no"));
         const ok = oi === idx; b.classList.add(ok ? "ok" : "no");
         if (!ok) div.querySelectorAll(".opt").forEach(x => { if (x.textContent === opts[idx]) x.classList.add("ok"); });
-        fb.className = "fb " + (ok ? "ok" : "no"); fb.textContent = (ok ? "Isso. " : "Não é essa. ") + (why || (ok ? "" : "A certa está em verde."));
-        mark(prefix + i, ok); };
+        fb.className = "fb " + (ok ? "ok" : "no"); fb.textContent = (ok ? "Isso. " : "Não é essa. ") + (why || (ok ? "" : "A certa está em verde.")) + (div.dataset.tried ? "" : " Pode tocar nas outras opções para comparar.");
+        if (!div.dataset.tried) mark(prefix + i, ok); div.dataset.tried = "1"; };
       div.appendChild(b);
     });
     div.appendChild(fb); box.appendChild(div);
